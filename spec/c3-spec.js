@@ -15,6 +15,16 @@ describe('c3', function () {
 
     });
 
-    // ...write other tests here
+    // describe('api.flow', function () {
+    //     it('does something', function () {
+    //         var args = {
+    //             columns: [
+    //                 ['x', 10, 20, 30],
+    //                 ['data1', 500, 210, 180]
+    //             ]
+    //         };
+    //         c3.chart.fn.flow(args);
+    //     });
+    // });
 
 });

@@ -1997,8 +1997,8 @@
         var $$ = this, config = $$.config,
             x, y, w, h, rectW, rectX;
 
-        // set update selection if null
-        eventRectUpdate = eventRectUpdate || $$.eventRect.data(function (d) { return d; });
+        // Moved eventRectUpdate to only be used when in non-multiplexed mode.
+        // Otherwise you get an error when flowing multiplex data.
 
         if ($$.isMultipleX()) {
             // TODO: rotated not supported yet
@@ -2008,6 +2008,8 @@
             h = $$.height;
         }
         else {
+            // set update selection if null
+            eventRectUpdate = eventRectUpdate || $$.eventRect.data(function (d) { return d; });
             if (($$.isCustomX() || $$.isTimeSeries()) && !$$.isCategorized()) {
                 rectW = function (d) {
                     var prevX = $$.getPrevX(d.index), nextX = $$.getNextX(d.index), dx = $$.data.xs[d.id][d.index],
@@ -2028,14 +2030,15 @@
             y = config.axis_rotated ? rectX : 0;
             w = config.axis_rotated ? $$.width : rectW;
             h = config.axis_rotated ? rectW : $$.height;
+
+            eventRectUpdate
+                .attr('class', $$.classEvent.bind($$))
+                .attr("x", x)
+                .attr("y", y)
+                .attr("width", w)
+                .attr("height", h);
         }
 
-        eventRectUpdate
-            .attr('class', $$.classEvent.bind($$))
-            .attr("x", x)
-            .attr("y", y)
-            .attr("width", w)
-            .attr("height", h);
     };
     c3_chart_internal_fn.generateEventRectsForSingleX = function (eventRectEnter) {
         var $$ = this, d3 = $$.d3, config = $$.config;
@@ -5372,7 +5375,13 @@
                     for (j = 0; j < length; j++) {
                         targets[i].values[j].index = tail + j;
                         if (!$$.isTimeSeries()) {
-                            targets[i].values[j].x = tail + j;
+                            if ($$.isCustomX()) {
+                                // If we have custom x, just use the value fed in
+                                targets[i].values[j].x = targets[i].values[j].x;
+                            } else {
+                                // otherwise make one based on the last index
+                                targets[i].values[j].x = tail + j;
+                            }
                         }
                     }
                     t.values = t.values.concat(targets[i].values);

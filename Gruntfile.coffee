@@ -89,4 +89,10 @@ module.exports = (grunt) ->
             files:
               'c3.min.js': 'c3.js'
 
-    grunt.registerTask 'default', ['concat', 'jshint', 'jasmine', 'uglify']
+        karma:
+          unit:
+            configFile: 'karma.conf.js'
+            background: true
+
+    grunt.loadNpmTasks 'grunt-karma'
+    grunt.registerTask 'default', ['concat', 'jshint', 'jasmine', 'uglify', 'karma']
