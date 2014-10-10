@@ -1021,6 +1021,7 @@
             bar_zerobased: true,
             // area
             area_zerobased: true,
+            line_zerobased: false,
             // pie
             pie_label_show: true,
             pie_label_format: undefined,
@@ -1254,7 +1255,9 @@
             domainLength, padding, padding_top, padding_bottom,
             center = axisId === 'y2' ? config.axis_y2_center : config.axis_y_center,
             yDomainAbs, lengths, diff, ratio, isAllPositive, isAllNegative,
-            isZeroBased = ($$.hasType('bar', yTargets) && config.bar_zerobased) || ($$.hasType('area', yTargets) && config.area_zerobased),
+            isZeroBased = ($$.hasType('bar', yTargets) && config.bar_zerobased) ||
+              ($$.hasType('area', yTargets) && config.area_zerobased) ||
+              ($$.hasType('line', yTargets) && config.line_zerobased),
             showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated,
             showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;
         if (yTargets.length === 0) { // use current domain if target of axisId is none
