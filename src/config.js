@@ -163,6 +163,7 @@ c3_chart_internal_fn.getDefaultConfig = function () {
         donut_width: undefined,
         donut_expand: true,
         donut_title: "",
+        donut_subtitle: "",
         // region - region to change style
         regions: [],
         // tooltip - show when mouseover on each data

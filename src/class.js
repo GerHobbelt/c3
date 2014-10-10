@@ -10,6 +10,7 @@ var CLASS = c3_chart_internal_fn.CLASS = {
     chartArc: 'c3-chart-arc',
     chartArcs: 'c3-chart-arcs',
     chartArcsTitle: 'c3-chart-arcs-title',
+    chartArcsSubTitle: 'c3-chart-arcs-subtitle',
     chartArcsBackground: 'c3-chart-arcs-background',
     chartArcsGaugeUnit: 'c3-chart-arcs-gauge-unit',
     chartArcsGaugeMax: 'c3-chart-arcs-gauge-max',
