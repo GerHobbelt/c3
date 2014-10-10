@@ -1042,6 +1042,7 @@
             donut_width: undefined,
             donut_expand: true,
             donut_title: "",
+            donut_subtitle: "",
             // region - region to change style
             regions: [],
             // tooltip - show when mouseover on each data
@@ -4427,10 +4428,22 @@
         $$.arcs = $$.main.select('.' + CLASS.chart).append("g")
             .attr("class", CLASS.chartArcs)
             .attr("transform", $$.getTranslate('arc'));
-        $$.arcs.append('text')
-            .attr('class', CLASS.chartArcsTitle)
-            .style("text-anchor", "middle")
-            .text($$.getArcTitle());
+        if ($$.config.donut_subtitle) {
+            $$.arcs.append('text')
+                .attr('class', CLASS.chartArcsSubTitle)
+                .attr("transform", "translate(0,-10)")
+                .style("text-anchor", "middle")
+                .text($$.config.donut_subtitle);
+        }
+        if ($$.config.donut_title) {
+            var title = $$.arcs.append('text')
+                .attr('class', CLASS.chartArcsTitle)
+                .style("text-anchor", "middle")
+                .text($$.getArcTitle());
+            if ($$.config.donut_subtitle) {
+                title.attr("transform", "translate(0,20)");
+            }
+        }
     };
 
     c3_chart_internal_fn.redrawArc = function (duration, durationForExit, withTransform) {
@@ -5185,6 +5198,7 @@
         chartArc: 'c3-chart-arc',
         chartArcs: 'c3-chart-arcs',
         chartArcsTitle: 'c3-chart-arcs-title',
+        chartArcsSubTitle: 'c3-chart-arcs-subtitle',
         chartArcsBackground: 'c3-chart-arcs-background',
         chartArcsGaugeUnit: 'c3-chart-arcs-gauge-unit',
         chartArcsGaugeMax: 'c3-chart-arcs-gauge-max',

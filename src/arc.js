@@ -241,7 +241,7 @@ c3_chart_internal_fn.initArc = function () {
             .style("text-anchor", "middle")
             .text($$.getArcTitle());
         if ($$.config.donut_subtitle) {
-            title.attr("transform", "translate(0,20)")
+            title.attr("transform", "translate(0,20)");
         }
     }
 };
