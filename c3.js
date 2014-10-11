@@ -1050,6 +1050,10 @@
             regions: [],
             // tooltip - show when mouseover on each data
             tooltip_show: true,
+            tooltip_animation_show: true,
+            tooltip_animation_delay: 0,
+            tooltip_animation_duration: 350,
+            tooltip_animation_ease: "linear",
             tooltip_grouped: true,
             tooltip_format_title: undefined,
             tooltip_format_name: undefined,
@@ -3457,7 +3461,19 @@
         if (dataToShow.length === 0 || !config.tooltip_show) {
             return;
         }
-        $$.tooltip.html(config.tooltip_contents.call($$, selectedData, $$.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color)).style("display", "block");
+        var tooltip = $$.tooltip.html(config.tooltip_contents.call($$, selectedData, $$.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color));
+        if ($$.config.tooltip_animation_show) {
+            tooltip = tooltip
+                        .style("opacity", 0)
+                        .style("display", "block")
+                        .transition()
+                        .delay($$.config.tooltip_animation_delay)
+                        .duration($$.config.tooltip_animation_duration)
+                        .ease($$.config.tooltip_animation_ease)
+                        .style("opacity", 1);
+        } else {
+            tooltip.style("display", "block");
+        }
 
         // Get tooltip dimensions
         tWidth = $$.tooltip.property('offsetWidth');

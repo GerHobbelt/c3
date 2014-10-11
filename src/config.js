@@ -169,6 +169,10 @@ c3_chart_internal_fn.getDefaultConfig = function () {
         regions: [],
         // tooltip - show when mouseover on each data
         tooltip_show: true,
+        tooltip_animation_show: true,
+        tooltip_animation_delay: 0,
+        tooltip_animation_duration: 350,
+        tooltip_animation_ease: "linear",
         tooltip_grouped: true,
         tooltip_format_title: undefined,
         tooltip_format_name: undefined,
