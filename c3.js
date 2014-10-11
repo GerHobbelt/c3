@@ -1010,6 +1010,7 @@
             // point - point of each data
             point_show: true,
             point_r: 2.5,
+            point_animation: false,
             point_focus_expand_enabled: true,
             point_focus_expand_r: undefined,
             point_select_r: undefined,
@@ -2828,17 +2829,28 @@
         var $$ = this,
             r = $$.pointExpandedR.bind($$);
         if (reset) { $$.unexpandCircles(); }
-        $$.getCircles(i, id)
-            .classed(CLASS.EXPANDED, true)
-            .attr('r', r);
+        var circles = $$.getCircles(i, id)
+            .classed(CLASS.EXPANDED, true);
+        if ($$.config.point_animation) {
+            circles = circles.transition()
+                .duration($$.config.transition_duration)
+                .ease('cubic-in-out');
+        }
+        circles.attr('r', r);
     };
     c3_chart_internal_fn.unexpandCircles = function (i) {
         var $$ = this,
             r = $$.pointR.bind($$);
-        $$.getCircles(i)
+        var circles = $$.getCircles(i)
             .filter(function () { return $$.d3.select(this).classed(CLASS.EXPANDED); })
-            .classed(CLASS.EXPANDED, false)
-            .attr('r', r);
+            .classed(CLASS.EXPANDED, false);
+
+        if ($$.config.point_animation) {
+            circles = circles.transition()
+                .duration($$.config.transition_duration)
+                .ease('cubic-in-out');
+        }
+        circles.attr('r', r);
     };
     c3_chart_internal_fn.pointR = function (d) {
         var $$ = this, config = $$.config;
