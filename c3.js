@@ -3021,17 +3021,39 @@
         mainTextEnter.append('g')
             .attr('class', classTexts);
     };
+    c3_chart_internal_fn.getAnchorColor = function (d) {
+        if (this.config.data_labels && this.config.data_labels.color) {
+            return this.config.data_labels.color;
+        }
+        if (this.config.axis_rotated &&
+            ((d.anchor === 'start' && d.value < 0) || (d.anchor === 'end' && d.value > 0))) {
+            return 'white';
+        }
+        return this.color(d);
+    };
     c3_chart_internal_fn.redrawText = function (durationForExit) {
         var $$ = this, config = $$.config,
             barOrLineData = $$.barOrLineData.bind($$),
             classText = $$.classText.bind($$);
+
         $$.mainText = $$.main.selectAll('.' + CLASS.texts).selectAll('.' + CLASS.text)
             .data(barOrLineData);
         $$.mainText.enter().append('text')
             .attr("class", classText)
-            .attr('text-anchor', function (d) { return config.axis_rotated ? (d.value < 0 ? 'end' : 'start') : 'middle'; })
+            .attr('text-anchor', function (d) {
+                var anchor = (config.data_labels && config.data_labels.anchor) || 'auto';
+                if (anchor === 'auto') {
+                    if (config.axis_rotated) {
+                        anchor = d.value < 0 ? 'end' : 'start';
+                    } else {
+                        anchor = 'middle';
+                    }
+                }
+                d.anchor = anchor;
+                return anchor;
+            })
             .style("stroke", 'none')
-            .style("fill", function (d) { return $$.color(d); })
+            .style("fill", function (d) { return $$.getAnchorColor(d); })
             .style("fill-opacity", 0);
         $$.mainText
             .text(function (d) { return $$.formatByAxisId($$.getAxisId(d.id))(d.value, d.id); });
@@ -3044,10 +3066,21 @@
         var $$ = this,
             opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
         transitions.push($$.mainText.transition()
-                         .attr('x', xForText)
-                         .attr('y', yForText)
-                         .style("fill", $$.color)
-                         .style("fill-opacity", opacityForText));
+            .attr('x', xForText)
+            .attr('y', yForText)
+            .attr('dx', function (d) {
+                if ($$.config.axis_rotated) {
+                    if (d.anchor === 'start' && d.value < 0) {
+                        return '1em';
+                    }
+                    if (d.anchor === 'end' && d.value > 0) {
+                        return '-1em';
+                    }
+                }
+                return 0;
+            })
+            .style("fill", function (d) { return $$.getAnchorColor(d); })
+            .style("fill-opacity", opacityForText));
     };
     c3_chart_internal_fn.getTextRect = function (text, cls) {
         var svg = this.d3.select('body').append("svg").style('visibility', 'hidden'), rect;
