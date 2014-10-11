@@ -7,7 +7,7 @@
   "version": "0.3.2",
   "homepage": "https://github.com/dsuket/c3",
   "authors": [
-    "Masayuki Tanaka <masayuki0812@mac.com>"
+    "Masayuki Tanaka <masayuki0812@mac.com>",
     "dsuket"
   ],
   "description": "D3-based reusable chart library",
