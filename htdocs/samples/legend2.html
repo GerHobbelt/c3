@@ -1,0 +1,47 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="/css/c3.css">
+  </head>
+  <body>
+    <h2>TopRight</h2>
+    <h3>Normal</h3>
+    <div id="chart1"></div>
+    <h3>Horizontal</h3>
+    <div id="chart2"></div>
+
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="/js/c3.js"></script>
+    <script>
+
+      var columns = [];
+      for (var i = 0; i < 5; i++ ) {
+        columns[i] = ['data-abcdefgabcdefg' + i, 10 * i, 20 * i];
+      }
+
+      c3.generate({
+        bindto: '#chart1',
+        data: {
+          columns: columns,
+          type: 'bar'
+        },
+        legend: {
+          position: 'top-right'
+        }
+      });
+
+      c3.generate({
+        bindto: '#chart2',
+        data: {
+          columns: columns,
+          type: 'bar'
+        },
+        legend: {
+          position: 'top-right'
+        },
+        axis: {
+          rotated: true
+        }
+      });
+    </script>
+  </body>
+</html>

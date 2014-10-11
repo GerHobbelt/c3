@@ -16,10 +16,10 @@ c3_chart_internal_fn.updateSizeForLegend = function (legendHeight, legendWidth) 
     };
 
     $$.margin3 = {
-        top: $$.isLegendRight ? 0 : $$.isLegendInset ? insetLegendPosition.top : $$.currentHeight - legendHeight,
+        top: ($$.isLegendRight || $$.isLegendTopRight) ? 20 : $$.isLegendInset ? insetLegendPosition.top : $$.currentHeight - legendHeight,
         right: NaN,
         bottom: 0,
-        left: $$.isLegendRight ? $$.currentWidth - legendWidth : $$.isLegendInset ? insetLegendPosition.left : 0
+        left: ($$.isLegendRight || $$.isLegendTopRight) ? $$.currentWidth - legendWidth : $$.isLegendInset ? insetLegendPosition.left : 0
     };
 };
 c3_chart_internal_fn.transformLegend = function (withTransition) {
@@ -35,9 +35,15 @@ c3_chart_internal_fn.updateLegendItemWidth = function (w) {
 c3_chart_internal_fn.updateLegendItemHeight = function (h) {
     this.legendItemHeight = h;
 };
+c3_chart_internal_fn.getLegendCount = function () {
+    return this.d3.keys(this.data.xs).length;
+};
 c3_chart_internal_fn.getLegendWidth = function () {
     var $$ = this;
-    return $$.config.legend_show ? $$.isLegendRight || $$.isLegendInset ? $$.legendItemWidth * ($$.legendStep + 1) : $$.currentWidth : 0;
+    // window.console.log('$$.legendItemWidth', $$.legendItemWidth);
+    return $$.config.legend_show ?
+        $$.isLegendTopRight ? (parseInt($$.legendItemWidth.toFixed()) + 2) * $$.getLegendCount() :
+        $$.isLegendRight || $$.isLegendInset ? $$.legendItemWidth * ($$.legendStep + 1) : $$.currentWidth : 0;
 };
 c3_chart_internal_fn.getLegendHeight = function () {
     var $$ = this, config = $$.config, h = 0;

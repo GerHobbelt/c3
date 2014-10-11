@@ -115,6 +115,7 @@
         $$.y2Orient = config.axis_rotated ? "top" : "right";
         $$.subXOrient = config.axis_rotated ? "left" : "bottom";
 
+        $$.isLegendTopRight = config.legend_position === 'top-right';
         $$.isLegendRight = config.legend_position === 'right';
         $$.isLegendInset = config.legend_position === 'inset';
         $$.isLegendTop = config.legend_inset_anchor === 'top-left' || config.legend_inset_anchor === 'top-right';
@@ -323,7 +324,8 @@
         var $$ = this, config = $$.config;
         var legendHeight = $$.legend ? $$.getLegendHeight() : 0,
             legendWidth = $$.legend ? $$.getLegendWidth() : 0,
-            legendHeightForBottom = $$.isLegendRight || $$.isLegendInset ? 0 : legendHeight,
+            legendHeightForTop = $$.isLegendTopRight ? legendHeight + 20 : 0,
+            legendHeightForBottom = $$.isLegendRight || $$.isLegendInset || $$.isLegendTopRight ? 0 : legendHeight,
             hasArc = $$.hasArcType(),
             xAxisHeight = config.axis_rotated || hasArc ? 0 : $$.getHorizontalAxisHeight('x'),
             subchartHeight = config.subchart_show && !hasArc ? (config.subchart_size_height + xAxisHeight) : 0;
@@ -333,12 +335,12 @@
 
         // for main
         $$.margin = config.axis_rotated ? {
-            top: $$.getHorizontalAxisHeight('y2') + $$.getCurrentPaddingTop(),
+            top: $$.getHorizontalAxisHeight('y2') + $$.getCurrentPaddingTop() + legendHeightForTop,
             right: hasArc ? 0 : $$.getCurrentPaddingRight(),
             bottom: $$.getHorizontalAxisHeight('y') + legendHeightForBottom + $$.getCurrentPaddingBottom(),
             left: subchartHeight + (hasArc ? 0 : $$.getCurrentPaddingLeft())
         } : {
-            top: 4 + $$.getCurrentPaddingTop(), // for top tick text
+            top: 4 + $$.getCurrentPaddingTop() + legendHeightForTop, // for top tick text
             right: hasArc ? 0 : $$.getCurrentPaddingRight(),
             bottom: xAxisHeight + subchartHeight + legendHeightForBottom + $$.getCurrentPaddingBottom(),
             left: hasArc ? 0 : $$.getCurrentPaddingLeft()
@@ -1010,7 +1012,7 @@
             // point - point of each data
             point_show: true,
             point_r: 2.5,
-            point_animation: false,
+            point_transition: false,
             point_focus_expand_enabled: true,
             point_focus_expand_r: undefined,
             point_select_r: undefined,
@@ -3513,10 +3515,10 @@
         };
 
         $$.margin3 = {
-            top: $$.isLegendRight ? 0 : $$.isLegendInset ? insetLegendPosition.top : $$.currentHeight - legendHeight,
+            top: ($$.isLegendRight || $$.isLegendTopRight) ? 20 : $$.isLegendInset ? insetLegendPosition.top : $$.currentHeight - legendHeight,
             right: NaN,
             bottom: 0,
-            left: $$.isLegendRight ? $$.currentWidth - legendWidth : $$.isLegendInset ? insetLegendPosition.left : 0
+            left: ($$.isLegendRight || $$.isLegendTopRight) ? $$.currentWidth - legendWidth : $$.isLegendInset ? insetLegendPosition.left : 0
         };
     };
     c3_chart_internal_fn.transformLegend = function (withTransition) {
@@ -3532,9 +3534,15 @@
     c3_chart_internal_fn.updateLegendItemHeight = function (h) {
         this.legendItemHeight = h;
     };
+    c3_chart_internal_fn.getLegendCount = function () {
+        return this.d3.keys(this.data.xs).length;
+    };
     c3_chart_internal_fn.getLegendWidth = function () {
         var $$ = this;
-        return $$.config.legend_show ? $$.isLegendRight || $$.isLegendInset ? $$.legendItemWidth * ($$.legendStep + 1) : $$.currentWidth : 0;
+        // window.console.log('$$.legendItemWidth', $$.legendItemWidth);
+        return $$.config.legend_show ?
+            $$.isLegendTopRight ? (parseInt($$.legendItemWidth.toFixed()) + 2) * $$.getLegendCount() :
+            $$.isLegendRight || $$.isLegendInset ? $$.legendItemWidth * ($$.legendStep + 1) : $$.currentWidth : 0;
     };
     c3_chart_internal_fn.getLegendHeight = function () {
         var $$ = this, config = $$.config, h = 0;
