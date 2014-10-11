@@ -1,0 +1,59 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="/css/c3.css">
+  </head>
+  <body>
+    <h3>inner-top</h3>
+    <div id="chart1"></div>
+
+    <h3>outer-top</h3>
+    <div id="chart2"></div>
+
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="/js/c3.js"></script>
+    <script>
+      var config = {
+        data: {
+          columns: [
+            ['data1', 30, 100, 120, 150, 120, 50],
+            ['data2', 50, 20, 10, 40, 15, 25],
+            ['data3', 250, 320, 310, 440, 515, 325]
+          ],
+          type: 'line',
+          axes: {
+            data1: 'y',
+            data2: 'y',
+            data3: 'y2'
+          }
+        },
+        axis: {
+          y: {
+            label: {
+              text: 'Y Label1',
+              position: 'inner-top',
+              rotate: true
+            },
+            ticks: 4
+          },
+          y2: {
+            label: {
+              text: 'Y Label2',
+              position: 'inner-top',
+              rotate: true
+            },
+            show: true,
+            ticks: 2
+          }
+        }
+      };
+
+      config.bindto = '#chart1';
+      c3.generate(config);
+
+      config.axis.y.label.position = 'outer-top';
+      config.axis.y2.label.position = 'outer-top';
+      config.bindto = '#chart2';
+      c3.generate(config);
+    </script>
+  </body>
+</html>

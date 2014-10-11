@@ -3804,12 +3804,11 @@
 
         $$.axes.y = main.append("g")
             .attr("class", CLASS.axis + ' ' + CLASS.axisY)
-            .attr("clip-path", $$.clipPathForYAxis)
             .attr("transform", $$.getTranslate('y'))
             .style("visibility", config.axis_y_show ? 'visible' : 'hidden');
         $$.axes.y.append("text")
             .attr("class", CLASS.axisYLabel)
-            .attr("transform", config.axis_rotated ? "" : "rotate(-90)")
+            .attr("transform", $$.isAxisLabelRotate("y") ? "" : "rotate(-90)")
             .style("text-anchor", $$.textAnchorForYAxisLabel.bind($$));
 
         $$.axes.y2 = main.append("g")
@@ -3819,7 +3818,7 @@
             .style("visibility", config.axis_y2_show ? 'visible' : 'hidden');
         $$.axes.y2.append("text")
             .attr("class", CLASS.axisY2Label)
-            .attr("transform", config.axis_rotated ? "" : "rotate(-90)")
+            .attr("transform", $$.isAxisLabelRotate("y2") ? "" : "rotate(-90)")
             .style("text-anchor", $$.textAnchorForY2AxisLabel.bind($$));
     };
     c3_chart_internal_fn.getXAxis = function (scale, orient, tickFormat, tickValues, withOuterTick) {
@@ -3928,6 +3927,15 @@
             isBottom: position.indexOf('bottom') >= 0
         };
     };
+    c3_chart_internal_fn.getAxisLabelRotateOption = function (axisId) {
+        var option = this.getAxisLabelOptionByAxisId(axisId),
+            rotate = (option && typeof option === 'object' && !isUndefined(option.rotate)) ? option.rotate : false;
+        return rotate;
+    };
+    c3_chart_internal_fn.isAxisLabelRotate = function (axisId) {
+        var rotate = this.getAxisLabelRotateOption(axisId);
+        return (!rotate && this.config.axis_rotated) || (rotate && !this.config.axis_rotated);
+    };
     c3_chart_internal_fn.getXAxisLabelPosition = function () {
         return this.getAxisLabelPosition('x', this.config.axis_rotated ? 'inner-top' : 'inner-right');
     };
@@ -3984,10 +3992,24 @@
         return this.dxForAxisLabel(!this.config.axis_rotated, this.getXAxisLabelPosition());
     };
     c3_chart_internal_fn.dxForYAxisLabel = function () {
-        return this.dxForAxisLabel(this.config.axis_rotated, this.getYAxisLabelPosition());
+        var position = this.getYAxisLabelPosition();
+        var box = this.getTextRect(this.getAxisLabelText("y"), CLASS.axisYLabel);
+        var labelWidth = box.width;
+        if (this.getAxisLabelRotateOption("y")) {
+            return position.isInner ? (labelWidth * 0.6 + 15) + "px" : "-1em";
+        } else {
+            return this.dxForAxisLabel(this.config.axis_rotated, this.getYAxisLabelPosition());
+        }
     };
     c3_chart_internal_fn.dxForY2AxisLabel = function () {
-        return this.dxForAxisLabel(this.config.axis_rotated, this.getY2AxisLabelPosition());
+        var position = this.getY2AxisLabelPosition();
+        var box = this.getTextRect(this.getAxisLabelText("y2"), CLASS.axisY2Label);
+        var labelWidth = box.width;
+        if (this.getAxisLabelRotateOption("y2")) {
+            return position.isInner ? "-1em" : (labelWidth * 0.6 + 15) + "px";
+        } else {
+            return this.dxForAxisLabel(this.config.axis_rotated, this.getY2AxisLabelPosition());
+        }
     };
     c3_chart_internal_fn.dyForXAxisLabel = function () {
         var $$ = this, config = $$.config,
@@ -4003,6 +4025,8 @@
             position = $$.getYAxisLabelPosition();
         if ($$.config.axis_rotated) {
             return position.isInner ? "-0.5em" : "3em";
+        } else if ($$.getAxisLabelRotateOption("y")) {
+            return "1.2em";
         } else {
             return position.isInner ? "1.2em" : -20 - $$.getMaxTickWidth('y');
         }
@@ -4012,6 +4036,8 @@
             position = $$.getY2AxisLabelPosition();
         if ($$.config.axis_rotated) {
             return position.isInner ? "1.2em" : "-2.2em";
+        } else if ($$.getAxisLabelRotateOption("y2")) {
+            return "1.2em";
         } else {
             return position.isInner ? "-0.5em" : 30 + this.getMaxTickWidth('y2');
         }
