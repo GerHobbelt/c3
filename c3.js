@@ -3064,16 +3064,18 @@
     };
     c3_chart_internal_fn.addTransitionForText = function (transitions, xForText, yForText, forFlow) {
         var $$ = this,
+            config = $$.config,
             opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
         transitions.push($$.mainText.transition()
             .attr('x', xForText)
             .attr('y', yForText)
             .attr('dx', function (d) {
-                if ($$.config.axis_rotated) {
-                    if (d.anchor === 'start' && d.value < 0) {
+                if (config.axis_rotated) {
+                    var anchor = (config.data_labels && config.data_labels.anchor) || 'auto';
+                    if (anchor === 'start' && d.value < 0) {
                         return '1em';
                     }
-                    if (d.anchor === 'end' && d.value > 0) {
+                    if (anchor === 'end' && d.value > 0) {
                         return '-1em';
                     }
                 }
