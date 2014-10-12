@@ -4335,6 +4335,9 @@
             }
             index++;
         });
+        if (isNaN(d.startAngle)) {
+            d.startAngle = 0;
+        }
         if (isNaN(d.endAngle)) {
             d.endAngle = d.startAngle;
         }
