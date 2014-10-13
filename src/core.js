@@ -550,7 +550,7 @@ c3_chart_internal_fn.redraw = function (options, transitions) {
 
     // text
     if ($$.hasDataLabel()) {
-        $$.redrawText(durationForExit);
+        $$.redrawText(durationForExit, barIndices);
     }
 
     // arc
