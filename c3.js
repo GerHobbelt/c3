@@ -3073,7 +3073,6 @@
             // 4 points that make a bar
             var points = getPoints(d, i);
             var width = Math.abs(points[0][1] - points[1][1]);
-            window.console.log('width', width);
             var text = '';
             if (width > threshold) {
                 text = $$.formatByAxisId($$.getAxisId(d.id))(d.value, d.id);
@@ -3886,12 +3885,11 @@
         var $$ = this, config = $$.config, main = $$.main;
         $$.axes.x = main.append("g")
             .attr("class", CLASS.axis + ' ' + CLASS.axisX)
-            .attr("clip-path", $$.clipPathForXAxis)
             .attr("transform", $$.getTranslate('x'))
             .style("visibility", config.axis_x_show ? 'visible' : 'hidden');
         $$.axes.x.append("text")
             .attr("class", CLASS.axisXLabel)
-            .attr("transform", config.axis_rotated ? "rotate(-90)" : "")
+            .attr("transform", $$.isAxisLabelRotate("x") ? "rotate(-90)" : "")
             .style("text-anchor", $$.textAnchorForXAxisLabel.bind($$));
 
         $$.axes.y = main.append("g")

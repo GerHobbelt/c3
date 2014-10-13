@@ -2,12 +2,11 @@ c3_chart_internal_fn.initAxis = function () {
     var $$ = this, config = $$.config, main = $$.main;
     $$.axes.x = main.append("g")
         .attr("class", CLASS.axis + ' ' + CLASS.axisX)
-        .attr("clip-path", $$.clipPathForXAxis)
         .attr("transform", $$.getTranslate('x'))
         .style("visibility", config.axis_x_show ? 'visible' : 'hidden');
     $$.axes.x.append("text")
         .attr("class", CLASS.axisXLabel)
-        .attr("transform", config.axis_rotated ? "rotate(-90)" : "")
+        .attr("transform", $$.isAxisLabelRotate("x") ? "rotate(-90)" : "")
         .style("text-anchor", $$.textAnchorForXAxisLabel.bind($$));
 
     $$.axes.y = main.append("g")
