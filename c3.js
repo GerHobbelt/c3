@@ -4563,6 +4563,8 @@
                 .text($$.getArcTitle());
             if ($$.config.donut_subtitle) {
                 title.attr("transform", "translate(0,20)");
+            } else {
+                title.attr("transform", "translate(0,5)");
             }
         }
     };
