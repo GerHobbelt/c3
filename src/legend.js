@@ -42,7 +42,7 @@ c3_chart_internal_fn.getLegendWidth = function () {
     var $$ = this;
     // window.console.log('$$.legendItemWidth', $$.legendItemWidth);
     return $$.config.legend_show ?
-        $$.isLegendTopRight ? $$.currentWidth) :
+        $$.isLegendTopRight ? $$.currentWidth :
         $$.isLegendRight || $$.isLegendInset ? $$.legendItemWidth * ($$.legendStep + 1) : $$.currentWidth : 0;
 };
 c3_chart_internal_fn.getLegendHeight = function () {
