@@ -4638,6 +4638,9 @@
                 //                        endAngle: Math.PI*2,
                 //                    };
                 //                }
+                if (isNaN(this._current.startAngle)) {
+                    this._current.startAngle = Math.PI * 2;
+                }
                 if (isNaN(this._current.endAngle)) {
                     this._current.endAngle = this._current.startAngle;
                 }
