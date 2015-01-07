@@ -573,7 +573,7 @@ c3_chart_internal_fn.redraw = function (options, transitions) {
     }
 
     // transition should be derived from one transition
-    d3.transition().duration(duration).each(function () {
+    main.transition().duration(duration).each(function () {
         var transitions = [];
 
         $$.addTransitionForBar(transitions, drawBar);
