@@ -100,3 +100,5 @@ module.exports = (grunt) ->
             dest: 'c3.min.css'
 
     grunt.registerTask 'default', ['concat', 'jshint', 'jasmine', 'cssmin', 'uglify']
+    grunt.registerTask 'test', ['concat', 'jshint', 'jasmine']
+    grunt.registerTask 'build', ['concat', 'jshint', 'cssmin', 'uglify']
