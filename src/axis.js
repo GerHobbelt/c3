@@ -183,6 +183,9 @@ c3_chart_internal_fn.textAnchorForAxisLabel = function (forHorizontal, position)
     if (forHorizontal) {
         return position.isLeft ? 'start' : position.isCenter ? 'middle' : 'end';
     } else {
+        if (position.isInner && position.isTop) {
+            return 'start';
+        }
         return position.isBottom ? 'start' : position.isMiddle ? 'middle' : 'end';
     }
 };
@@ -200,10 +203,8 @@ c3_chart_internal_fn.dxForXAxisLabel = function () {
 };
 c3_chart_internal_fn.dxForYAxisLabel = function () {
     var position = this.getYAxisLabelPosition();
-    var box = this.getTextRect(this.getAxisLabelText("y"), CLASS.axisYLabel);
-    var labelWidth = box.width;
     if (this.getAxisLabelRotateOption("y")) {
-        return position.isInner ? (labelWidth * 0.6 + 15) + "px" : "-1em";
+        return position.isInner ? "0.2em" : "-1em";
     } else {
         return this.dxForAxisLabel(this.config.axis_rotated, this.getYAxisLabelPosition());
     }
@@ -233,7 +234,7 @@ c3_chart_internal_fn.dyForYAxisLabel = function () {
     if ($$.config.axis_rotated) {
         return position.isInner ? "-0.5em" : "3em";
     } else if ($$.getAxisLabelRotateOption("y")) {
-        return "2.0em";
+        return "0.45em";
     } else {
         return position.isInner ? "1.2em" : -20 - $$.getMaxTickWidth('y');
     }
