@@ -4116,7 +4116,7 @@
         if ($$.config.axis_rotated) {
             return position.isInner ? "-0.5em" : "3em";
         } else if ($$.getAxisLabelRotateOption("y")) {
-            return "1.2em";
+            return "2.0em";
         } else {
             return position.isInner ? "1.2em" : -20 - $$.getMaxTickWidth('y');
         }
