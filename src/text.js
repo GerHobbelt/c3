@@ -73,7 +73,7 @@ c3_chart_internal_fn.generateDrawBarText = function (barIndices, threshold) {
         var width = Math.abs(points[0][1] - points[1][1]);
         var text = '';
         if (width > threshold) {
-            text = $$.formatByAxisId($$.getAxisId(d.id))(d.value, d.id);
+            text = $$.formatByAxisId($$.getAxisId(d.id))(d.value, d.id, i);
         }
         return text;
     };
