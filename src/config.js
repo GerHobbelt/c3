@@ -61,6 +61,10 @@ c3_chart_internal_fn.getDefaultConfig = function () {
         data_empty_label_text: "",
         // subchart
         subchart_show: false,
+        subchart_type: undefined,
+        subchart_types: {},
+        subchart_line_step_type: 'step',
+        subchart_line_spline_type: 'cardinal',
         subchart_size_height: 60,
         subchart_onbrush: function () {},
         // color

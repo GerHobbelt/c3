@@ -77,12 +77,12 @@ c3_chart_internal_fn.generateDrawLine = function (lineIndices, isSub) {
     return function (d) {
         var values = config.line_connectNull ? $$.filterRemoveNull(d.values) : d.values,
             x = isSub ? $$.x : $$.subX, y = yScaleGetter.call($$, d.id), x0 = 0, y0 = 0, path;
-        if ($$.isLineType(d)) {
+        if ($$.isLineType(d, isSub)) {
             if (config.data_regions[d.id]) {
                 path = $$.lineWithRegions(values, x, y, config.data_regions[d.id]);
             } else {
-                if ($$.isStepType(d)) { values = $$.convertValuesToStep(values); }
-                path = line.interpolate($$.getInterpolate(d))(values);
+                if ($$.isStepType(d, isSub)) { values = $$.convertValuesToStep(values); }
+                path = line.interpolate($$.getInterpolate(d, isSub))(values);
             }
         } else {
             if (values[0]) {

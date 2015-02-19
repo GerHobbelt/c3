@@ -73,12 +73,14 @@ c3_chart_internal_fn.isWithinShape = function (that, d) {
 };
 
 
-c3_chart_internal_fn.getInterpolate = function (d) {
+c3_chart_internal_fn.getInterpolate = function (d, isSub) {
     var $$ = this;
-    if ($$.isSplineType(d)) {
-        return $$.config.line_spline_type;
-    } else if ($$.isStepType(d)) {
-        return $$.config.line_step_type;
+    if ($$.isSplineType(d, isSub)) {
+        return (isSub ? $$.config.subchart_line_spline_type : undefined) ||
+            $$.config.line_spline_type;
+    } else if ($$.isStepType(d, isSub)) {
+        return (isSub ? $$.config.subchart_line_step_type : undefined) ||
+            $$.config.line_step_type;
     }
     return "linear";
 };
