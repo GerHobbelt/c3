@@ -235,6 +235,7 @@
         main = $$.main = $$.svg.append("g").attr("transform", $$.getTranslate('main'));
 
         if ($$.initSubchart) { $$.initSubchart(); }
+        if ($$.initHeader) { $$.initHeader(); }
         if ($$.initTooltip) { $$.initTooltip(); }
         if ($$.initLegend) { $$.initLegend(); }
 
@@ -508,6 +509,9 @@
         if (!config.axis_y2_tick_values && config.axis_y2_tick_count) {
             $$.y2Axis.tickValues($$.generateTickValues($$.y2.domain(), config.axis_y2_tick_count));
         }
+
+        // header background
+        if ($$.redrawHeader) { $$.redrawHeader(); }
 
         // axes
         $$.redrawAxis(transitions, hideAxis);
@@ -1178,7 +1182,13 @@
             },
             tooltip_init_show: false,
             tooltip_init_x: 0,
-            tooltip_init_position: {top: '0px', left: '50px'}
+            tooltip_init_position: {top: '0px', left: '50px'},
+            // header
+            header_show: false,
+            header_color: undefined,
+            header_border_show: false,
+            header_border_color: undefined,
+            header_border_width: undefined
         };
 
         Object.keys(this.additionalConfig).forEach(function (key) {
@@ -4077,6 +4087,42 @@
         $$.legendHasRendered = true;
     };
 
+    c3_chart_internal_fn.initHeader = function() {
+      var $$ = this;
+      if ($$.config.header_show && $$.getCurrentPaddingTop()) {
+          $$.header = $$.svg.append("rect")
+                .attr("class", "c3-chart-header")
+                .attr("style", "fill: " + $$.config.header_color)
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("width", $$.getCurrentWidth())
+                .attr("height", $$.getCurrentPaddingTop());
+
+          if ($$.config.header_border_show) {
+              $$.headerBorder = $$.svg.append("line")
+                    .attr("class", "c3-chart-header-border")
+                    .attr("style", "stroke-width: " + $$.config.header_border_width + 
+                          "; stroke: " + $$.config.header_border_color)
+                    .attr("x1", 0)
+                    .attr("x2", $$.getCurrentWidth())
+                    .attr("y1", $$.getCurrentPaddingTop())
+                    .attr("y2", $$.getCurrentPaddingTop());
+          }
+      }
+    };
+    c3_chart_internal_fn.redrawHeader = function () {
+        var $$ = this;
+        if ($$.header) {
+            $$.header
+                .attr("width", $$.getCurrentWidth())
+                .attr("height", $$.getCurrentPaddingTop());
+        }
+
+        if ($$.headerBorder) {
+            $$.headerBorder
+                .attr("x2", $$.getCurrentWidth());
+        }
+    };
     c3_chart_internal_fn.initAxis = function () {
         var $$ = this, config = $$.config, main = $$.main;
         $$.axes.x = main.append("g")
