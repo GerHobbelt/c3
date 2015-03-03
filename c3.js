@@ -5885,6 +5885,15 @@
         });
     };
 
+    c3_chart_fn.toggleLabels = function (value) {
+        var $$ = this.internal, config = $$.config;
+        if (config.data_labels !== (value || false)) {
+            config.data_labels = value || false;
+            $$.updateAndRedraw();            
+        }
+    };
+
+
     c3_chart_fn.zoom = function (domain) {
         var $$ = this.internal;
         if (domain) {
@@ -5943,6 +5952,10 @@
             });
         } else {
             $$.loadFromArgs(args);
+        }
+        // toggle data labels if exists
+        if (args.labels) {
+            this.toggleLabels(args.labels);
         }
     };
 
