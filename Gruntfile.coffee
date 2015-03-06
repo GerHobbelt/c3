@@ -27,6 +27,7 @@ module.exports = (grunt) ->
               'src/scale.js',
               'src/domain.js',
               'src/data.js',
+              'src/json.js',
               'src/data.convert.js',
               'src/data.load.js',
               'src/category.js',
@@ -71,6 +72,7 @@ module.exports = (grunt) ->
               'src/api.legend.js',
               'src/api.chart.js',
               'src/api.tooltip.js',
+              'src/api.json.js',
               'src/c3.axis.js',
               'src/polyfill.js',
               'src/tail.js'

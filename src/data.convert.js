@@ -36,6 +36,7 @@ c3_chart_internal_fn.convertTsvToData = function (tsv) {
 c3_chart_internal_fn.convertJsonToData = function (json, keys) {
     var $$ = this,
         new_rows = [], targetKeys, data;
+    $$.config.json_original = json;
     if (keys) { // when keys specified, json would be an array that includes objects
         targetKeys = keys.value;
         if (keys.x) {
