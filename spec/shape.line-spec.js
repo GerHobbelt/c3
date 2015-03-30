@@ -1,30 +1,27 @@
-var describe = window.describe,
-    expect = window.expect,
-    it = window.it,
-    beforeEach = window.beforeEach;
-
 describe('c3 chart shape line', function () {
     'use strict';
 
-    var chart, d3;
-
-    var args = {
-        data: {
-            columns: [
-                ['data1', 30, 200, 100, 400, -150, 250],
-                ['data2', 50, 20, 10, 40, 15, 25],
-                ['data3', -150, 120, 110, 140, 115, 125]
-            ],
-            type: 'line'
-        }
-    };
+    var chart, args;
 
     beforeEach(function (done) {
         chart = window.initChart(chart, args, done);
-        d3 = chart.internal.d3;
     });
 
     describe('shape-rendering for line chart', function () {
+
+        it('should update args', function () {
+            args = {
+                data: {
+                    columns: [
+                        ['data1', 30, 200, 100, 400, -150, 250],
+                        ['data2', 50, 20, 10, 40, 15, 25],
+                        ['data3', -150, 120, 110, 140, 115, 125]
+                    ],
+                    type: 'line'
+                }
+            };
+            expect(true).toBeTruthy();
+        });
 
         it("should not have shape-rendering when it's line chart", function () {
             d3.selectAll('.c3-line').each(function () {

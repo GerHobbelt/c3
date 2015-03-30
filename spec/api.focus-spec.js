@@ -1,12 +1,7 @@
-var describe = window.describe,
-    expect = window.expect,
-    it = window.it,
-    beforeEach = window.beforeEach;
-
-describe('c3 api load', function () {
+describe('c3 api focus', function () {
     'use strict';
 
-    var chart, d3;
+    var chart;
 
     var args = {
         data: {
@@ -20,7 +15,6 @@ describe('c3 api load', function () {
 
     beforeEach(function (done) {
         chart = window.initChart(chart, args, done);
-        d3 = chart.internal.d3;
     });
 
     describe('focus', function () {
@@ -41,7 +35,7 @@ describe('c3 api load', function () {
                     expect(item.classed('c3-legend-item-focused')).toBeTruthy();
                 });
                 done();
-            }, 500);
+            }, 1000);
         });
 
         it('should focus one target', function (done) {
@@ -66,7 +60,7 @@ describe('c3 api load', function () {
                 expect(legendItems.data2.classed('c3-legend-item-focused')).toBeTruthy();
                 expect(legendItems.data3.classed('c3-legend-item-focused')).toBeFalsy();
                 done();
-            }, 500);
+            }, 1000);
         });
 
         it('should focus multiple targets', function (done) {
@@ -91,7 +85,7 @@ describe('c3 api load', function () {
                 expect(legendItems.data2.classed('c3-legend-item-focused')).toBeTruthy();
                 expect(legendItems.data3.classed('c3-legend-item-focused')).toBeFalsy();
                 done();
-            }, 500);
+            }, 1000);
         });
 
     });
@@ -116,7 +110,7 @@ describe('c3 api load', function () {
                     expect(+item.style('opacity')).toBeCloseTo(0.3);
                 });
                 done();
-            }, 500);
+            }, 1000);
         });
 
         it('should defocus one target', function (done) {
@@ -144,7 +138,7 @@ describe('c3 api load', function () {
                 expect(+legendItems.data2.style('opacity')).toBeCloseTo(0.3);
                 expect(+legendItems.data3.style('opacity')).toBeCloseTo(1);
                 done();
-            }, 500);
+            }, 1000);
         });
 
         it('should defocus multiple targets', function (done) {
@@ -172,7 +166,7 @@ describe('c3 api load', function () {
                 expect(+legendItems.data2.style('opacity')).toBeCloseTo(0.3);
                 expect(+legendItems.data3.style('opacity')).toBeCloseTo(1);
                 done();
-            }, 500);
+            }, 1000);
         });
 
         it('should defocus multiple targets after focused', function (done) {
@@ -202,9 +196,9 @@ describe('c3 api load', function () {
                     expect(+legendItems.data2.style('opacity')).toBeCloseTo(0.3);
                     expect(+legendItems.data3.style('opacity')).toBeCloseTo(1);
                     done();
-                }, 500);
-            });
-        }, 500);
+                }, 1000);
+            }, 1000);
+        });
 
     });
 
@@ -225,11 +219,12 @@ describe('c3 api load', function () {
                     });
                     legendItems.each(function () {
                         var item = d3.select(this);
+                        expect(item.classed('c3-legend-item-focused')).toBeFalsy();
                         expect(+item.style('opacity')).toBeCloseTo(1);
                     });
                     done();
-                }, 500);
-            }, 500);
+                }, 1000);
+            }, 1000);
         });
 
         it('should revert all targets after defocus', function (done) {
@@ -247,11 +242,12 @@ describe('c3 api load', function () {
                     });
                     legendItems.each(function () {
                         var item = d3.select(this);
+                        expect(item.classed('c3-legend-item-focused')).toBeFalsy();
                         expect(+item.style('opacity')).toBeCloseTo(1);
                     });
                     done();
-                }, 500);
-            }, 500);
+                }, 1000);
+            }, 1000);
         });
 
         it('should revert one target after focus', function (done) {
@@ -277,9 +273,12 @@ describe('c3 api load', function () {
                     expect(+legendItems.data1.style('opacity')).toBeCloseTo(1);
                     expect(+legendItems.data2.style('opacity')).toBeCloseTo(1);
                     expect(+legendItems.data3.style('opacity')).toBeCloseTo(1);
+                    expect(legendItems.data1.classed('c3-legend-item-focused')).toBeTruthy();
+                    expect(legendItems.data2.classed('c3-legend-item-focused')).toBeFalsy();
+                    expect(legendItems.data3.classed('c3-legend-item-focused')).toBeTruthy();
                     done();
-                }, 500);
-            }, 500);
+                }, 1000);
+            }, 1000);
         });
 
         it('should revert one target after defocus', function (done) {
@@ -305,9 +304,12 @@ describe('c3 api load', function () {
                     expect(+legendItems.data1.style('opacity')).toBeCloseTo(0.3);
                     expect(+legendItems.data2.style('opacity')).toBeCloseTo(1);
                     expect(+legendItems.data3.style('opacity')).toBeCloseTo(0.3);
+                    expect(legendItems.data1.classed('c3-legend-item-focused')).toBeFalsy();
+                    expect(legendItems.data2.classed('c3-legend-item-focused')).toBeFalsy();
+                    expect(legendItems.data3.classed('c3-legend-item-focused')).toBeFalsy();
                     done();
-                }, 500);
-            }, 500);
+                }, 1000);
+            }, 1000);
         });
 
         it('should focus multiple targets after focus', function (done) {
@@ -333,9 +335,12 @@ describe('c3 api load', function () {
                     expect(+legendItems.data1.style('opacity')).toBeCloseTo(1);
                     expect(+legendItems.data2.style('opacity')).toBeCloseTo(1);
                     expect(+legendItems.data3.style('opacity')).toBeCloseTo(1);
+                    expect(legendItems.data1.classed('c3-legend-item-focused')).toBeFalsy();
+                    expect(legendItems.data2.classed('c3-legend-item-focused')).toBeFalsy();
+                    expect(legendItems.data3.classed('c3-legend-item-focused')).toBeTruthy();
                     done();
-                }, 500);
-            }, 500);
+                }, 1000);
+            }, 1000);
         });
 
         it('should focus multiple targets after defocus', function (done) {
@@ -361,9 +366,12 @@ describe('c3 api load', function () {
                     expect(+legendItems.data1.style('opacity')).toBeCloseTo(1);
                     expect(+legendItems.data2.style('opacity')).toBeCloseTo(1);
                     expect(+legendItems.data3.style('opacity')).toBeCloseTo(0.3);
+                    expect(legendItems.data1.classed('c3-legend-item-focused')).toBeFalsy();
+                    expect(legendItems.data2.classed('c3-legend-item-focused')).toBeFalsy();
+                    expect(legendItems.data3.classed('c3-legend-item-focused')).toBeFalsy();
                     done();
-                }, 500);
-            }, 500);
+                }, 1000);
+            }, 1000);
         });
 
     });
@@ -390,7 +398,7 @@ describe('c3 api load', function () {
                 });
                 expect(legendItems.size()).toBeCloseTo(0);
                 done();
-            }, 500);
+            }, 1000);
         });
 
         it('should defocus all targets without showing legend', function (done) {
@@ -406,7 +414,7 @@ describe('c3 api load', function () {
                 });
                 expect(legendItems.size()).toBeCloseTo(0);
                 done();
-            }, 500);
+            }, 1000);
         });
 
         it('should revert all targets after focus', function (done) {
@@ -424,8 +432,8 @@ describe('c3 api load', function () {
                     });
                     expect(legendItems.size()).toBeCloseTo(0);
                     done();
-                }, 500);
-            }, 500);
+                }, 1000);
+            }, 1000);
         });
 
     });

@@ -1,5 +1,6 @@
 c3_chart_internal_fn.initLegend = function () {
     var $$ = this;
+    $$.legendItemTextBox = {};
     $$.legendHasRendered = false;
     $$.legend = $$.svg.append("g").attr("transform", $$.getTranslate('legend'));
     if (!$$.config.legend_show) {
@@ -107,9 +108,8 @@ c3_chart_internal_fn.hideLegend = function (targetIds) {
         .style('opacity', 0)
         .style('visibility', 'hidden');
 };
-var legendItemTextBox = {};
 c3_chart_internal_fn.clearLegendItemTextBoxCache = function () {
-    legendItemTextBox = {};
+    this.legendItemTextBox = {};
 };
 c3_chart_internal_fn.updateLegend = function (targetIds, options, transitions) {
     var $$ = this, config = $$.config;
@@ -117,7 +117,6 @@ c3_chart_internal_fn.updateLegend = function (targetIds, options, transitions) {
     var paddingTop = 4, paddingRight = 10, maxWidth = 0, maxHeight = 0, posMin = 10, tileWidth = 15;
     var l, totalLength = 0, offsets = {}, widths = {}, heights = {}, margins = [0], steps = {}, step = 0;
     var withTransition, withTransitionForTransform;
-    var hasFocused = $$.legend.selectAll('.' + CLASS.legendItemFocused).size();
     var texts, rects, tiles, background;
 
     options = options || {};
@@ -125,10 +124,10 @@ c3_chart_internal_fn.updateLegend = function (targetIds, options, transitions) {
     withTransitionForTransform = getOption(options, "withTransitionForTransform", true);
 
     function getTextBox(textElement, id) {
-        if (!legendItemTextBox[id]) {
-            legendItemTextBox[id] = $$.getTextRect(textElement.textContent, CLASS.legendItem);
+        if (!$$.legendItemTextBox[id]) {
+            $$.legendItemTextBox[id] = $$.getTextRect(textElement.textContent, CLASS.legendItem);
         }
-        return legendItemTextBox[id];
+        return $$.legendItemTextBox[id];
     }
 
     function updatePositions(textElement, id, index) {
@@ -307,16 +306,7 @@ c3_chart_internal_fn.updateLegend = function (targetIds, options, transitions) {
 
     // toggle legend state
     $$.legend.selectAll('.' + CLASS.legendItem)
-        .classed(CLASS.legendItemHidden, function (id) { return !$$.isTargetToShow(id); })
-        .transition()
-        .style('opacity', function (id) {
-            var This = $$.d3.select(this);
-            if ($$.isTargetToShow(id)) {
-                return !hasFocused || This.classed(CLASS.legendItemFocused) ? $$.opacityForLegend(This) : $$.opacityForUnfocusedLegend(This);
-            } else {
-                return null; // c3-legend-item-hidden will be applied
-            }
-        });
+        .classed(CLASS.legendItemHidden, function (id) { return !$$.isTargetToShow(id); });
 
     // Update all to reflect change of legend
     $$.updateLegendItemWidth(maxWidth);

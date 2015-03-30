@@ -1,26 +1,10 @@
-var describe = window.describe,
-    expect = window.expect,
-    it = window.it,
-    beforeEach = window.beforeEach;
-
 describe('c3 chart interaction', function () {
     'use strict';
 
-    var chart, d3;
-
-    var args = {
-        data: {
-            columns: [
-                ['data1', 30, 200, 100, 400, 150, 250],
-                ['data2', 50, 20, 10, 40, 15, 25],
-                ['data3', 150, 120, 110, 140, 115, 125]
-            ]
-        }
-    };
+    var chart, args;
 
     beforeEach(function (done) {
         chart = window.initChart(chart, args, done);
-        d3 = chart.internal.d3;
     });
 
     describe('generate event rects', function () {
@@ -46,8 +30,8 @@ describe('c3 chart interaction', function () {
                     widths = [60, 67.5, 202, 194];
                 d3.selectAll('.c3-event-rect').each(function (d, i) {
                     var box = d3.select(this).node().getBoundingClientRect();
-                    expect(box.left).toBe(lefts[i]);
-                    expect(box.width).toBe(widths[i]);
+                    expect(box.left).toBeCloseTo(lefts[i], -2);
+                    expect(box.width).toBeCloseTo(widths[i], -2);
                 });
             });
 
@@ -70,8 +54,8 @@ describe('c3 chart interaction', function () {
                 expect(eventRects.size()).toBe(1);
                 eventRects.each(function () {
                     var box = d3.select(this).node().getBoundingClientRect();
-                    expect(box.left).toBe(40.5);
-                    expect(box.width).toBe(598);
+                    expect(box.left).toBeCloseTo(40.5, -2);
+                    expect(box.width).toBeCloseTo(598, -2);
                 });
             });
         });
@@ -96,8 +80,8 @@ describe('c3 chart interaction', function () {
                     widths = [149.5, 160, 147, 136];
                 d3.selectAll('.c3-event-rect').each(function (d, i) {
                     var box = d3.select(this).node().getBoundingClientRect();
-                    expect(box.left).toBe(lefts[i]);
-                    expect(box.width).toBe(widths[i]);
+                    expect(box.left).toBeCloseTo(lefts[i], -2);
+                    expect(box.width).toBeCloseTo(widths[i], -2);
                 });
 
             });
@@ -120,8 +104,8 @@ describe('c3 chart interaction', function () {
                 expect(eventRects.size()).toBe(1);
                 eventRects.each(function () {
                     var box = d3.select(this).node().getBoundingClientRect();
-                    expect(box.left).toBe(40.5);
-                    expect(box.width).toBe(598);
+                    expect(box.left).toBeCloseTo(40.5, -2);
+                    expect(box.width).toBeCloseTo(598, -2);
                 });
             });
 

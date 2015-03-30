@@ -69,8 +69,19 @@ c3_chart_internal_fn.updateYGrid = function () {
     $$.smoothLines($$.ygrid, 'grid');
 };
 
-
-c3_chart_internal_fn.redrawGrid = function (duration) {
+c3_chart_internal_fn.gridTextAnchor = function (d) {
+    return d.position ? d.position : "end";
+};
+c3_chart_internal_fn.gridTextDx = function (d) {
+    return d.position === 'start' ? 4 : d.position === 'middle' ? 0 : -4;
+};
+c3_chart_internal_fn.xGridTextX = function (d) {
+    return d.position === 'start' ? -this.height : d.position === 'middle' ? -this.height / 2 : 0;
+};
+c3_chart_internal_fn.yGridTextX = function (d) {
+    return d.position === 'start' ? 0 : d.position === 'middle' ? this.width / 2 : this.width;
+};
+c3_chart_internal_fn.updateGrid = function (duration) {
     var $$ = this, main = $$.main, config = $$.config,
         xgridLine, ygridLine, yv;
 
@@ -89,9 +100,9 @@ c3_chart_internal_fn.redrawGrid = function (duration) {
     xgridLine.append('line')
         .style("opacity", 0);
     xgridLine.append('text')
-        .attr("text-anchor", "end")
+        .attr("text-anchor", $$.gridTextAnchor)
         .attr("transform", config.axis_rotated ? "" : "rotate(-90)")
-        .attr('dx', config.axis_rotated ? 0 : -$$.margin.top)
+        .attr('dx', $$.gridTextDx)
         .attr('dy', -5)
         .style("opacity", 0);
     // udpate
@@ -113,9 +124,9 @@ c3_chart_internal_fn.redrawGrid = function (duration) {
     ygridLine.append('line')
         .style("opacity", 0);
     ygridLine.append('text')
-        .attr("text-anchor", "end")
+        .attr("text-anchor", $$.gridTextAnchor)
         .attr("transform", config.axis_rotated ? "rotate(-90)" : "")
-        .attr('dx', config.axis_rotated ? 0 : -$$.margin.top)
+        .attr('dx', $$.gridTextDx)
         .attr('dy', -5)
         .style("opacity", 0);
     // update
@@ -129,7 +140,7 @@ c3_chart_internal_fn.redrawGrid = function (duration) {
         .style("opacity", 1);
     $$.ygridLines.select('text')
       .transition().duration(duration)
-        .attr("x", config.axis_rotated ? 0 : $$.width)
+        .attr("x", config.axis_rotated ? $$.xGridTextX.bind($$) : $$.yGridTextX.bind($$))
         .attr("y", yv)
         .text(function (d) { return d.text; })
         .style("opacity", 1);
@@ -138,19 +149,23 @@ c3_chart_internal_fn.redrawGrid = function (duration) {
         .style("opacity", 0)
         .remove();
 };
-c3_chart_internal_fn.addTransitionForGrid = function (transitions) {
-    var $$ = this, config = $$.config, xv = $$.xv.bind($$);
-    transitions.push($$.xgridLines.select('line').transition()
-                     .attr("x1", config.axis_rotated ? 0 : xv)
-                     .attr("x2", config.axis_rotated ? $$.width : xv)
-                     .attr("y1", config.axis_rotated ? xv : $$.margin.top)
-                     .attr("y2", config.axis_rotated ? xv : $$.height)
-                     .style("opacity", 1));
-    transitions.push($$.xgridLines.select('text').transition()
-                     .attr("x", config.axis_rotated ? $$.width : 0)
-                     .attr("y", xv)
-                     .text(function (d) { return d.text; })
-                     .style("opacity", 1));
+c3_chart_internal_fn.redrawGrid = function (withTransition) {
+    var $$ = this, config = $$.config, xv = $$.xv.bind($$),
+        lines = $$.xgridLines.select('line'),
+        texts = $$.xgridLines.select('text');
+    return [
+        (withTransition ? lines.transition() : lines)
+            .attr("x1", config.axis_rotated ? 0 : xv)
+            .attr("x2", config.axis_rotated ? $$.width : xv)
+            .attr("y1", config.axis_rotated ? xv : 0)
+            .attr("y2", config.axis_rotated ? xv : $$.height)
+            .style("opacity", 1),
+        (withTransition ? texts.transition() : texts)
+            .attr("x", config.axis_rotated ? $$.yGridTextX.bind($$) : $$.xGridTextX.bind($$))
+            .attr("y", xv)
+            .text(function (d) { return d.text; })
+            .style("opacity", 1)
+    ];
 };
 c3_chart_internal_fn.showXGridFocus = function (selectedData) {
     var $$ = this, config = $$.config,

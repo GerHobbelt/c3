@@ -1,38 +1,35 @@
-var describe = window.describe,
-    expect = window.expect,
-    it = window.it,
-    beforeEach = window.beforeEach;
-
 describe('c3 chart grid', function () {
     'use strict';
 
-    var chart, d3;
-
-    var args = {
-        data: {
-            columns: [
-                ['data1', 30, 200, 100, 400, 150, 250]
-            ]
-        },
-        axis: {
-            y: {
-                tick: {
-                }
-            }
-        },
-        grid: {
-            y: {
-                show: false
-            }
-        }
-    };
+    var chart, args;
 
     beforeEach(function (done) {
         chart = window.initChart(chart, args, done);
-        d3 = chart.internal.d3;
     });
 
-    describe('y grid', function () {
+    describe('y grid show', function () {
+
+        it('should update args', function () {
+            args = {
+                data: {
+                    columns: [
+                        ['data1', 30, 200, 100, 400, 150, 250]
+                    ]
+                },
+                axis: {
+                    y: {
+                        tick: {
+                        }
+                    }
+                },
+                grid: {
+                    y: {
+                        show: false
+                    }
+                }
+            };
+            expect(true).toBeTruthy();
+        });
 
         it('should not show y grids', function () {
             expect(chart.internal.main.select('.c3-ygrids').size()).toBe(0);
@@ -78,10 +75,248 @@ describe('c3 chart grid', function () {
                 expect(t.translate[1]).toBe(expectedYs[i]);
             });
         });
+    });
 
+    describe('y grid lines', function () {
+
+        describe('position', function () {
+
+            it('should update args', function () {
+                args = {
+                    data: {
+                        columns: [
+                            ['data1', 10, 200, 100, 400, 150, 250]
+                        ]
+                    },
+                    grid: {
+                        y: {
+                            lines: [
+                                {value: 30, text: 'Lable 30', position: 'start'},
+                                {value: 145, text: 'Lable 145', position: 'middle'},
+                                {value: 225, text: 'Lable 225'}
+                            ]
+                        }
+                    }
+                };
+                expect(true).toBeTruthy();
+            });
+
+            it('should show 3 grid lines', function () {
+                expect(chart.internal.main.selectAll('.c3-ygrid-lines .c3-ygrid-line').size()).toBe(3);
+            });
+
+            it('should locate grid lines properly', function () {
+                var lines = chart.internal.main.selectAll('.c3-ygrid-lines .c3-ygrid-line'),
+                    expectedY1s = [373, 268, 196];
+                lines.each(function (d, i) {
+                    var y1 = d3.select(this).select('line').attr('y1');
+                    expect(y1).toBeCloseTo(expectedY1s[i], -2);
+                });
+            });
+
+            it('should locate grid texts properly', function () {
+                var lines = chart.internal.main.selectAll('.c3-ygrid-lines .c3-ygrid-line'),
+                    expectedPositions = ['start', 'middle', 'end'],
+                    expectedDxs = [4, 0, -4];
+                lines.each(function (d, i) {
+                    var text = d3.select(this).select('text'),
+                        textAnchor = text.attr('text-anchor'),
+                        dx = text.attr('dx');
+                    expect(textAnchor).toBe(expectedPositions[i]);
+                    expect(+dx).toBe(expectedDxs[i]);
+                });
+            });
+
+            it('should update args', function () {
+                args = {
+                    data: {
+                        columns: [
+                            ['data1', 10, 200, 100, 400, 150, 250]
+                        ]
+                    },
+                    axis: {
+                        rotated: true
+                    },
+                    grid: {
+                        y: {
+                            lines: [
+                                {value: 30, text: 'Lable 30', position: 'start'},
+                                {value: 145, text: 'Lable 145', position: 'middle'},
+                                {value: 225, text: 'Lable 225'}
+                            ]
+                        }
+                    }
+                };
+                expect(true).toBeTruthy();
+            });
+
+            it('should show 3 grid lines', function () {
+                expect(chart.internal.main.selectAll('.c3-ygrid-lines .c3-ygrid-line').size()).toBe(3);
+            });
+
+            it('should locate grid lines properly', function () {
+                var lines = chart.internal.main.selectAll('.c3-ygrid-lines .c3-ygrid-line'),
+                    expectedX1s = [75, 220, 321];
+                lines.each(function (d, i) {
+                    var x1 = d3.select(this).select('line').attr('x1');
+                    expect(x1).toBeCloseTo(expectedX1s[i], -2);
+                });
+            });
+
+            it('should locate grid texts properly', function () {
+                var lines = chart.internal.main.selectAll('.c3-ygrid-lines .c3-ygrid-line'),
+                    expectedPositions = ['start', 'middle', 'end'],
+                    expectedDxs = [4, 0, -4];
+                lines.each(function (d, i) {
+                    var text = d3.select(this).select('text'),
+                        textAnchor = text.attr('text-anchor'),
+                        dx = text.attr('dx');
+                    expect(textAnchor).toBe(expectedPositions[i]);
+                    expect(+dx).toBe(expectedDxs[i]);
+                });
+            });
+
+        });
     });
 
     describe('x grid lines', function () {
+
+        describe('position', function () {
+
+            it('should have correct height', function () {
+                args = {
+                    data: {
+                        columns: [
+                            ['data1', 30, 200, 100, 400],
+                        ]
+                    },
+                    grid: {
+                        x: {
+                            lines: [
+                                {value: 1, text: 'Label 1', position: 'start'},
+                                {value: 2, text: 'Label 2', position: 'middle'},
+                                {value: 3, text: 'Label 3'},
+                            ]
+                        }
+                    },
+                };
+                expect(true).toBeTruthy();
+            });
+
+            it('should show 3 grid lines', function () {
+                expect(chart.internal.main.selectAll('.c3-xgrid-lines .c3-xgrid-line').size()).toBe(3);
+            });
+
+            it('should locate grid lines properly', function () {
+                var lines = chart.internal.main.selectAll('.c3-xgrid-lines .c3-xgrid-line'),
+                    expectedX1s = [202, 397, 593];
+                lines.each(function (d, i) {
+                    var x1 = d3.select(this).select('line').attr('x1');
+                    expect(x1).toBeCloseTo(expectedX1s[i], -2);
+                });
+            });
+
+            it('should locate grid texts properly', function () {
+                var lines = chart.internal.main.selectAll('.c3-xgrid-lines .c3-xgrid-line'),
+                    expectedPositions = ['start', 'middle', 'end'],
+                    expectedDxs = [4, 0, -4];
+                lines.each(function (d, i) {
+                    var text = d3.select(this).select('text'),
+                        textAnchor = text.attr('text-anchor'),
+                        dx = text.attr('dx');
+                    expect(textAnchor).toBe(expectedPositions[i]);
+                    expect(+dx).toBe(expectedDxs[i]);
+                });
+            });
+
+            it('should update args', function () {
+                args = {
+                    data: {
+                        columns: [
+                            ['data1', 30, 200, 100, 400],
+                        ]
+                    },
+                    axis: {
+                        rotated: true
+                    },
+                    grid: {
+                        x: {
+                            lines: [
+                                {value: 1, text: 'Label 1', position: 'start'},
+                                {value: 2, text: 'Label 2', position: 'middle'},
+                                {value: 3, text: 'Label 3'},
+                            ]
+                        }
+                    },
+                };
+                expect(true).toBeTruthy();
+            });
+
+            it('should show 3 grid lines', function () {
+                expect(chart.internal.main.selectAll('.c3-xgrid-lines .c3-xgrid-line').size()).toBe(3);
+            });
+
+            it('should locate grid lines properly', function () {
+                var lines = chart.internal.main.selectAll('.c3-xgrid-lines .c3-xgrid-line'),
+                    expectedY1s = [144, 283, 421];
+                lines.each(function (d, i) {
+                    var y1 = d3.select(this).select('line').attr('y1');
+                    expect(y1).toBeCloseTo(expectedY1s[i], -2);
+                });
+            });
+
+            it('should locate grid texts properly', function () {
+                var lines = chart.internal.main.selectAll('.c3-xgrid-lines .c3-xgrid-line'),
+                    expectedPositions = ['start', 'middle', 'end'],
+                    expectedDxs = [4, 0, -4];
+                lines.each(function (d, i) {
+                    var text = d3.select(this).select('text'),
+                        textAnchor = text.attr('text-anchor'),
+                        dx = text.attr('dx');
+                    expect(textAnchor).toBe(expectedPositions[i]);
+                    expect(+dx).toBe(expectedDxs[i]);
+                });
+            });
+
+        });
+
+        describe('with padding.top', function () {
+
+            it('should have correct height', function () {
+                args = {
+                    data: {
+                        columns: [
+                            ['data1', 30, 200, 100, 400],
+                        ]
+                    },
+                    grid: {
+                        x: {
+                            lines: [
+                                {value: 3, text: 'Label 3'}
+                            ]
+                        }
+                    },
+                    padding: {
+                        top: 50
+                    }
+                };
+                expect(true).toBeTruthy();
+            });
+
+            it('should show x grid lines', function () {
+                var lines = chart.internal.main.select('.c3-xgrid-lines .c3-xgrid-line'),
+                    expectedX1 = 593,
+                    expectedText = ['Label 3'];
+                lines.each(function (id, i) {
+                    var line = d3.select(this),
+                        l = line.select('line'),
+                        t = line.select('text');
+                    expect(+l.attr('x1')).toBeCloseTo(expectedX1, -2);
+                    expect(t.text()).toBe(expectedText[i]);
+                });
+            });
+
+        });
 
         describe('on category axis', function () {
 
@@ -119,13 +354,12 @@ describe('c3 chart grid', function () {
                     var line = d3.select(this),
                         l = line.select('line'),
                         t = line.select('text');
-                    expect(+l.attr('x1')).toBeCloseTo(expectedX1[i], -1);
+                    expect(+l.attr('x1')).toBeCloseTo(expectedX1[i], -2);
                     expect(t.text()).toBe(expectedText[i]);
                 });
             });
 
         });
-
     });
 
 });

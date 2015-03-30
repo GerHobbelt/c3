@@ -1,27 +1,24 @@
-var describe = window.describe,
-    expect = window.expect,
-    it = window.it,
-    beforeEach = window.beforeEach;
-
 describe('c3 api grid', function () {
     'use strict';
 
-    var chart, d3;
-
-    var args = {
-        data: {
-            columns: [
-                ['data1', 30, 200, 100, 400, 150, 250]
-            ]
-        }
-    };
+    var chart, args;
 
     beforeEach(function (done) {
         chart = window.initChart(chart, args, done);
-        d3 = chart.internal.d3;
     });
 
     describe('ygrid.add and ygrid.remove', function () {
+
+        it('should update args', function () {
+            args = {
+                data: {
+                    columns: [
+                        ['data1', 30, 200, 100, 400, 150, 250]
+                    ]
+                }
+            };
+            expect(true).toBeTruthy();
+        });
 
         it('should update y grids', function (done) {
             var main = chart.internal.main,

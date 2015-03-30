@@ -1,12 +1,7 @@
-var describe = window.describe,
-    expect = window.expect,
-    it = window.it,
-    beforeEach = window.beforeEach;
-
 describe('c3 api data', function () {
     'use strict';
 
-    var chart, d3;
+    var chart;
 
     var args = {
         data: {
@@ -36,7 +31,6 @@ describe('c3 api data', function () {
 
     beforeEach(function (done) {
         chart = window.initChart(chart, args, done);
-        d3 = chart.internal.d3;
     });
 
     describe('data()', function () {

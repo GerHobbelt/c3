@@ -18,7 +18,7 @@ c3_chart_internal_fn.initTooltip = function () {
         }
         $$.tooltip.html(config.tooltip_contents.call($$, $$.data.targets.map(function (d) {
             return $$.addName(d.values[config.tooltip_init_x]);
-        }), $$.getXAxisTickFormat(), $$.getYFormat($$.hasArcType()), $$.color));
+        }), $$.axis.getXAxisTickFormat(), $$.getYFormat($$.hasArcType()), $$.color));
         $$.tooltip.style("top", config.tooltip_init_position.top)
             .style("left", config.tooltip_init_position.left)
             .style("display", "block");
@@ -38,14 +38,16 @@ c3_chart_internal_fn.getTooltipContent = function (d, defaultTitleFormat, defaul
             text = "<table class='" + CLASS.tooltip + "'>" + (title || title === 0 ? "<tr><th colspan='2'>" + title + "</th></tr>" : "");
         }
 
-        name = nameFormat(d[i].name, d[i].ratio, d[i].id, d[i].index);
         value = valueFormat(d[i].value, d[i].ratio, d[i].id, d[i].index);
-        bgcolor = $$.levelColor ? $$.levelColor(d[i].value) : color(d[i].id);
+        if (value !== undefined) {
+            name = nameFormat(d[i].name, d[i].ratio, d[i].id, d[i].index);
+            bgcolor = $$.levelColor ? $$.levelColor(d[i].value) : color(d[i].id);
 
-        text += "<tr class='" + CLASS.tooltipName + "-" + d[i].id + "'>";
-        text += "<td class='name'><span style='background-color:" + bgcolor + "'></span>" + name + "</td>";
-        text += "<td class='value'>" + value + "</td>";
-        text += "</tr>";
+            text += "<tr class='" + CLASS.tooltipName + "-" + d[i].id + "'>";
+            text += "<td class='name'><span style='background-color:" + bgcolor + "'></span>" + name + "</td>";
+            text += "<td class='value'>" + value + "</td>";
+            text += "</tr>";
+        }
     }
     return text + "</table>";
 };
@@ -73,7 +75,8 @@ c3_chart_internal_fn.tooltipPosition = function (dataToShow, tWidth, tHeight, el
         }
 
         if (tooltipRight > chartRight) {
-            tooltipLeft -= tooltipRight - chartRight;
+            // 20 is needed for Firefox to keep tooletip width
+            tooltipLeft -= tooltipRight - chartRight + 20;
         }
         if (tooltipTop + tHeight > $$.currentHeight) {
             tooltipTop -= tHeight + 30;
@@ -93,7 +96,7 @@ c3_chart_internal_fn.showTooltip = function (selectedData, element) {
     if (dataToShow.length === 0 || !config.tooltip_show) {
         return;
     }
-    $$.tooltip.html(config.tooltip_contents.call($$, selectedData, $$.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color)).style("display", "block");
+    $$.tooltip.html(config.tooltip_contents.call($$, selectedData, $$.axis.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color)).style("display", "block");
 
     // Get tooltip dimensions
     tWidth = $$.tooltip.property('offsetWidth');

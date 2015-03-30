@@ -1,14 +1,7 @@
-var describe = window.describe,
-    expect = window.expect,
-    it = window.it,
-    jasmine = window.jasmine,
-    beforeAll = window.beforeAll,
-    beforeEach = window.beforeEach;
-
 describe('c3 chart tooltip', function () {
     'use strict';
 
-    var chart, d3;
+    var chart;
     var tooltipConfiguration;
 
     var args = function () {
@@ -26,7 +19,6 @@ describe('c3 chart tooltip', function () {
 
     beforeEach(function (done) {
         chart = window.initChart(chart, args(), done);
-        d3 = chart.internal.d3;
     });
 
     describe('tooltip position', function () {
@@ -44,9 +36,9 @@ describe('c3 chart tooltip', function () {
                     top = Math.floor(+tooltipContainer.style('top').replace(/px/, '')),
                     left = Math.floor(+tooltipContainer.style('left').replace(/px/, '')),
                     topExpected = 115,
-                    leftExpected = 307;
+                    leftExpected = 280;
                 expect(top).toBe(topExpected);
-                expect(left).toBe(leftExpected);
+                expect(left).toBeGreaterThan(leftExpected);
             });
 
         });
@@ -66,9 +58,9 @@ describe('c3 chart tooltip', function () {
                     top = Math.floor(+tooltipContainer.style('top').replace(/px/, '')),
                     left = Math.floor(+tooltipContainer.style('left').replace(/px/, '')),
                     topExpected = 115,
-                    leftExpected = 307;
+                    leftExpected = 280;
                 expect(top).toBe(topExpected);
-                expect(left).toBe(leftExpected);
+                expect(left).toBeGreaterThan(leftExpected);
             });
 
         });

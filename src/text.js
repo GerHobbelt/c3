@@ -19,7 +19,7 @@ c3_chart_internal_fn.updateTargetsForText = function (targets) {
     mainTextEnter.append('g')
         .attr('class', classTexts);
 };
-c3_chart_internal_fn.redrawText = function (durationForExit) {
+c3_chart_internal_fn.updateText = function (durationForExit) {
     var $$ = this, config = $$.config,
         barOrLineData = $$.barOrLineData.bind($$),
         classText = $$.classText.bind($$);
@@ -38,31 +38,31 @@ c3_chart_internal_fn.redrawText = function (durationForExit) {
         .style('fill-opacity', 0)
         .remove();
 };
-c3_chart_internal_fn.addTransitionForText = function (transitions, xForText, yForText, forFlow) {
-    var $$ = this,
-        opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
-    transitions.push($$.mainText.transition()
-                     .attr('x', xForText)
-                     .attr('y', yForText)
-                     .style("fill", $$.color)
-                     .style("fill-opacity", opacityForText));
+c3_chart_internal_fn.redrawText = function (xForText, yForText, forFlow, withTransition) {
+    return [
+        (withTransition ? this.mainText.transition() : this.mainText)
+            .attr('x', xForText)
+            .attr('y', yForText)
+            .style("fill", this.color)
+            .style("fill-opacity", forFlow ? 0 : this.opacityForText.bind(this))
+    ];
 };
 c3_chart_internal_fn.getTextRect = function (text, cls) {
-    var body = this.d3.select('body').classed('c3', true),
-        svg = body.append("svg").style('visibility', 'hidden'), rect;
+    var dummy = this.d3.select('body').append('div').classed('c3', true),
+        svg = dummy.append("svg").style('visibility', 'hidden').style('position', 'fixed').style('top', 0).style('left', 0),
+        rect;
     svg.selectAll('.dummy')
         .data([text])
       .enter().append('text')
         .classed(cls ? cls : "", true)
         .text(text)
       .each(function () { rect = this.getBoundingClientRect(); });
-    svg.remove();
-    body.classed('c3', false);
+    dummy.remove();
     return rect;
 };
 c3_chart_internal_fn.generateXYForText = function (areaIndices, barIndices, lineIndices, forX) {
     var $$ = this,
-        getAreaPoints = $$.generateGetAreaPoints(barIndices, false),
+        getAreaPoints = $$.generateGetAreaPoints(areaIndices, false),
         getBarPoints = $$.generateGetBarPoints(barIndices, false),
         getLinePoints = $$.generateGetLinePoints(lineIndices, false),
         getter = forX ? $$.getXForText : $$.getYForText;
@@ -92,11 +92,23 @@ c3_chart_internal_fn.getXForText = function (points, d, textElement) {
 };
 c3_chart_internal_fn.getYForText = function (points, d, textElement) {
     var $$ = this,
-        box = textElement.getBoundingClientRect(), yPos;
+        box = textElement.getBoundingClientRect(),
+        yPos;
     if ($$.config.axis_rotated) {
         yPos = (points[0][0] + points[2][0] + box.height * 0.6) / 2;
     } else {
-        yPos = points[2][1] + (d.value < 0 ? box.height : $$.isBarType(d) ? -3 : -6);
+        yPos = points[2][1];
+        if (d.value < 0) {
+            yPos += box.height;
+            if ($$.isBarType(d) && $$.isSafari()) {
+                yPos -= 3;
+            }
+            else if (!$$.isBarType(d) && $$.isChrome()) {
+                yPos += 3;
+            }
+        } else {
+            yPos += $$.isBarType(d) ? -3 : -6;
+        }
     }
     // show labels regardless of the domain if value is null
     if (d.value === null && !$$.config.axis_rotated) {

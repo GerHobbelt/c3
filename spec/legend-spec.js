@@ -1,38 +1,64 @@
-var describe = window.describe,
-    expect = window.expect,
-    it = window.it,
-    beforeEach = window.beforeEach;
-
 describe('c3 chart legend', function () {
     'use strict';
 
-    var chart, d3;
-
-    var args = {
-        data: {
-            columns: [
-                ['data1', 30, 200, 100, 400, 150, 250],
-                ['data2', 50, 20, 10, 40, 15, 25]
-            ]
-        }
-    };
+    var chart, args;
 
     beforeEach(function (done) {
-        if (typeof chart === 'undefined') {
-            window.initDom();
-        }
-        chart = window.c3.generate(args);
-        d3 = chart.internal.d3;
-        chart.internal.d3.select('.jasmine_html-reporter')
-            .style('position', 'absolute')
-            .style('right', 0);
+        chart = window.initChart(chart, args, done);
+    });
 
-        window.setTimeout(function () {
-            done();
-        }, 10);
+    describe('legend when multiple charts rendered', function () {
+
+        it('should update args', function () {
+            args = {
+                data: {
+                    columns: [
+                        ['data1', 30],
+                        ['data2', 50],
+                        ['data3', 100]
+                    ]
+                }
+            };
+            expect(true).toBeTruthy();
+        });
+
+        it('should update args with long data names', function () {
+            args = {
+                data: {
+                    columns: [
+                        ['long data name 1', 30],
+                        ['long data name 2', 50],
+                        ['long data name 3', 50],
+                    ]
+                }
+            };
+            expect(true).toBeTruthy();
+        });
+
+        it('should have properly computed legend width', function () {
+            var expectedLeft = [148, 226, 384],
+                expectedWidth = [118, 118, 108];
+            d3.selectAll('.c3-legend-item').each(function (d, i) {
+                var rect = d3.select(this).node().getBoundingClientRect();
+                expect(rect.left).toBeCloseTo(expectedLeft[i], -2);
+                expect(rect.width).toBeCloseTo(expectedWidth[i], -2);
+            });
+        });
     });
 
     describe('legend position', function () {
+
+        it('should update args', function () {
+            args = {
+                data: {
+                    columns: [
+                        ['data1', 30, 200, 100, 400, 150, 250],
+                        ['data2', 50, 20, 10, 40, 15, 25]
+                    ]
+                }
+            };
+            expect(true).toBeTruthy();
+        });
 
         it('should be located on the center of chart', function () {
             var box = chart.internal.legend.node().getBoundingClientRect();
@@ -44,10 +70,18 @@ describe('c3 chart legend', function () {
     describe('legend as inset', function () {
 
         it('should change the legend to "inset" successfully', function () {
-            args.legend = {
-                position: 'inset',
-                inset: {
-                    step: null
+            args = {
+                data: {
+                    columns: [
+                        ['data1', 30, 200, 100, 400, 150, 250],
+                        ['data2', 50, 20, 10, 40, 15, 25]
+                    ]
+                },
+                legend: {
+                    position: 'inset',
+                    inset: {
+                        step: null
+                    }
                 }
             };
             expect(true).toBeTruthy();
@@ -56,7 +90,7 @@ describe('c3 chart legend', function () {
         it('should be positioned properly', function () {
             var box = d3.select('.c3-legend-background').node().getBoundingClientRect();
             expect(box.top).toBe(5.5);
-            expect(box.left).toBe(60.5);
+            expect(box.left).toBeGreaterThan(30);
         });
 
         it('should have automatically calculated height', function () {

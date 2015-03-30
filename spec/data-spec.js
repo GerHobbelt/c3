@@ -1,38 +1,118 @@
-var describe = window.describe,
-    expect = window.expect,
-    it = window.it,
-    beforeEach = window.beforeEach;
-
 describe('c3 chart data', function () {
     'use strict';
 
-    var chart, d3;
-
-    var args = {
-        data: {
-            columns: [
-                ['data1', 30, 200, 100, 400, 150, 250],
-                ['data2', 50, 20, 10, 40, 15, 25],
-                ['data3', 150, 120, 110, 140, 115, 125]
-            ],
-            order: function () {
-                return 0;
-            }
-        }
-    };
+    var chart, args;
 
     beforeEach(function (done) {
         chart = window.initChart(chart, args, done);
-        d3 = chart.internal.d3;
+    });
+
+    describe('load json', function () {
+
+        it('should update args', function () {
+            args = {
+                data: {
+                    json: {
+                        data1: [30, 20, 50],
+                        data2: [200, 130, 90]
+                    }
+                }
+            };
+            expect(true).toBeTruthy();
+        });
+
+        it('should draw correctly', function () {
+            var expectedCx = [6, 299, 593],
+                expectedCy = [370, 390, 331];
+            d3.selectAll('.c3-circles-data1 .c3-circle').each(function (d, i) {
+                var circle = d3.select(this);
+                expect(+circle.attr('cx')).toBeCloseTo(expectedCx[i], -2);
+                expect(+circle.attr('cy')).toBeCloseTo(expectedCy[i], -2);
+            });
+        });
+
+        it('should update args', function () {
+            args = {
+                data: {
+                    json: [{
+                        "date": "2014-06-03",
+                        "443": "3000",
+                        "995": "500"
+                    }, {
+                        "date": "2014-06-04",
+                        "443": "1000"
+                    }, {
+                        "date": "2014-06-05",
+                        "443": "5000",
+                        "995": "1000"
+                    }],
+                    keys: {
+                        x: 'date',
+                        value: [ "443", "995" ]
+                    }
+                },
+                axis: {
+                    x: {
+                        type: "category"
+                    }
+                }
+            };
+            expect(true).toBeTruthy();
+        });
+
+        it('should draw correctly', function () {
+            var expectedCx = {443: [98, 294, 490], 995: [98, 294, 490]},
+                expectedCy = {443: [193, 351, 36], 995: [390, 429, 351]};
+            d3.selectAll('.c3-circles-443 .c3-circle').each(function (d, i) {
+                var circle = d3.select(this);
+                expect(+circle.attr('cx')).toBeCloseTo(expectedCx[443][i], -2);
+                expect(+circle.attr('cy')).toBeCloseTo(expectedCy[443][i], -2);
+            });
+            d3.selectAll('.c3-circles-995 .c3-circle').each(function (d, i) {
+                var circle = d3.select(this);
+                expect(+circle.attr('cx')).toBeCloseTo(expectedCx[995][i], -2);
+                expect(+circle.attr('cy')).toBeCloseTo(expectedCy[995][i], -2);
+            });
+        });
+
     });
 
     describe('function in data.order', function () {
+        it('should update args', function () {
+            args = {
+                data: {
+                    columns: [
+                        ['data1', 30, 200, 100, 400, 150, 250],
+                        ['data2', 50, 20, 10, 40, 15, 25],
+                        ['data3', 150, 120, 110, 140, 115, 125]
+                    ],
+                    order: function () {
+                        return 0;
+                    }
+                }
+            };
+            expect(true).toBeTruthy();
+        });
+
         it('should return false in isOrderAsc and isOrderDesc functions', function () {
             expect(chart.internal.isOrderAsc() || chart.internal.isOrderDesc()).toBe(false);
         });
     });
 
     describe('data.xs', function () {
+
+        it('should update args', function () {
+            args = {
+                data: {
+                    columns: [
+                        ['data1', 30, 200, 100, 400, 150, 250],
+                        ['data2', 50, 20, 10, 40, 15, 25],
+                        ['data3', 150, 120, 110, 140, 115, 125]
+                    ],
+                }
+            };
+            expect(true).toBeTruthy();
+        });
 
         describe('normal x', function () {
  
@@ -54,39 +134,82 @@ describe('c3 chart data', function () {
         });
 
         describe('timeseries x', function () {
-            it('should load timeseries data successfully', function () {
-                args = {
-                    data: {
-                        x : 'date',
-                        columns: [
-                            ['date', '2013-01-01', '2013-01-02', '2013-01-03'],
-                            ['data1', 30, 200, 100],
-                            ['data2', 130, 300, 200]
-                        ]
-                    },
-                    axis : {
-                        x : {
-                            type : 'timeseries'
+            describe('without xFormat', function () {
+
+                it('should load timeseries data successfully', function () {
+                    args = {
+                        data: {
+                            x : 'date',
+                            columns: [
+                                ['date', '2013-01-01', '2013-01-02', '2013-01-03'],
+                                ['data1', 30, 200, 100],
+                                ['data2', 130, 300, 200]
+                            ]
+                        },
+                        axis : {
+                            x : {
+                                type : 'timeseries'
+                            }
                         }
-                    }
-                };
-                expect(true).toBeTruthy();
+                    };
+                    expect(true).toBeTruthy();
+                });
+
+                it('should have correct number of xs', function () {
+                    expect(Object.keys(chart.internal.data.xs).length).toBe(2);
+                    expect(chart.internal.data.xs.data1.length).toBe(3);
+                    expect(chart.internal.data.xs.data2.length).toBe(3);
+                });
+
+                it('should have Date object as x', function () {
+                    var xs = chart.internal.data.xs;
+                    expect(+xs.data1[0]).toBe(+new Date(2013, 0, 1, 0, 0, 0));
+                    expect(+xs.data1[1]).toBe(+new Date(2013, 0, 2, 0, 0, 0));
+                    expect(+xs.data1[2]).toBe(+new Date(2013, 0, 3, 0, 0, 0));
+                    expect(+xs.data2[0]).toBe(+new Date(2013, 0, 1, 0, 0, 0));
+                    expect(+xs.data2[1]).toBe(+new Date(2013, 0, 2, 0, 0, 0));
+                    expect(+xs.data2[2]).toBe(+new Date(2013, 0, 3, 0, 0, 0));
+                });
             });
 
-            it('should have correct number of xs', function () {
-                expect(Object.keys(chart.internal.data.xs).length).toBe(2);
-                expect(chart.internal.data.xs.data1.length).toBe(3);
-                expect(chart.internal.data.xs.data2.length).toBe(3);
-            });
+            describe('with xFormat', function () {
+                describe('timeseries x with xFormat', function () {
+                    it('should load timeseries data successfully', function () {
+                        args = {
+                            data: {
+                                x : 'date',
+                                xFormat: '%Y%m%d',
+                                columns: [
+                                    ['date', '20130101', '20130102', '20130103'],
+                                    ['data1', 30, 200, 100],
+                                    ['data2', 130, 300, 200]
+                                ]
+                            },
+                            axis : {
+                                x : {
+                                    type : 'timeseries'
+                                }
+                            }
+                        };
+                        expect(true).toBeTruthy();
+                    });
 
-            it('should have Date object as x', function () {
-                var xs = chart.internal.data.xs;
-                expect(+xs.data1[0]).toBe(+new Date(2013, 0, 1, 0, 0, 0));
-                expect(+xs.data1[1]).toBe(+new Date(2013, 0, 2, 0, 0, 0));
-                expect(+xs.data1[2]).toBe(+new Date(2013, 0, 3, 0, 0, 0));
-                expect(+xs.data2[0]).toBe(+new Date(2013, 0, 1, 0, 0, 0));
-                expect(+xs.data2[1]).toBe(+new Date(2013, 0, 2, 0, 0, 0));
-                expect(+xs.data2[2]).toBe(+new Date(2013, 0, 3, 0, 0, 0));
+                    it('should have correct number of xs', function () {
+                        expect(Object.keys(chart.internal.data.xs).length).toBe(2);
+                        expect(chart.internal.data.xs.data1.length).toBe(3);
+                        expect(chart.internal.data.xs.data2.length).toBe(3);
+                    });
+
+                    it('should have Date object as x', function () {
+                        var xs = chart.internal.data.xs;
+                        expect(+xs.data1[0]).toBe(+new Date(2013, 0, 1, 0, 0, 0));
+                        expect(+xs.data1[1]).toBe(+new Date(2013, 0, 2, 0, 0, 0));
+                        expect(+xs.data1[2]).toBe(+new Date(2013, 0, 3, 0, 0, 0));
+                        expect(+xs.data2[0]).toBe(+new Date(2013, 0, 1, 0, 0, 0));
+                        expect(+xs.data2[1]).toBe(+new Date(2013, 0, 2, 0, 0, 0));
+                        expect(+xs.data2[2]).toBe(+new Date(2013, 0, 3, 0, 0, 0));
+                    });
+                });
             });
         });
 
@@ -180,52 +303,218 @@ describe('c3 chart data', function () {
                 });
             });
 
-            describe('as unixtime string', function () {
-
-                it('should upate args', function () {
-                    args = {
-                        data: {
-                            x : 'date',
-                            columns: [
-                                ['date', "1417622461123", "1417622522345"],
-                                ['data1', 30, 200],
-                                ['data2', 130, 300]
-                            ]
-                        },
-                        axis: {
-                            x: {
-                                type: 'timeseries',
-                                tick: {
-                                    format: '%Y-%m-%d %H:%M:%S.%L',
-                                    multiline: false
-                                }
-                            }
-                        }
-                    };
-                    expect(true).toBeTruthy();
-                });
-
-                it('should have correct number of xs', function () {
-                    expect(Object.keys(chart.internal.data.xs).length).toBe(2);
-                    expect(chart.internal.data.xs.data1.length).toBe(2);
-                    expect(chart.internal.data.xs.data2.length).toBe(2);
-                });
-
-                it('should have Date object as x', function () {
-                    var xs = chart.internal.data.xs;
-                    expect(+xs.data1[0]).toBe(1417622461123);
-                    expect(+xs.data1[1]).toBe(1417622522345);
-                    expect(+xs.data2[0]).toBe(1417622461123);
-                    expect(+xs.data2[1]).toBe(1417622522345);
-                });
-
-            });
-
         });
 
     });
 
     describe('data.label', function () {
+
+        describe('on line chart', function () {
+
+            it('should update args', function () {
+                args = {
+                    data: {
+                        columns: [
+                            ['data1', 1030, 2200, 2100],
+                            ['data2', 1150, 2010, 1200],
+                            ['data3', -1150, -2010, -1200],
+                            ['data4', -1030, -2200, -2100],
+                        ],
+                        type: 'line',
+                        labels: true,
+                    }
+                };
+                expect(true).toBeTruthy();
+            });
+
+            it('should locate data labels in correct position', function () {
+                var expectedTextY = {
+                    data1: [128, 38, 46],
+                    data2: [119, 53, 115],
+                    data3: [311, 377, 315],
+                    data4: [302, 392, 384],
+                };
+                var expectedTextX = {
+                    data1: [6, 294, 583],
+                    data2: [6, 294, 583],
+                    data3: [6, 294, 583],
+                    data4: [6, 294, 583],
+                };
+                Object.keys(expectedTextY).forEach(function (key) {
+                    d3.selectAll('.c3-texts-' + key + ' text.c3-text').each(function (d, i) {
+                        var text = d3.select(this);
+                        expect(+text.attr('y')).toBeCloseTo(expectedTextY[key][i], -2);
+                        expect(+text.attr('x')).toBeCloseTo(expectedTextX[key][i], -2);
+                    });
+                });
+            });
+
+            it('should update args to be stacked', function () {
+                args.data.groups = [['data1', 'data2'], ['data3', 'data4']];
+                expect(true).toBeTruthy();
+            });
+
+            it('should locate data labels in correct position', function () {
+                var expectedTextY = {
+                    data1: [120, 38, 75],
+                    data2: [161, 127, 159],
+                    data3: [269, 303, 271],
+                    data4: [310, 392, 355],
+                };
+                var expectedTextX = {
+                    data1: [6, 294, 583],
+                    data2: [6, 294, 583],
+                    data3: [6, 294, 583],
+                    data4: [6, 294, 583],
+                };
+                Object.keys(expectedTextY).forEach(function (key) {
+                    d3.selectAll('.c3-texts-' + key + ' text.c3-text').each(function (d, i) {
+                        var text = d3.select(this);
+                        expect(+text.attr('y')).toBeCloseTo(expectedTextY[key][i], -2);
+                        expect(+text.attr('x')).toBeCloseTo(expectedTextX[key][i], -2);
+                    });
+                });
+            });
+
+        });
+
+        describe('on area chart', function () {
+
+            it('should update args', function () {
+                args = {
+                    data: {
+                        columns: [
+                            ['data1', 1030, 2200, 2100],
+                            ['data2', 1150, 2010, 1200],
+                            ['data3', -1150, -2010, -1200],
+                            ['data4', -1030, -2200, -2100],
+                        ],
+                        type: 'area',
+                        labels: true,
+                    }
+                };
+                expect(true).toBeTruthy();
+            });
+
+            it('should locate data labels in correct position', function () {
+                var expectedTextY = {
+                    data1: [128, 38, 46],
+                    data2: [119, 53, 115],
+                    data3: [311, 377, 315],
+                    data4: [302, 392, 384],
+                };
+                var expectedTextX = {
+                    data1: [6, 294, 583],
+                    data2: [6, 294, 583],
+                    data3: [6, 294, 583],
+                    data4: [6, 294, 583],
+                };
+                Object.keys(expectedTextY).forEach(function (key) {
+                    d3.selectAll('.c3-texts-' + key + ' text.c3-text').each(function (d, i) {
+                        var text = d3.select(this);
+                        expect(+text.attr('y')).toBeCloseTo(expectedTextY[key][i], -2);
+                        expect(+text.attr('x')).toBeCloseTo(expectedTextX[key][i], -2);
+                    });
+                });
+            });
+
+            it('should update args to be stacked', function () {
+                args.data.groups = [['data1', 'data2'], ['data3', 'data4']];
+                expect(true).toBeTruthy();
+            });
+
+            it('should locate data labels in correct position', function () {
+                var expectedTextY = {
+                    data1: [120, 38, 75],
+                    data2: [161, 127, 159],
+                    data3: [269, 303, 271],
+                    data4: [310, 392, 355],
+                };
+                var expectedTextX = {
+                    data1: [6, 294, 583],
+                    data2: [6, 294, 583],
+                    data3: [6, 294, 583],
+                    data4: [6, 294, 583],
+                };
+                Object.keys(expectedTextY).forEach(function (key) {
+                    d3.selectAll('.c3-texts-' + key + ' text.c3-text').each(function (d, i) {
+                        var text = d3.select(this);
+                        expect(+text.attr('y')).toBeCloseTo(expectedTextY[key][i], -2);
+                        expect(+text.attr('x')).toBeCloseTo(expectedTextX[key][i], -2);
+                    });
+                });
+            });
+
+        });
+
+        describe('on bar chart', function () {
+
+            it('should update args', function () {
+                args = {
+                    data: {
+                        columns: [
+                            ['data1', 1030, 2200, 2100],
+                            ['data2', 1150, 2010, 1200],
+                            ['data3', -1150, -2010, -1200],
+                            ['data4', -1030, -2200, -2100],
+                        ],
+                        type: 'bar',
+                        labels: true,
+                    }
+                };
+                expect(true).toBeTruthy();
+            });
+
+            it('should locate data labels in correct position', function () {
+                var expectedTextY = {
+                    data1: [128, 38, 46],
+                    data2: [119, 53, 115],
+                    data3: [311, 377, 315],
+                    data4: [302, 392, 384],
+                };
+                var expectedTextX = {
+                    data1: [53, 249, 445],
+                    data2: [83, 279, 475],
+                    data3: [112, 308, 504],
+                    data4: [142, 338, 534],
+                };
+                Object.keys(expectedTextY).forEach(function (key) {
+                    d3.selectAll('.c3-texts-' + key + ' text.c3-text').each(function (d, i) {
+                        var text = d3.select(this);
+                        expect(+text.attr('y')).toBeCloseTo(expectedTextY[key][i], -2);
+                        expect(+text.attr('x')).toBeCloseTo(expectedTextX[key][i], -2);
+                    });
+                });
+            });
+
+            it('should update args to be stacked', function () {
+                args.data.groups = [['data1', 'data2'], ['data3', 'data4']];
+                expect(true).toBeTruthy();
+            });
+
+            it('should locate data labels in correct position', function () {
+                var expectedTextY = {
+                    data1: [120, 38, 75],
+                    data2: [161, 127, 159],
+                    data3: [269, 303, 271],
+                    data4: [310, 392, 355],
+                };
+                var expectedTextX = {
+                    data1: [68.6, 264, 460],
+                    data2: [68.6, 264, 460],
+                    data3: [127, 323, 519],
+                    data4: [127, 323, 519],
+                };
+                Object.keys(expectedTextY).forEach(function (key) {
+                    d3.selectAll('.c3-texts-' + key + ' text.c3-text').each(function (d, i) {
+                        var text = d3.select(this);
+                        expect(+text.attr('y')).toBeCloseTo(expectedTextY[key][i], -2);
+                        expect(+text.attr('x')).toBeCloseTo(expectedTextX[key][i], -2);
+                    });
+                });
+            });
+
+        });
 
         describe('for all targets', function () {
 

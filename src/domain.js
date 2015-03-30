@@ -20,7 +20,7 @@ c3_chart_internal_fn.getYDomainMin = function (targets) {
                 id = idsInGroup[k];
                 if (! ys[id]) { continue; }
                 ys[id].forEach(function (v, i) {
-                    if ($$.getAxisId(id) === $$.getAxisId(baseId) && ys[baseId] && !(hasNegativeValue && +v > 0)) {
+                    if ($$.axis.getId(id) === $$.axis.getId(baseId) && ys[baseId] && !(hasNegativeValue && +v > 0)) {
                         ys[baseId][i] += +v;
                     }
                 });
@@ -51,7 +51,7 @@ c3_chart_internal_fn.getYDomainMax = function (targets) {
                 id = idsInGroup[k];
                 if (! ys[id]) { continue; }
                 ys[id].forEach(function (v, i) {
-                    if ($$.getAxisId(id) === $$.getAxisId(baseId) && ys[baseId] && !(hasPositiveValue && +v < 0)) {
+                    if ($$.axis.getId(id) === $$.axis.getId(baseId) && ys[baseId] && !(hasPositiveValue && +v < 0)) {
                         ys[baseId][i] += +v;
                     }
                 });
@@ -62,26 +62,23 @@ c3_chart_internal_fn.getYDomainMax = function (targets) {
 };
 c3_chart_internal_fn.getYDomain = function (targets, axisId, xDomain) {
     var $$ = this, config = $$.config,
-        targetsByAxisId = targets.filter(function (t) { return $$.getAxisId(t.id) === axisId; }),
+        targetsByAxisId = targets.filter(function (t) { return $$.axis.getId(t.id) === axisId; }),
         yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId,
         yMin = axisId === 'y2' ? config.axis_y2_min : config.axis_y_min,
         yMax = axisId === 'y2' ? config.axis_y2_max : config.axis_y_max,
-        yDomainMin = isValue(yMin) ? yMin : $$.getYDomainMin(yTargets),
-        yDomainMax = isValue(yMax) ? yMax : $$.getYDomainMax(yTargets),
-        domainLength, padding, padding_top, padding_bottom,
+        yDomainMin = $$.getYDomainMin(yTargets),
+        yDomainMax = $$.getYDomainMax(yTargets),
+        domain, domainLength, padding, padding_top, padding_bottom,
         center = axisId === 'y2' ? config.axis_y2_center : config.axis_y_center,
         yDomainAbs, lengths, diff, ratio, isAllPositive, isAllNegative,
         isZeroBased = ($$.hasType('bar', yTargets) && config.bar_zerobased) || ($$.hasType('area', yTargets) && config.area_zerobased),
+        isInverted = axisId === 'y2' ? config.axis_y2_inverted : config.axis_y_inverted,
         showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated,
         showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;
 
-    if (yDomainMax < yDomainMin) {
-        if (isValue(yMin)) {
-            yDomainMax = yDomainMin + 10; // TODO: introduce axis.y.maxMin
-        } else {
-            yDomainMin = yDomainMax - 10; // TODO: introduce axis.y.minMax
-        }
-    }
+    // MEMO: avoid inverting domain unexpectedly
+    yDomainMin = isValue(yMin) ? yMin : isValue(yMax) ? (yDomainMin < yMax ? yDomainMin : yMax - 10) : yDomainMin;
+    yDomainMax = isValue(yMax) ? yMax : isValue(yMin) ? (yMin < yDomainMax ? yDomainMax : yMin + 10) : yDomainMax;
 
     if (yTargets.length === 0) { // use current domain if target of axisId is none
         return axisId === 'y2' ? $$.y2.domain() : $$.y.domain();
@@ -126,23 +123,24 @@ c3_chart_internal_fn.getYDomain = function (targets, axisId, xDomain) {
         padding_bottom += domainLength * (ratio[0] / (1 - ratio[0] - ratio[1]));
     } else if (showVerticalDataLabel) {
         lengths = $$.getDataLabelLength(yDomainMin, yDomainMax, 'height');
-        padding_top += this.convertPixelsToAxisPadding(lengths[1], domainLength);
-        padding_bottom += this.convertPixelsToAxisPadding(lengths[0], domainLength);
+        padding_top += $$.axis.convertPixelsToAxisPadding(lengths[1], domainLength);
+        padding_bottom += $$.axis.convertPixelsToAxisPadding(lengths[0], domainLength);
     }
     if (axisId === 'y' && notEmpty(config.axis_y_padding)) {
-        padding_top = $$.getAxisPadding(config.axis_y_padding, 'top', padding_top, domainLength);
-        padding_bottom = $$.getAxisPadding(config.axis_y_padding, 'bottom', padding_bottom, domainLength);
+        padding_top = $$.axis.getPadding(config.axis_y_padding, 'top', padding_top, domainLength);
+        padding_bottom = $$.axis.getPadding(config.axis_y_padding, 'bottom', padding_bottom, domainLength);
     }
     if (axisId === 'y2' && notEmpty(config.axis_y2_padding)) {
-        padding_top = $$.getAxisPadding(config.axis_y2_padding, 'top', padding_top, domainLength);
-        padding_bottom = $$.getAxisPadding(config.axis_y2_padding, 'bottom', padding_bottom, domainLength);
+        padding_top = $$.axis.getPadding(config.axis_y2_padding, 'top', padding_top, domainLength);
+        padding_bottom = $$.axis.getPadding(config.axis_y2_padding, 'bottom', padding_bottom, domainLength);
     }
     // Bar/Area chart should be 0-based if all positive|negative
     if (isZeroBased) {
         if (isAllPositive) { padding_bottom = yDomainMin; }
         if (isAllNegative) { padding_top = -yDomainMax; }
     }
-    return [yDomainMin - padding_bottom, yDomainMax + padding_top];
+    domain = [yDomainMin - padding_bottom, yDomainMax + padding_top];
+    return isInverted ? domain.reverse() : domain;
 };
 c3_chart_internal_fn.getXDomainMin = function (targets) {
     var $$ = this, config = $$.config;

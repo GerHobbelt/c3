@@ -22,7 +22,7 @@ c3_chart_internal_fn.updateTargetsForBar = function (targets) {
         .style("cursor", function (d) { return config.data_selection_isselectable(d) ? "pointer" : null; });
 
 };
-c3_chart_internal_fn.redrawBar = function (durationForExit) {
+c3_chart_internal_fn.updateBar = function (durationForExit) {
     var $$ = this,
         barData = $$.barData.bind($$),
         classBar = $$.classBar.bind($$),
@@ -40,16 +40,17 @@ c3_chart_internal_fn.redrawBar = function (durationForExit) {
         .style('opacity', 0)
         .remove();
 };
-c3_chart_internal_fn.addTransitionForBar = function (transitions, drawBar) {
-    var $$ = this;
-    transitions.push($$.mainBar.transition()
-                     .attr('d', drawBar)
-                     .style("fill", $$.color)
-                     .style("opacity", 1));
+c3_chart_internal_fn.redrawBar = function (drawBar, withTransition) {
+    return [
+        (withTransition ? this.mainBar.transition() : this.mainBar)
+            .attr('d', drawBar)
+            .style("fill", this.color)
+            .style("opacity", 1)
+    ];
 };
 c3_chart_internal_fn.getBarW = function (axis, barTargetsNum) {
     var $$ = this, config = $$.config,
-        w = typeof config.bar_width === 'number' ? config.bar_width : barTargetsNum ? (axis.tickOffset() * 2 * config.bar_width_ratio) / barTargetsNum : 0;
+        w = typeof config.bar_width === 'number' ? config.bar_width : barTargetsNum ? (axis.tickInterval() * config.bar_width_ratio) / barTargetsNum : 0;
     return config.bar_width_max && w > config.bar_width_max ? config.bar_width_max : w;
 };
 c3_chart_internal_fn.getBars = function (i, id) {
