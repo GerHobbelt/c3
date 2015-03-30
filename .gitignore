@@ -1,7 +1,9 @@
 # npm modules
 node_modules
 bower_components
-d3.js
-d3.min.js
 components
 build
+
+# github analytics scripts
+__forks__.bulk_dump
+__forks.info__/
