@@ -16,7 +16,9 @@ c3_chart_fn.load = function (args) {
     }
     // update names if exists
     if ('names' in args) {
-        c3_chart_fn.data.names.bind(this)(args.names);
+        Object.keys(args.names).forEach(function (id) {
+            config.data_names[id] = args.names[id];
+        });
     }
     // update axes if exists
     if ('axes' in args) {
