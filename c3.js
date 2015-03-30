@@ -5842,6 +5842,10 @@
         if ('categories' in args && $$.isCategorized()) {
             config.axis_x_categories = args.categories;
         }
+        // update names if exists
+        if ('names' in args) {
+            c3_chart_fn.data.names.bind(this)(args.names);
+        }
         // update axes if exists
         if ('axes' in args) {
             Object.keys(args.axes).forEach(function (id) {
@@ -6808,14 +6812,6 @@
         };
         return axis;
     }
-
-    // fix problems using c3 with phantomjs #578
-    Function.prototype.bind = Function.prototype.bind || function (thisp) {
-        var fn = this;
-        return function () {
-            return fn.apply(thisp, arguments);
-        };
-    };
 
     if (typeof define === 'function' && define.amd) {
         define("c3", ["d3"], c3);
