@@ -1,29 +1,29 @@
 <html>
   <head>
-    <link href="/css/c3.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="../css/c3.css">
   </head>
   <body>
     <div id="chart"></div>
 
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script src="/js/c3.js"></script>
+    <script src="../js/d3.latest.js" charset="utf-8"></script>
+    <script src="../js/c3.js" charset="utf-8"></script>
     <script>
 
       var chart = c3.generate({
         data: {
-          url: '/data/c3_test.csv'
+          url: '../data/c3_test.csv'
         }
       });
 
       setTimeout(function () {
         chart.load({
-          url: '/data/c3_test2.csv',
+          url: '../data/c3_test2.csv',
         });
       }, 1000);
 
       setTimeout(function () {
         chart.load({
-          url: '/data/c3_test.tsv',
+          url: '../data/c3_test.tsv',
           mimeType: 'tsv'
         });
       }, 2000);
@@ -31,7 +31,7 @@
       setTimeout(function () {
         chart = c3.generate({
           data: {
-            url: '/data/c3_test.json',
+            url: '../data/c3_test.json',
             mimeType: 'json'
           }
         });
@@ -39,14 +39,14 @@
 
       setTimeout(function () {
         chart.load({
-          url: '/data/c3_test_2.json',
+          url: '../data/c3_test_2.json',
           mimeType: 'json'
         });
       }, 4000);
 
       setTimeout(function () {
         chart.load({
-          url: '/data/c3_test_3.json',
+          url: '../data/c3_test_3.json',
           mimeType: 'json',
           keys: {
             value: ['data1', 'data2']

@@ -1,15 +1,14 @@
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="/css/c3.css">
+    <link rel="stylesheet" type="text/css" href="../css/c3.css">
   </head>
   <body>
     <div id="chart"></div>
 
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script src="/js/c3.js"></script>
+    <script src="../js/d3.latest.js" charset="utf-8"></script>
+    <script src="../js/c3.js" charset="utf-8"></script>
     <script>
-
-      var data, axis_x_localtime;
+      var data, axis_x_localtime, chart;
 
       var data1 = {
           x : 'date',
@@ -40,7 +39,7 @@
 
       var data4 = {
           x : 'date',
-          x_format : '%Y%m%d',
+          x_format: '%Y%m%d',
           columns: [
             ['date', '20130101', '20130102', '20130103', '20130104', '20130105'],
             ['sample', 1030, 1200, 1100, 1400, 1150],
@@ -50,7 +49,7 @@
 
       var data5 = {
           x : 'date',
-          x_format : '%Y%m%d %H:%M:%S',
+          x_format: '%Y%m%d %H:%M:%S',
           columns: [
             ['date', '20130101 00:00:00', '20130102 00:00:00', '20130103 00:00:00', '20130104 00:00:00', '20130105 00:00:00'],
             ['sample', 30, 200, 100, 400, 150],
@@ -61,11 +60,11 @@
       var generate = function () { return c3.generate({
         bindto: '#chart',
         data: data,
-        axis : {
+        axis: {
           x : {
-            type : 'timeseries',
-            tick : {
-              format : "%Y-%m-%d %H:%M:%S" // https://github.com/mbostock/d3/wiki/Time-Formatting#wiki-format
+            type: 'timeseries',
+            tick: {
+              format: "%Y-%m-%d %H:%M:%S" // https://github.com/mbostock/d3/wiki/Time-Formatting#wiki-format
             },
             localtime: axis_x_localtime
           }

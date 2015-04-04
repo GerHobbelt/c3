@@ -1,17 +1,17 @@
 <html>
   <head>
-    <link href="/css/c3.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="../css/c3.css">
   </head>
   <body>
     <div id="chart"></div>
 
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script src="/js/c3.js"></script>
+    <script src="../js/d3.latest.js" charset="utf-8"></script>
+    <script src="../js/c3.js" charset="utf-8"></script>
     <script>
 
       var chart = c3.generate({
         data: {
-          url: '/data/c3_test.csv',
+          url: '../data/c3_test.csv',
           labels: true,
           filter: function (t) {
             return t.id !== 'data1';
@@ -31,7 +31,7 @@
     var queue = [
       function () {
         chart.load({
-          url: '/data/c3_test2.csv',
+          url: '../data/c3_test2.csv',
           filter: function (t) {
             return t.id !== 'data1';
           }
