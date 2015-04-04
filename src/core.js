@@ -978,12 +978,13 @@ c3_chart_internal_fn.updateDimension = function (withoutAxis) {
 };
 
 c3_chart_internal_fn.observeInserted = function (selection) {
-    var $$ = this, observer;
+    var $$ = this, 
+        observer;
     if (typeof MutationObserver === 'undefined') {
         window.console.error("MutationObserver not defined.");
         return;
     }
-    observer= new MutationObserver(function (mutations) {
+    observer = new MutationObserver(function (mutations) {
         mutations.forEach(function (mutation) {
             if (mutation.type === 'childList' && mutation.previousSibling) {
                 observer.disconnect();
