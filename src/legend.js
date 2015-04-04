@@ -17,10 +17,12 @@ c3_chart_internal_fn.updateLegendWithDefaults = function () {
     $$.updateLegend($$.mapToIds($$.data.targets), {withTransform: false, withTransitionForTransform: false, withTransition: false});
 };
 c3_chart_internal_fn.updateSizeForLegend = function (legendHeight, legendWidth) {
-    var $$ = this, config = $$.config, insetLegendPosition = {
-        top: $$.isLegendTop ? $$.getCurrentPaddingTop() + config.legend_inset_y + 5.5 : $$.currentHeight - legendHeight - $$.getCurrentPaddingBottom() - config.legend_inset_y,
-        left: $$.isLegendLeft ? $$.getCurrentPaddingLeft() + config.legend_inset_x + 0.5 : $$.currentWidth - legendWidth - $$.getCurrentPaddingRight() - config.legend_inset_x + 0.5
-    };
+    var $$ = this, 
+        config = $$.config, 
+        insetLegendPosition = {
+            top: $$.isLegendTop ? $$.getCurrentPaddingTop() + config.legend_inset_y + 5.5 : $$.currentHeight - legendHeight - $$.getCurrentPaddingBottom() - config.legend_inset_y,
+            left: $$.isLegendLeft ? $$.getCurrentPaddingLeft() + config.legend_inset_x + 0.5 : $$.currentWidth - legendWidth - $$.getCurrentPaddingRight() - config.legend_inset_x + 0.5
+        };
 
     $$.margin3 = {
         top: $$.isLegendRight ? 0 : $$.isLegendInset ? insetLegendPosition.top : $$.currentHeight - legendHeight,
@@ -67,7 +69,9 @@ c3_chart_internal_fn.toggleFocusLegend = function (targetIds, focus) {
     var $$ = this;
     targetIds = $$.mapToTargetIds(targetIds);
     $$.legend.selectAll('.' + CLASS.legendItem)
-        .filter(function (id) { return targetIds.indexOf(id) >= 0; })
+        .filter(function (id) { 
+            return targetIds.indexOf(id) >= 0; 
+        })
         .classed(CLASS.legendItemFocused, focus)
       .transition().duration(100)
         .style('opacity', function () {
@@ -76,14 +80,18 @@ c3_chart_internal_fn.toggleFocusLegend = function (targetIds, focus) {
         });
 };
 c3_chart_internal_fn.revertLegend = function () {
-    var $$ = this, d3 = $$.d3;
+    var $$ = this, 
+        d3 = $$.d3;
     $$.legend.selectAll('.' + CLASS.legendItem)
         .classed(CLASS.legendItemFocused, false)
         .transition().duration(100)
-        .style('opacity', function () { return $$.opacityForLegend(d3.select(this)); });
+        .style('opacity', function () { 
+            return $$.opacityForLegend(d3.select(this)); 
+        });
 };
 c3_chart_internal_fn.showLegend = function (targetIds) {
-    var $$ = this, config = $$.config;
+    var $$ = this, 
+        config = $$.config;
     if (!config.legend_show) {
         config.legend_show = true;
         $$.legend.style('visibility', 'visible');
@@ -95,10 +103,13 @@ c3_chart_internal_fn.showLegend = function (targetIds) {
     $$.legend.selectAll($$.selectorLegends(targetIds))
         .style('visibility', 'visible')
         .transition()
-        .style('opacity', function () { return $$.opacityForLegend($$.d3.select(this)); });
+        .style('opacity', function () { 
+            return $$.opacityForLegend($$.d3.select(this)); 
+        });
 };
 c3_chart_internal_fn.hideLegend = function (targetIds) {
-    var $$ = this, config = $$.config;
+    var $$ = this, 
+        config = $$.config;
     if (config.legend_show && isEmpty(targetIds)) {
         config.legend_show = false;
         $$.legend.style('visibility', 'hidden');
@@ -112,10 +123,23 @@ c3_chart_internal_fn.clearLegendItemTextBoxCache = function () {
     this.legendItemTextBox = {};
 };
 c3_chart_internal_fn.updateLegend = function (targetIds, options, transitions) {
-    var $$ = this, config = $$.config;
+    var $$ = this, 
+        config = $$.config;
     var xForLegend, xForLegendText, xForLegendRect, yForLegend, yForLegendText, yForLegendRect;
-    var paddingTop = 4, paddingRight = 10, maxWidth = 0, maxHeight = 0, posMin = 10, tileWidth = 15;
-    var l, totalLength = 0, offsets = {}, widths = {}, heights = {}, margins = [0], steps = {}, step = 0;
+    var paddingTop = 4, 
+        paddingRight = 10, 
+        maxWidth = 0, 
+        maxHeight = 0, 
+        posMin = 10, 
+        tileWidth = 15;
+    var l, 
+        totalLength = 0, 
+        offsets = {}, 
+        widths = {}, 
+        heights = {}, 
+        margins = [0], 
+        steps = {}, 
+        step = 0;
     var withTransition, withTransitionForTransform;
     var texts, rects, tiles, background;
 
@@ -170,18 +194,28 @@ c3_chart_internal_fn.updateLegend = function (targetIds, options, transitions) {
         widths[id] = itemWidth;
         heights[id] = itemHeight;
 
-        if (!maxWidth || itemWidth >= maxWidth) { maxWidth = itemWidth; }
-        if (!maxHeight || itemHeight >= maxHeight) { maxHeight = itemHeight; }
+        if (!maxWidth || itemWidth >= maxWidth) { 
+            maxWidth = itemWidth; 
+        }
+        if (!maxHeight || itemHeight >= maxHeight) { 
+            maxHeight = itemHeight; 
+        }
         maxLength = $$.isLegendRight || $$.isLegendInset ? maxHeight : maxWidth;
 
         if (config.legend_equally) {
-            Object.keys(widths).forEach(function (id) { widths[id] = maxWidth; });
-            Object.keys(heights).forEach(function (id) { heights[id] = maxHeight; });
+            Object.keys(widths).forEach(function (id) { 
+                widths[id] = maxWidth; 
+            });
+            Object.keys(heights).forEach(function (id) { 
+                heights[id] = maxHeight; 
+            });
             margin = (areaLength - maxLength * targetIds.length) / 2;
             if (margin < posMin) {
                 totalLength = 0;
                 step = 0;
-                targetIds.forEach(function (id) { updateValues(id); });
+                targetIds.forEach(function (id) { 
+                    updateValues(id); 
+                });
             }
             else {
                 updateValues(id, true);
@@ -197,26 +231,50 @@ c3_chart_internal_fn.updateLegend = function (targetIds, options, transitions) {
     }
 
     if ($$.isLegendRight) {
-        xForLegend = function (id) { return maxWidth * steps[id]; };
-        yForLegend = function (id) { return margins[steps[id]] + offsets[id]; };
+        xForLegend = function (id) { 
+            return maxWidth * steps[id]; 
+        };
+        yForLegend = function (id) { 
+            return margins[steps[id]] + offsets[id]; 
+        };
     } else if ($$.isLegendInset) {
-        xForLegend = function (id) { return maxWidth * steps[id] + 10; };
-        yForLegend = function (id) { return margins[steps[id]] + offsets[id]; };
+        xForLegend = function (id) { 
+            return maxWidth * steps[id] + 10; 
+        };
+        yForLegend = function (id) { 
+            return margins[steps[id]] + offsets[id]; 
+        };
     } else {
-        xForLegend = function (id) { return margins[steps[id]] + offsets[id]; };
-        yForLegend = function (id) { return maxHeight * steps[id]; };
+        xForLegend = function (id) { 
+            return margins[steps[id]] + offsets[id]; 
+        };
+        yForLegend = function (id) { 
+            return maxHeight * steps[id]; 
+        };
     }
-    xForLegendText = function (id, i) { return xForLegend(id, i) + 14; };
-    yForLegendText = function (id, i) { return yForLegend(id, i) + 9; };
-    xForLegendRect = function (id, i) { return xForLegend(id, i); };
-    yForLegendRect = function (id, i) { return yForLegend(id, i) - 5; };
+    xForLegendText = function (id, i) { 
+        return xForLegend(id, i) + 14; 
+    };
+    yForLegendText = function (id, i) { 
+        return yForLegend(id, i) + 9; 
+    };
+    xForLegendRect = function (id, i) { 
+        return xForLegend(id, i); 
+    };
+    yForLegendRect = function (id, i) { 
+        return yForLegend(id, i) - 5; 
+    };
 
     // Define g for legend area
     l = $$.legend.selectAll('.' + CLASS.legendItem)
         .data(targetIds)
         .enter().append('g')
-        .attr('class', function (id) { return $$.generateClass(CLASS.legendItem, id); })
-        .style('visibility', function (id) { return $$.isLegendToShow(id) ? 'visible' : 'hidden'; })
+        .attr('class', function (id) { 
+            return $$.generateClass(CLASS.legendItem, id); 
+        })
+        .style('visibility', function (id) { 
+            return $$.isLegendToShow(id) ? 'visible' : 'hidden'; 
+        })
         .style('cursor', 'pointer')
         .on('click', function (id) {
             if (config.legend_item_onclick) {
@@ -248,8 +306,12 @@ c3_chart_internal_fn.updateLegend = function (targetIds, options, transitions) {
             }
         });
     l.append('text')
-        .text(function (id) { return isDefined(config.data_names[id]) ? config.data_names[id] : id; })
-        .each(function (id, i) { updatePositions(this, id, i); })
+        .text(function (id) { 
+            return isDefined(config.data_names[id]) ? config.data_names[id] : id; 
+        })
+        .each(function (id, i) { 
+            updatePositions(this, id, i); 
+        })
         .style("pointer-events", "none")
         .attr('x', $$.isLegendRight || $$.isLegendInset ? xForLegendText : -200)
         .attr('y', $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendText);
@@ -277,8 +339,13 @@ c3_chart_internal_fn.updateLegend = function (targetIds, options, transitions) {
 
     texts = $$.legend.selectAll('text')
         .data(targetIds)
-        .text(function (id) { return isDefined(config.data_names[id]) ? config.data_names[id] : id; }) // MEMO: needed for update
-        .each(function (id, i) { updatePositions(this, id, i); });
+        .text(function (id) { 
+            // MEMO: needed for update
+            return isDefined(config.data_names[id]) ? config.data_names[id] : id; 
+        })
+        .each(function (id, i) { 
+            updatePositions(this, id, i); 
+        });
     (withTransition ? texts.transition() : texts)
         .attr('x', xForLegendText)
         .attr('y', yForLegendText);
@@ -286,8 +353,12 @@ c3_chart_internal_fn.updateLegend = function (targetIds, options, transitions) {
     rects = $$.legend.selectAll('rect.' + CLASS.legendItemEvent)
         .data(targetIds);
     (withTransition ? rects.transition() : rects)
-        .attr('width', function (id) { return widths[id]; })
-        .attr('height', function (id) { return heights[id]; })
+        .attr('width', function (id) { 
+            return widths[id]; 
+        })
+        .attr('height', function (id) { 
+            return heights[id]; 
+        })
         .attr('x', xForLegendRect)
         .attr('y', yForLegendRect);
 
@@ -306,7 +377,9 @@ c3_chart_internal_fn.updateLegend = function (targetIds, options, transitions) {
 
     // toggle legend state
     $$.legend.selectAll('.' + CLASS.legendItem)
-        .classed(CLASS.legendItemHidden, function (id) { return !$$.isTargetToShow(id); });
+        .classed(CLASS.legendItemHidden, function (id) { 
+            return !$$.isTargetToShow(id); 
+        });
 
     // Update all to reflect change of legend
     $$.updateLegendItemWidth(maxWidth);

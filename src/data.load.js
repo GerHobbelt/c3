@@ -62,19 +62,23 @@ c3_chart_internal_fn.unload = function (targetIds, done) {
         done = function () {};
     }
     // filter existing target
-    targetIds = targetIds.filter(function (id) { return $$.hasTarget($$.data.targets, id); });
+    targetIds = targetIds.filter(function (id) { 
+        return $$.hasTarget($$.data.targets, id); 
+    });
     // If no target, call done and return
     if (!targetIds || targetIds.length === 0) {
         done();
         return;
     }
-    $$.svg.selectAll(targetIds.map(function (id) { return $$.selectorTarget(id); }))
+    $$.svg.selectAll(targetIds.map(function (id) { 
+            return $$.selectorTarget(id); 
+        }))
         .transition()
         .style('opacity', 0)
         .remove()
         .call($$.endall, done);
     targetIds.forEach(function (id) {
-        // Reset fadein for future load
+        // Reset fade-in for future load
         $$.withoutFadeIn[id] = false;
         // Remove target's elements
         if ($$.legend) {
