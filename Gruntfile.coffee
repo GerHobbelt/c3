@@ -110,4 +110,18 @@ module.exports = (grunt) ->
             files:
               'c3.css': 'src/scss/main.scss'
 
-    grunt.registerTask 'default', ['concat', 'jshint', 'jasmine', 'sass', 'cssmin', 'uglify']
+        copy:
+          web:
+            files: [
+              {expand: true, src: 'c3.js', dest: 'htdocs/js/', filter: 'isFile'},
+              {expand: true, src: 'c3.css', dest: 'htdocs/css/', filter: 'isFile'},
+
+              {expand: true, cwd: 'extensions/js/', src: ['**'], dest: 'htdocs/js/extensions/'},
+            ]
+
+# dependencies:
+    grunt.registerTask 'build', ['concat', 'jshint', 'jasmine', 'sass', 'cssmin', 'uglify']
+    grunt.registerTask 'update_web', ['build', 'copy:web']
+
+# main / default:
+    grunt.registerTask 'default', ['update_web']
