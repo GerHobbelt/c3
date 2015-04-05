@@ -814,7 +814,7 @@
         return this.config.axis_x_type === 'timeseries';
     };
     c3_chart_internal_fn.isCategorized = function () {
-        return this.config.axis_x_type.indexOf('category') >= 0;
+        return this.config.axis_x_type.indexOf('categor') >= 0;
     };
     c3_chart_internal_fn.isCustomX = function () {
         var $$ = this, config = $$.config;
@@ -983,12 +983,13 @@
     };
 
     c3_chart_internal_fn.observeInserted = function (selection) {
-        var $$ = this, observer;
+        var $$ = this, 
+            observer;
         if (typeof MutationObserver === 'undefined') {
             window.console.error("MutationObserver not defined.");
             return;
         }
-        observer= new MutationObserver(function (mutations) {
+        observer = new MutationObserver(function (mutations) {
             mutations.forEach(function (mutation) {
                 if (mutation.type === 'childList' && mutation.previousSibling) {
                     observer.disconnect();
