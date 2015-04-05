@@ -293,6 +293,9 @@ c3_chart_internal_fn.initWithData = function (data) {
     if ($$.initLegend) { 
         $$.initLegend(); 
     }
+    if ($$.initTitle) { 
+        $$.initTitle(); 
+    }
 
     /*-- Main Region --*/
 
@@ -665,6 +668,11 @@ c3_chart_internal_fn.redraw = function (options, transitions) {
     // text
     if ($$.hasDataLabel()) {
         $$.updateText(durationForExit);
+    }
+
+    // title
+    if ($$.redrawTitle) { 
+        $$.redrawTitle(); 
     }
 
     // arc
