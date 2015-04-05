@@ -46,6 +46,10 @@ c3_chart_fn.load = function (args) {
     } else {
         $$.loadFromArgs(args);
     }
+    // toggle data labels if exists
+    if (args.labels) {
+        this.toggleLabels(args.labels);
+    }
 };
 
 c3_chart_fn.unload = function (args) {

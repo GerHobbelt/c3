@@ -48,3 +48,12 @@ c3_chart_fn.toggle = function (targetIds, options) {
         $$.isTargetToShow(targetId) ? that.hide(targetId, options) : that.show(targetId, options);
     });
 };
+
+c3_chart_fn.toggleLabels = function (value) {
+    var $$ = this.internal, config = $$.config;
+    if (config.data_labels !== (value || false)) {
+        config.data_labels = value || false;
+        $$.updateAndRedraw();            
+    }
+};
+
