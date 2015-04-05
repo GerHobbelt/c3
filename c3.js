@@ -292,11 +292,17 @@
         if ($$.initSubchart) { 
             $$.initSubchart(); 
         }
+        if ($$.initHeader) { 
+            $$.initHeader(); 
+        }
         if ($$.initTooltip) { 
             $$.initTooltip(); 
         }
         if ($$.initLegend) { 
             $$.initLegend(); 
+        }
+        if ($$.initTitle) { 
+            $$.initTitle(); 
         }
 
         /*-- Main Region --*/
@@ -600,6 +606,11 @@
             $$.y2Axis.tickValues($$.axis.generateTickValues($$.y2.domain(), config.axis_y2_tick_count));
         }
 
+        // header background
+        if ($$.redrawHeader) { 
+            $$.redrawHeader(); 
+        }
+
         // axes
         $$.axis.redraw(transitions, hideAxis);
 
@@ -670,6 +681,11 @@
         // text
         if ($$.hasDataLabel()) {
             $$.updateText(durationForExit);
+        }
+
+        // title
+        if ($$.redrawTitle) { 
+            $$.redrawTitle(); 
         }
 
         // arc
@@ -1294,7 +1310,19 @@
             },
             tooltip_init_show: false,
             tooltip_init_x: 0,
-            tooltip_init_position: {top: '0px', left: '50px'}
+            tooltip_init_position: {top: '0px', left: '50px'},
+            // title
+            title_text: undefined,
+            title_x: 0,
+            title_y: 0,
+            // header
+            header_show: false,
+            header_color: undefined,
+            header_border_show: false,
+            header_border_color: undefined,
+            header_border_width: undefined,
+            // save/load in JSON format
+            json_original: undefined,
         };
 
         Object.keys(this.additionalConfig).forEach(function (key) {
@@ -2094,6 +2122,16 @@
         return current;
     };
 
+    c3_chart_internal_fn.getOriginalJson = function() {
+    	return this.config.json_original;
+    };
+    c3_chart_internal_fn.json2array = function(json) {
+    	var arr = [];
+    	for (var i in json) {
+    		arr.push(json[i]);
+    	}
+    	return arr;
+    };
     c3_chart_internal_fn.convertUrlToData = function (url, mimeType, keys, done) {
         var $$ = this, type = mimeType ? mimeType : 'csv';
         $$.d3.xhr(url, function (error, data) {
@@ -2132,6 +2170,7 @@
     c3_chart_internal_fn.convertJsonToData = function (json, keys) {
         var $$ = this,
             new_rows = [], targetKeys, data;
+        $$.config.json_original = json;
         if (keys) { // when keys specified, json would be an array that includes objects
             if (keys.x) {
                 targetKeys = keys.value.concat(keys.x);
@@ -2736,8 +2775,13 @@
         return h > 0 ? h : 320 / ($$.hasType('gauge') ? 2 : 1);
     };
     c3_chart_internal_fn.getCurrentPaddingTop = function () {
-        var config = this.config;
-        return isValue(config.padding_top) ? config.padding_top : 0;
+        var $$ = this,
+            config = $$.config,
+            padding = isValue(config.padding_top) ? config.padding_top : 0;
+        if ($$.title && $$.title.node()) {
+            padding += $$.getTitlePadding();
+        }
+        return padding;
     };
     c3_chart_internal_fn.getCurrentPaddingBottom = function () {
         var config = this.config;
@@ -2829,6 +2873,11 @@
 
     c3_chart_internal_fn.getEventRectWidth = function () {
         return Math.max(0, this.xAxis.tickInterval());
+    };
+
+    c3_chart_internal_fn.getTitlePadding = function() {
+        var $$ = this;
+        return $$.config.title_y + $$.title.node().getBBox().height;
     };
 
     c3_chart_internal_fn.getShapeIndices = function (typeFilter) {
@@ -4378,6 +4427,57 @@
         $$.legendHasRendered = true;
     };
 
+    c3_chart_internal_fn.initTitle = function () {
+        var $$ = this;
+        $$.title = $$.svg.append("text")
+              .text($$.config.title_text)
+              .attr("class", "c3-chart-title")
+              .attr("x", $$.config.title_x)
+              .attr("y", $$.config.title_y);
+    };
+
+    c3_chart_internal_fn.redrawTitle = function () {
+        var $$ = this;
+        $$.title
+              .attr("x", $$.config.title_x)
+              .attr("y", $$.config.title_y || $$.title.node().getBBox().height);
+    };
+    c3_chart_internal_fn.initHeader = function() {
+      var $$ = this;
+      if ($$.config.header_show && $$.getCurrentPaddingTop()) {
+          $$.header = $$.svg.append("rect")
+                .attr("class", "c3-chart-header")
+                .attr("style", "fill: " + $$.config.header_color)
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("width", $$.getCurrentWidth())
+                .attr("height", $$.getCurrentPaddingTop());
+
+          if ($$.config.header_border_show) {
+              $$.headerBorder = $$.svg.append("line")
+                    .attr("class", "c3-chart-header-border")
+                    .attr("style", "stroke-width: " + $$.config.header_border_width + 
+                          "; stroke: " + $$.config.header_border_color)
+                    .attr("x1", 0)
+                    .attr("x2", $$.getCurrentWidth())
+                    .attr("y1", $$.getCurrentPaddingTop())
+                    .attr("y2", $$.getCurrentPaddingTop());
+          }
+      }
+    };
+    c3_chart_internal_fn.redrawHeader = function () {
+        var $$ = this;
+        if ($$.header) {
+            $$.header
+                .attr("width", $$.getCurrentWidth())
+                .attr("height", $$.getCurrentPaddingTop());
+        }
+
+        if ($$.headerBorder) {
+            $$.headerBorder
+                .attr("x2", $$.getCurrentWidth());
+        }
+    };
     function Axis(owner) {
         API.call(this, owner);
     }
@@ -6421,7 +6521,8 @@
             withLegend: true,
             withTransition: orgDataCount > 1,
             withTrimXDomain: false,
-            withUpdateXAxis: true,
+            withUpdateXDomain: $$.isTimeSeries,
+            withUpdateXAxis: true
         });
     };
 
@@ -6812,9 +6913,9 @@
         var $$ = this.internal, config = $$.config;
         if (arguments.length) {
             if (typeof max === 'object') {
-                if (isValue(max.x)) { config.axis_x_max = max.x; }
-                if (isValue(max.y)) { config.axis_y_max = max.y; }
-                if (isValue(max.y2)) { config.axis_y2_max = max.y2; }
+                if (max.hasOwnProperty('x')) { config.axis_x_max = max.x; }
+                if (max.hasOwnProperty('y')) { config.axis_y_max = max.y; }
+                if (max.hasOwnProperty('y2')) { config.axis_y2_max = max.y2; }
             } else {
                 config.axis_y_max = config.axis_y2_max = max;
             }
@@ -6831,9 +6932,9 @@
         var $$ = this.internal, config = $$.config;
         if (arguments.length) {
             if (typeof min === 'object') {
-                if (isValue(min.x)) { config.axis_x_min = min.x; }
-                if (isValue(min.y)) { config.axis_y_min = min.y; }
-                if (isValue(min.y2)) { config.axis_y2_min = min.y2; }
+                if (min.hasOwnProperty('x')) { config.axis_x_min = min.x; }
+                if (min.hasOwnProperty('y')) { config.axis_y_min = min.y; }
+                if (min.hasOwnProperty('y2')) { config.axis_y2_min = min.y2; }
             } else {
                 config.axis_y_min = config.axis_y2_min = min;
             }
@@ -6934,6 +7035,12 @@
         this.internal.dispatchEvent('mouseout', 0);
     };
 
+    c3_chart_fn.originalJson = function() {
+    	return this.internal.getOriginalJson();
+    };
+    c3_chart_fn.originalJsonArray = function() {
+    	return this.internal.json2array(this.internal.getOriginalJson());
+    };
     // Features:
     // 1. category axis
     // 2. ceil values of translate/x/y to int for half pixel antialiasing
@@ -7051,7 +7158,7 @@
                 // this should be called only when category axis
                 function splitTickText(d, maxWidth) {
                     var tickText = textFormatted(d),
-                        subtext, spaceIndex, textWidth, splitted = [];
+                        subtext, spaceIndex, preserveSpace, textWidth, splitted = [];
 
                     if (Object.prototype.toString.call(tickText) === "[object Array]") {
                         return tickText;
@@ -7066,13 +7173,17 @@
                         for (var i = 1; i < text.length; i++) {
                             if (text.charAt(i) === ' ') {
                                 spaceIndex = i;
+                                preserveSpace = 0;
+                            } else if (text.charAt(i) === '/' || text.charAt(i) === '-') {
+                                spaceIndex = i;
+                                preserveSpace = 1;
                             }
                             subtext = text.substr(0, i + 1);
                             textWidth = sizeFor1Char.w * subtext.length;
                             // if text width gets over tick width, split by space index or crrent index
                             if (maxWidth < textWidth) {
                                 return split(
-                                    splitted.concat(text.substr(0, spaceIndex ? spaceIndex : i)),
+                                    splitted.concat(text.substr(0, spaceIndex ? spaceIndex + preserveSpace : i)),
                                     text.slice(spaceIndex ? spaceIndex + 1 : i)
                                 );
                             }
