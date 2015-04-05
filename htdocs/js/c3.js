@@ -423,15 +423,15 @@
 
         // for main
         $$.margin = config.axis_rotated ? {
-            top: $$.getHorizontalAxisHeight('y2') + $$.getCurrentPaddingTop(),
-            right: hasArc ? 0 : $$.getCurrentPaddingRight(),
-            bottom: $$.getHorizontalAxisHeight('y') + legendHeightForBottom + $$.getCurrentPaddingBottom(),
-            left: subchartHeight + (hasArc ? 0 : $$.getCurrentPaddingLeft())
+            top: config.margin_top ? config.margin.top : $$.getHorizontalAxisHeight('y2') + $$.getCurrentPaddingTop(),
+            right: hasArc ? 0 : config.margin_right ? config.margin_right : $$.getCurrentPaddingRight(),
+            bottom: config.margin_bottom ? config.margin_bottom : $$.getHorizontalAxisHeight('y') + legendHeightForBottom + $$.getCurrentPaddingBottom(),
+            left: subchartHeight + (hasArc ? 0 : config.margin_left ? config.margin_left : $$.getCurrentPaddingLeft())
         } : {
-            top: 4 + $$.getCurrentPaddingTop(), // for top tick text
-            right: hasArc ? 0 : $$.getCurrentPaddingRight(),
-            bottom: xAxisHeight + subchartHeight + legendHeightForBottom + $$.getCurrentPaddingBottom(),
-            left: hasArc ? 0 : $$.getCurrentPaddingLeft()
+            top: 4 + config.margin_top ? config.margin.top : $$.getCurrentPaddingTop(), // for top tick text
+            right: hasArc ? 0 : config.margin_right ? config.margin_right : $$.getCurrentPaddingRight(),
+            bottom: config.margin_bottom ? config.margin_bottom : xAxisHeight + subchartHeight + legendHeightForBottom + $$.getCurrentPaddingBottom(),
+            left: hasArc ? 0 : config.margin_left ? config.margin_left : $$.getCurrentPaddingLeft()
         };
 
         // for subchart
@@ -1126,6 +1126,10 @@
             padding_right: undefined,
             padding_top: undefined,
             padding_bottom: undefined,
+            margin_left: undefined,
+            margin_right: undefined,
+            margin_top: undefined,
+            margin_bottom: undefined,
             zoom_enabled: false,
             zoom_extent: undefined,
             zoom_privileged: false,
@@ -1203,6 +1207,7 @@
             axis_x_type: 'indexed',
             axis_x_localtime: true,
             axis_x_categories: [],
+            axis_x_tick_automatic: false,
             axis_x_tick_centered: false,
             axis_x_tick_format: undefined,
             axis_x_tick_culling: {},
@@ -4485,8 +4490,9 @@
     inherit(API, Axis);
 
     Axis.prototype.init = function init() {
-
-        var $$ = this.owner, config = $$.config, main = $$.main;
+        var $$ = this.owner, 
+            config = $$.config, 
+            main = $$.main;
         $$.axes.x = main.append("g")
             .attr("class", CLASS.axis + ' ' + CLASS.axisX)
             .attr("clip-path", $$.clipPathForXAxis)
@@ -4517,7 +4523,8 @@
             .style("text-anchor", this.textAnchorForY2AxisLabel.bind(this));
     };
     Axis.prototype.getXAxis = function getXAxis(scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, withoutRotateTickText) {
-        var $$ = this.owner, config = $$.config,
+        var $$ = this.owner, 
+            config = $$.config,
             axisParams = {
                 isCategory: $$.isCategorized(),
                 withOuterTick: withOuterTick,
@@ -4544,7 +4551,9 @@
         return axis;
     };
     Axis.prototype.updateXAxisTickValues = function updateXAxisTickValues(targets, axis) {
-        var $$ = this.owner, config = $$.config, tickValues;
+        var $$ = this.owner, 
+            config = $$.config, 
+            tickValues;
         if (config.axis_x_tick_fit || config.axis_x_tick_count) {
             tickValues = this.generateTickValues($$.mapTargetsToUniqueXs(targets), config.axis_x_tick_count, $$.isTimeSeries());
         }
@@ -4558,9 +4567,9 @@
     };
     Axis.prototype.getYAxis = function getYAxis(scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition) {
         var axisParams = {
-            withOuterTick: withOuterTick,
-            withoutTransition: withoutTransition,
-        },
+                withOuterTick: withOuterTick,
+                withoutTransition: withoutTransition,
+            },
             $$ = this.owner,
             d3 = $$.d3,
             config = $$.config,
@@ -4577,8 +4586,11 @@
         return id in config.data_axes ? config.data_axes[id] : 'y';
     };
     Axis.prototype.getXAxisTickFormat = function getXAxisTickFormat() {
-        var $$ = this.owner, config = $$.config,
-            format = $$.isTimeSeries() ? $$.defaultAxisTimeFormat : $$.isCategorized() ? $$.categoryName : function (v) { return v < 0 ? v.toFixed(0) : v; };
+        var $$ = this.owner, 
+            config = $$.config,
+            format = $$.isTimeSeries() ? $$.defaultAxisTimeFormat : $$.isCategorized() ? $$.categoryName : function (v) { 
+                return v < 0 ? v.toFixed(0) : v; 
+            };
         if (config.axis_x_tick_format) {
             if (isFunction(config.axis_x_tick_format)) {
                 format = config.axis_x_tick_format;
@@ -4588,7 +4600,9 @@
                 };
             }
         }
-        return isFunction(format) ? function (v) { return format.call($$, v); } : format;
+        return isFunction(format) ? function (v) { 
+            return format.call($$, v); 
+        } : format;
     };
     Axis.prototype.getTickValues = function getTickValues(tickValues, axis) {
         return tickValues ? tickValues : axis ? axis.tickValues() : undefined;
@@ -4603,7 +4617,9 @@
         return this.getTickValues(this.owner.config.axis_y2_tick_values, this.owner.y2Axis);
     };
     Axis.prototype.getLabelOptionByAxisId = function getLabelOptionByAxisId(axisId) {
-        var $$ = this.owner, config = $$.config, option;
+        var $$ = this.owner, 
+            config = $$.config, 
+            option;
         if (axisId === 'y') {
             option = config.axis_y_label;
         } else if (axisId === 'y2') {
@@ -4618,7 +4634,8 @@
         return isString(option) ? option : option ? option.text : null;
     };
     Axis.prototype.setLabelText = function setLabelText(axisId, text) {
-        var $$ = this.owner, config = $$.config,
+        var $$ = this.owner, 
+            config = $$.config,
             option = this.getLabelOptionByAxisId(axisId);
         if (isString(option)) {
             if (axisId === 'y') {
@@ -4708,7 +4725,8 @@
         return this.dxForAxisLabel(this.owner.config.axis_rotated, this.getY2AxisLabelPosition());
     };
     Axis.prototype.dyForXAxisLabel = function dyForXAxisLabel() {
-        var $$ = this.owner, config = $$.config,
+        var $$ = this.owner, 
+            config = $$.config,
             position = this.getXAxisLabelPosition();
         if (config.axis_rotated) {
             return position.isInner ? "1.2em" : -25 - this.getMaxTickWidth('x');
@@ -4747,8 +4765,10 @@
         return this.textAnchorForAxisLabel($$.config.axis_rotated, this.getY2AxisLabelPosition());
     };
     Axis.prototype.getMaxTickWidth = function getMaxTickWidth(id, withoutRecompute) {
-        var $$ = this.owner, config = $$.config,
-            maxWidth = 0, targetsToShow, scale, axis, dummy, svg;
+        var $$ = this.owner, 
+            config = $$.config,
+            maxWidth = 0, 
+            targetsToShow, scale, axis, dummy, svg;
         if (withoutRecompute && $$.currentMaxTickWidths[id]) {
             return $$.currentMaxTickWidths[id];
         }
@@ -4816,7 +4836,8 @@
         return domainLength * (pixels / length);
     };
     Axis.prototype.generateTickValues = function generateTickValues(values, tickCount, forTimeSeries) {
-        var tickValues = values, targetCount, start, end, count, interval, i, tickValue;
+        var tickValues = values, 
+            targetCount, start, end, count, interval, i, tickValue;
         if (tickCount) {
             targetCount = isFunction(tickCount) ? tickCount() : tickCount;
             // compute ticks according to tickCount
@@ -4842,7 +4863,8 @@
         return tickValues;
     };
     Axis.prototype.generateTransitions = function generateTransitions(duration) {
-        var $$ = this.owner, axes = $$.axes;
+        var $$ = this.owner, 
+            axes = $$.axes;
         return {
             axisX: duration ? axes.x.transition().duration(duration) : axes.x,
             axisY: duration ? axes.y.transition().duration(duration) : axes.y,
