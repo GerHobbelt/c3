@@ -195,7 +195,13 @@ c3_chart_internal_fn.getDefaultConfig = function () {
         // title
         title_text: undefined,
         title_x: 0,
-        title_y: 0
+        title_y: 0,
+        // header
+        header_show: false,
+        header_color: undefined,
+        header_border_show: false,
+        header_border_color: undefined,
+        header_border_width: undefined
     };
 
     Object.keys(this.additionalConfig).forEach(function (key) {
