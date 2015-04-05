@@ -3,6 +3,7 @@ node_modules
 bower_components
 components
 build
+.idea/
 .sass-cache
 
 # github analytics scripts
