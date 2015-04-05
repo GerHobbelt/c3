@@ -828,7 +828,8 @@ c3_chart_internal_fn.isCategorized = function () {
     return this.config.axis_x_type.indexOf('categor') >= 0;
 };
 c3_chart_internal_fn.isCustomX = function () {
-    var $$ = this, config = $$.config;
+    var $$ = this, 
+        config = $$.config;
     return !$$.isTimeSeries() && (config.data_x || notEmpty(config.data_xs));
 };
 
