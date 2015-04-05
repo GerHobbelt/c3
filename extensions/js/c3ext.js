@@ -40,43 +40,50 @@ c3ext.generate = function (options) {
     zoom2.enhance = function () {
         _zoom2_maxItems *= 2;
         var totalItems = zoom2.getZoom().totalItems;
-        if (_zoom2_maxItems > totalItems)
+        if (_zoom2_maxItems > totalItems) {
             _zoom2_maxItems = totalItems;
+        }
         refresh();
-    }
+    };
     zoom2.dehance = function () {
         _zoom2_maxItems = Math.ceil(_zoom2_maxItems / 2) + 1;
         refresh();
-    }
+    };
 
-    zoom2.maxItems = function () { return _zoom2_maxItems; };
+    zoom2.maxItems = function () { 
+        return _zoom2_maxItems; 
+    };
+    
     function zoomAndReduceData(list, zoomRange, func, maxItems) {
         //var maxItems = 10;//Math.ceil(10 * zoomFactor);
         var list2 = list.slice(zoomRange[0], zoomRange[1]);
         var chunkSize = 1;
         var list3 = list2;
         if (list3.length > maxItems) {
-            var chunkSize = Math.ceil(list2.length / maxItems);
+            chunkSize = Math.ceil(list2.length / maxItems);
             list3 = list3.splitIntoChunksOf(chunkSize).map(func);
         }
         //console.log("x" + getCurrentZoomLevel() + ", maxItems=" + maxItems + " chunkSize=" + chunkSize + " totalBefore=" + list2.length + ", totalAfter=" + list3.length);
         return list3;
     }
 
-    function first(t) { return t[0]; }
+    function first(t) { 
+        return t[0]; 
+    }
 
     var getDataForZoom = function (data) {
-        if (data.columns == null || data.columns.length == 0)
+        if (data.columns == null || data.columns.length == 0) {
             return;
+        }
 
         var zoomInfo = zoom2.getZoom();
-        if (zoomInfo.totalItems != data.columns[0].length - 1) {
+        if (zoomInfo.totalItems !== data.columns[0].length - 1) {
             zoom2.setOptions({ totalItems: data.columns[0].length - 1 });
             zoomInfo = zoom2.getZoom();
         }
         data.columns = originalData.columns.map(function (column) {
             var name = column[0];
-            var reducer = zoom2_reducers[name] || first; //by default take the first
+            var reducer = zoom2_reducers[name] || first; // by default take the first
 
             var values = column.slice(1);
             var newValues = zoomAndReduceData(values, zoomInfo.currentZoom, reducer, _zoom2_maxItems);
@@ -96,26 +103,26 @@ c3ext.generate = function (options) {
         }
         Q.copy(data, originalData);
         refresh();
-    }
+    };
     chart.unload = function (names) {
         unload(names);
         refresh();
-    }
-
-    function unload(names) {
-        originalData.columns.removeAll(function (t) { names.contains(t); });
-    }
-
-
-    function refresh() {
-        var data = Q.copy(originalData)
-        getDataForZoom(data);
-        _chart_load_org(data);
     };
 
+    function unload(names) {
+        originalData.columns.removeAll(function (t) { 
+            names.contains(t); 
+        });
+    }
+
+    function refresh() {
+        var data = Q.copy(originalData);
+        getDataForZoom(data);
+        _chart_load_org(data);
+    }
 
     return chart;
-}
+};
 
 c3ext.ZoomBehavior = function (options) {
     var zoom = { __type: "ZoomBehavior" };
@@ -133,34 +140,37 @@ c3ext.ZoomBehavior = function (options) {
 
 
     zoom.setOptions = function (options) {
-        if (options == null)
+        if (options == null) {
             options = {};
+        }
         _zoom2_factor = options.factor || 1;
         _left = 0;
         totalItems = options.totalItems || 0;
         currentZoom = [0, totalItems];
         _zoomChanged = options.changed || _zoomChanged;
-    }
+    };
 
     zoom.setOptions(options);
 
-
     function verifyZoom(newZoom) {
+        var diff;
         //newZoom.sort();
         if (newZoom[1] > totalItems) {
-            var diff = newZoom[1] - totalItems;
+            diff = newZoom[1] - totalItems;
             newZoom[0] -= diff;
             newZoom[1] -= diff;
         }
         if (newZoom[0] < 0) {
-            var diff = newZoom[0] * -1;
+            diff = newZoom[0] * -1;
             newZoom[0] += diff;
             newZoom[1] += diff;
         }
-        if (newZoom[1] > totalItems)
+        if (newZoom[1] > totalItems) {
             newZoom[1] = totalItems;
-        if (newZoom[0] < 0)
+        }
+        if (newZoom[0] < 0) {
             newZoom[0] = 0;
+        }
     }
 
     function zoomAndPan(zoomFactor, left) {
@@ -172,8 +182,9 @@ c3ext.ZoomBehavior = function (options) {
     }
 
     function onZoomChanged() {
-        if (_zoomChanged != null)
+        if (_zoomChanged != null) {
             _zoomChanged(zoom.getZoom());
+        }
     }
     function applyZoomAndPan() {
         zoomAndPan(_zoom2_factor, _left);
@@ -186,74 +197,81 @@ c3ext.ZoomBehavior = function (options) {
 
     zoom.getZoom = function () {
         return { totalItems: totalItems, currentZoom: currentZoom.slice() };
-    }
+    };
 
     zoom.factor = function (factor, skipDraw) {
-        if (arguments.length == 0)
+        if (arguments.length === 0) {
             return _zoom2_factor;
+        }
         _zoom2_factor = factor;
-        if (_zoom2_factor < 1)
+        if (_zoom2_factor < 1) {
             _zoom2_factor = 1;
-        if (skipDraw)
+        }
+        if (skipDraw) {
             return;
+        }
         applyZoomAndPan();
-    }
+    };
+
     zoom.left = function (left, skipDraw) {
-        if (arguments.length == 0)
+        if (arguments.length === 0) {
             return _left;
+        }
         _left = left;
-        if (_left < 0)
+        if (_left < 0) {
             _left = 0;
+        }
         var pageSize = getItemsToShow();
         //_left += pageSize;
-        if (_left + pageSize > totalItems)
+        if (_left + pageSize > totalItems) {
             _left = totalItems - pageSize;
+        }
         console.log({ left: _left, pageSize: pageSize });
-        if (skipDraw)
+        if (skipDraw) {
             return;
+        }
         applyZoomAndPan();
-    }
+    };
 
     zoom.zoomAndPanByRatio = function (zoomRatio, panRatio) {
-
         var pageSize = getItemsToShow();
         var leftOffset = Math.round(pageSize * panRatio);
         var mouseLeft = _left + leftOffset;
         zoom.factor(zoom.factor() * zoomRatio, true);
 
         var finalLeft = mouseLeft;
-        if (zoomRatio != 1) {
+        if (zoomRatio !== 1) {
             var pageSize2 = getItemsToShow();
             var leftOffset2 = Math.round(pageSize2 * panRatio);
             finalLeft = mouseLeft - leftOffset2;
         }
         zoom.left(finalLeft, true);
         applyZoomAndPan();
-    }
+    };
 
     zoom.zoomIn = function () {
         zoom.zoomAndPanByRatio(2, 0);
-    }
+    };
 
     zoom.zoomOut = function () {
         zoom.zoomAndPanByRatio(0.5, 0);
-    }
+    };
 
     zoom.panLeft = function () {
         zoom.zoomAndPanByRatio(1, -1);
-    }
+    };
     zoom.panRight = function () {
         zoom.zoomAndPanByRatio(1, 1);
-    }
+    };
 
     zoom.reset = function () {
         _left = 0;
         _zoom2_factor = 1;
         applyZoomAndPan();
-    }
+    };
 
     function doZoom() {
-        if (deltaY != 0) {
+        if (deltaY !== 0) {
             var maxDelta = 10;
             var multiply = (maxDelta + deltaY) / maxDelta;
             //var factor = chart.zoom2.factor()*multiply;
@@ -281,42 +299,46 @@ c3ext.ZoomBehavior = function (options) {
     }
 
     return zoom;
+};
 
-}
-
-if (typeof (Q) == "undefined") {
-    var Q = function () {
-    };
+if (typeof Q === 'undefined') {
+    var Q = function () {};
 
     Q.copy = function (src, target, options, depth) {
-        ///<summary>Copies an object into a target object, recursively cloning any object or array in the way, overwrite=true will overwrite a primitive field value even if exists</summary>
+        ///<summary>Copies an object into a target object, recursively cloning any object or array in the way, overwrite=true will overwrite a primitive field value even if it exists</summary>
         ///<param name="src" />
         ///<param name="target" />
         ///<param name="options" type="Object">{ overwrite:false }</param>
         ///<returns type="Object">The copied object</returns>
-        if (depth == null)
+        if (depth == null) {
             depth = 0;
-        if (depth == 100) {
-            console.warn("Q.copy is in depth of 100 - possible circular reference")
+        }
+        if (depth === 100) {
+            console.warn("Q.copy is in depth of 100 - possible circular reference");
         }
         options = options || { overwrite: false };
-        if (src == target || src == null)
-            return target;
-        if (typeof (src) != "object") {
-            if (options.overwrite || target == null)
-                return src;
+        if (src === target || src == null) {
             return target;
         }
-        if (typeof (src.clone) == "function") {
-            if (options.overwrite || target == null)
+        if (typeof (src) !== "object") {
+            if (options.overwrite || target == null) {
+                return src;
+            }
+            return target;
+        }
+        if (typeof (src.clone) === "function") {
+            if (options.overwrite || target == null) {
                 return src.clone();
+            }
             return target;
         }
         if (target == null) {
-            if (src instanceof Array)
+            if (src instanceof Array) {
                 target = [];
-            else
+            }
+            else {
                 target = {};
+            }
         }
 
         if (src instanceof Array) {
@@ -336,45 +358,51 @@ if (typeof (Q) == "undefined") {
             target[p] = value2;
         }
         return target;
-    }
+    };
 }
-if (typeof (Timer) == "undefined") {
+
+if (typeof Timer === "undefined") {
     var Timer = function (action, ms) {
         this.action = action;
-        if (ms != null)
+        if (ms != null) {
             this.set(ms);
-    }
+        }
+    };
 
     Timer.prototype.set = function (ms) {
-        if (ms == null)
+        if (ms == null) {
             ms = this._ms;
-        else
+        }
+        else {
             this._ms = ms;
+        }
         this.clear();
-        if (ms == null)
+        if (ms == null) {
             return;
+        }
         this.timeout = window.setTimeout(this.onTick.bind(this), ms);
-    }
+    };
 
     Timer.prototype.onTick = function () {
         this.clear();
         this.action();
-    }
+    };
 
-    Timer.prototype.clear = function (ms) {
-        if (this.timeout == null)
+    Timer.prototype.clear = function () {
+        if (this.timeout == null) {
             return;
+        }
         window.clearTimeout(this.timeout);
         this.timeout = null;
-    }
+    };
 }
-if (typeof(Array.prototype.splitIntoChunksOf)=="undefined") {
+
+if (typeof Array.prototype.splitIntoChunksOf === "undefined") {
     Array.prototype.splitIntoChunksOf = function (countInEachChunk) {
-        var chunks = Math.ceil(this.length / countInEachChunk);
         var list = [];
         for (var i = 0; i < this.length; i += countInEachChunk) {
             list.push(this.slice(i, i + countInEachChunk));
         }
         return list;
-    }
+    };
 }
