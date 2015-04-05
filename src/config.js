@@ -201,7 +201,9 @@ c3_chart_internal_fn.getDefaultConfig = function () {
         header_color: undefined,
         header_border_show: false,
         header_border_color: undefined,
-        header_border_width: undefined
+        header_border_width: undefined,
+        // save/load in JSON format
+        json_original: undefined,
     };
 
     Object.keys(this.additionalConfig).forEach(function (key) {
