@@ -47,8 +47,8 @@ c3_chart_internal_fn.updateEventRect = function (eventRectUpdate) {
     var $$ = this, config = $$.config,
         x, y, w, h, rectW, rectX;
 
-    // set update selection if null
-    eventRectUpdate = eventRectUpdate || $$.eventRect.data(function (d) { return d; });
+    // Moved eventRectUpdate to only be used when in non-multiplexed mode.
+    // Otherwise you get an error when flowing multiplex data.
 
     if ($$.isMultipleX()) {
         // TODO: rotated not supported yet
@@ -58,6 +58,8 @@ c3_chart_internal_fn.updateEventRect = function (eventRectUpdate) {
         h = $$.height;
     }
     else {
+        // set update selection if null
+        eventRectUpdate = eventRectUpdate || $$.eventRect.data(function (d) { return d; });
         if (($$.isCustomX() || $$.isTimeSeries()) && !$$.isCategorized()) {
 
             // update index for x that is used by prevX and nextX
@@ -99,14 +101,15 @@ c3_chart_internal_fn.updateEventRect = function (eventRectUpdate) {
         y = config.axis_rotated ? rectX : 0;
         w = config.axis_rotated ? $$.width : rectW;
         h = config.axis_rotated ? rectW : $$.height;
+
+        eventRectUpdate
+            .attr('class', $$.classEvent.bind($$))
+            .attr("x", x)
+            .attr("y", y)
+            .attr("width", w)
+            .attr("height", h);
     }
 
-    eventRectUpdate
-        .attr('class', $$.classEvent.bind($$))
-        .attr("x", x)
-        .attr("y", y)
-        .attr("width", w)
-        .attr("height", h);
 };
 c3_chart_internal_fn.generateEventRectsForSingleX = function (eventRectEnter) {
     var $$ = this, d3 = $$.d3, config = $$.config;

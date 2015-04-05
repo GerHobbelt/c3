@@ -114,6 +114,11 @@ module.exports = (grunt) ->
             files:
               'c3.css': 'src/scss/main.scss'
 
+        karma:
+          unit:
+            configFile: 'karma.conf.js'
+            background: true
+
         copy:
           web:
             files: [
@@ -123,8 +128,10 @@ module.exports = (grunt) ->
               {expand: true, cwd: 'extensions/js/', src: ['**'], dest: 'htdocs/js/extensions/'},
             ]
 
+    grunt.loadNpmTasks 'grunt-karma'
+
 # dependencies:
-    grunt.registerTask 'build', ['concat', 'jshint', 'jasmine', 'sass', 'cssmin', 'uglify']
+    grunt.registerTask 'build', ['concat', 'jshint', 'jasmine', 'sass', 'cssmin', 'uglify', 'karma']
     grunt.registerTask 'update_web', ['build', 'copy:web']
 
 # main / default:

@@ -31,8 +31,14 @@ c3_chart_fn.flow = function (args) {
 
                 for (j = 0; j < length; j++) {
                     targets[i].values[j].index = tail + j;
-                    if (!$$.isTimeSeries() && !$$.isCustomX()) {
-                        targets[i].values[j].x = tail + j;
+                    if (!$$.isTimeSeries()) {
+                        if ($$.isCustomX()) {
+                            // If we have custom x, just use the value fed in
+                            targets[i].values[j].x = targets[i].values[j].x;
+                        } else {
+                            // otherwise make one based on the last index
+                            targets[i].values[j].x = tail + j;
+                        }
                     }
                 }
                 t.values = t.values.concat(targets[i].values);
