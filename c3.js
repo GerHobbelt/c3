@@ -551,7 +551,7 @@
         options = options || {};
         withY = getOption(options, "withY", true);
         withSubchart = getOption(options, "withSubchart", true);
-        withTransition = getOption(options, "withTransition", true);
+        withTransition = getOption(options, "withTransition", $$.config.transition_duration > 0);
         withTransform = getOption(options, "withTransform", false);
         withUpdateXDomain = getOption(options, "withUpdateXDomain", false);
         withUpdateOrgXDomain = getOption(options, "withUpdateOrgXDomain", false);
@@ -796,7 +796,7 @@
             transitions;
         options = options || {};
         // same with redraw
-        options.withTransition = getOption(options, "withTransition", true);
+        options.withTransition = getOption(options, "withTransition", $$.config.transition_duration > 0);
         options.withTransform = getOption(options, "withTransform", false);
         options.withLegend = getOption(options, "withLegend", false);
         // NOT same with redraw
@@ -4384,8 +4384,8 @@
         var texts, rects, tiles, background;
 
         options = options || {};
-        withTransition = getOption(options, "withTransition", true);
-        withTransitionForTransform = getOption(options, "withTransitionForTransform", true);
+        withTransition = getOption(options, "withTransition", $$.config.transition_duration > 0);
+        withTransitionForTransform = getOption(options, "withTransitionForTransform", withTransition);
 
         function getTextBox(textElement, id) {
             if (!$$.legendItemTextBox[id]) {
@@ -6715,8 +6715,13 @@
 
     c3_chart_fn.flow = function (args) {
         var $$ = this.internal,
-            targets, data, notfoundIds = [], orgDataCount = $$.getMaxDataCount(),
-            dataCount, domain, baseTarget, baseValue, length = 0, tail = 0, diff, to;
+            targets, data, 
+            notfoundIds = [], 
+            orgDataCount = $$.getMaxDataCount(),
+            dataCount, domain, baseTarget, baseValue, 
+            length = 0, 
+            tail = 0, 
+            diff, to;
 
         if (args.json) {
             data = $$.convertJsonToData(args.json, args.keys);
@@ -6734,7 +6739,8 @@
 
         // Update/Add data
         $$.data.targets.forEach(function (t) {
-            var found = false, i, j;
+            var found = false, 
+                i, j;
             for (i = 0; i < targets.length; i++) {
                 if (t.id === targets[i].id) {
                     found = true;
@@ -6762,7 +6768,9 @@
                     break;
                 }
             }
-            if (!found) { notfoundIds.push(t.id); }
+            if (!found) { 
+                notfoundIds.push(t.id); 
+            }
         });
 
         // Append null for not found targets
@@ -6816,7 +6824,9 @@
             length = 0;
             to = $$.isTimeSeries() ? $$.parseDate(args.to) : args.to;
             baseTarget.values.forEach(function (v) {
-                if (v.x < to) { length++; }
+                if (v.x < to) { 
+                    length++; 
+                }
             });
         } else if (isDefined(args.length)) {
             length = args.length;
@@ -6864,7 +6874,9 @@
     };
 
     c3_chart_internal_fn.generateFlow = function (args) {
-        var $$ = this, config = $$.config, d3 = $$.d3;
+        var $$ = this, 
+            config = $$.config, 
+            d3 = $$.d3;
 
         return function () {
             var targets = args.targets,
@@ -6879,7 +6891,9 @@
                 yForText = args.yForText,
                 duration = args.duration;
 
-            var translateX, scaleX = 1, transform,
+            var translateX, 
+                scaleX = 1, 
+                transform,
                 flowIndex = flow.index,
                 flowLength = flow.length,
                 flowStart = $$.getValueOnIndex($$.data.targets[0].values, flowIndex),
@@ -6909,7 +6923,9 @@
             // update x domain to generate axis elements for flow
             domain = $$.updateXDomain(targets, true, true);
             // update elements related to x scale
-            if ($$.updateXGrid) { $$.updateXGrid(true); }
+            if ($$.updateXGrid) { 
+                $$.updateXGrid(true); 
+            }
 
             // generate transform to flow
             if (!flow.orgDataCount) { // if empty
@@ -6952,7 +6968,10 @@
                 wait.add(xgridLines.transition().attr('transform', transform));
             })
             .call(wait, function () {
-                var i, shapes = [], texts = [], eventRects = [];
+                var i, 
+                    shapes = [], 
+                    texts = [], 
+                    eventRects = [];
 
                 // remove flowed elements
                 if (flowLength) {
@@ -7078,7 +7097,7 @@
 
     c3_chart_internal_fn.transformTo = function (targetIds, type, optionsForRedraw) {
         var $$ = this,
-            withTransitionForAxis = !$$.hasArcType(),
+            withTransitionForAxis = $$.config.transition_duration && !$$.hasArcType(),
             options = optionsForRedraw || {withTransitionForAxis: withTransitionForAxis};
         options.withTransitionForTransform = false;
         $$.transiting = false;
@@ -7128,39 +7147,50 @@
     };
 
     c3_chart_fn.regions = function (regions) {
-        var $$ = this.internal, config = $$.config;
-        if (!regions) { return config.regions; }
+        var $$ = this.internal, 
+            config = $$.config;
+        if (!regions) { 
+            return config.regions; 
+        }
         config.regions = regions;
         $$.redrawWithoutRescale();
         return config.regions;
     };
     c3_chart_fn.regions.add = function (regions) {
-        var $$ = this.internal, config = $$.config;
-        if (!regions) { return config.regions; }
+        var $$ = this.internal, 
+            config = $$.config;
+        if (!regions) { 
+            return config.regions; 
+        }
         config.regions = config.regions.concat(regions);
         $$.redrawWithoutRescale();
         return config.regions;
     };
     c3_chart_fn.regions.remove = function (options) {
-        var $$ = this.internal, config = $$.config,
+        var $$ = this.internal, 
+            config = $$.config,
             duration, classes, regions;
 
         options = options || {};
         duration = $$.getOption(options, "duration", config.transition_duration);
         classes = $$.getOption(options, "classes", [CLASS.region]);
 
-        regions = $$.main.select('.' + CLASS.regions).selectAll(classes.map(function (c) { return '.' + c; }));
+        regions = $$.main.select('.' + CLASS.regions).selectAll(classes.map(function (c) { 
+            return '.' + c; 
+        }));
         (duration ? regions.transition().duration(duration) : regions)
             .style('opacity', 0)
             .remove();
 
         config.regions = config.regions.filter(function (region) {
             var found = false;
-            if (!region['class']) {
+            if (!region.class) {
                 return true;
             }
-            region['class'].split(' ').forEach(function (c) {
-                if (classes.indexOf(c) >= 0) { found = true; }
+            region.class.split(' ').forEach(function (c) {
+                if (classes.indexOf(c) >= 0) { 
+                    found = true; 
+                }
             });
             return !found;
         });
