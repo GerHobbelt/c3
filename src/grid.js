@@ -108,6 +108,13 @@ c3_chart_internal_fn.updateGrid = function (duration) {
     $$.ygridLines = main.select('.' + CLASS.ygridLines).selectAll('.' + CLASS.ygridLine)
         .data(config.grid_y_lines);
     // enter
+    var dy_pos = function(d) {
+      if(yv(d) < 0) {
+        return 9;
+      } else {
+        return -5;
+      }
+    };
     ygridLine = $$.ygridLines.enter().append('g')
         .attr("class", function (d) { return CLASS.ygridLine + (d['class'] ? ' ' + d['class'] : ''); });
     ygridLine.append('line')
@@ -116,21 +123,29 @@ c3_chart_internal_fn.updateGrid = function (duration) {
         .attr("text-anchor", "end")
         .attr("transform", config.axis_rotated ? "rotate(-90)" : "")
         .attr('dx', config.axis_rotated ? 0 : -$$.margin.top)
-        .attr('dy', -5)
+        .attr('dy', dy_pos)
         .style("opacity", 0);
     // update
-    yv = $$.yv.bind($$);
+    var yv_pos = function(d) {
+      var yv = $$.yv(d);
+      if(yv < 0) {
+        return 1;
+      } else if (yv > $$.height) {
+        return $$.height - 1;
+      }
+      return yv;
+    };
     $$.ygridLines.select('line')
       .transition().duration(duration)
         .attr("x1", config.axis_rotated ? yv : 0)
         .attr("x2", config.axis_rotated ? yv : $$.width)
-        .attr("y1", config.axis_rotated ? 0 : yv)
-        .attr("y2", config.axis_rotated ? $$.height : yv)
+        .attr("y1", config.axis_rotated ? 0 : yv_pos)
+        .attr("y2", config.axis_rotated ? $$.height : yv_pos)
         .style("opacity", 1);
     $$.ygridLines.select('text')
       .transition().duration(duration)
         .attr("x", config.axis_rotated ? 0 : $$.width)
-        .attr("y", yv)
+        .attr("y", yv_pos)
         .text(function (d) { return d.text; })
         .style("opacity", 1);
     // exit
