@@ -128,6 +128,7 @@ c3_chart_internal_fn.getDefaultConfig = function () {
         axis_y2_tick_format: undefined,
         axis_y2_tick_outer: true,
         axis_y2_tick_values: null,
+        axis_y2_tick_rotate: 0,
         axis_y2_tick_count: undefined,
         axis_y2_padding: {},
         axis_y2_default: undefined,
