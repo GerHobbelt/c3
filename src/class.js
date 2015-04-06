@@ -120,7 +120,7 @@ c3_chart_internal_fn.classAreas = function (d) {
     return this.classShapes(d) + this.generateClass(CLASS.areas, d.id);
 };
 c3_chart_internal_fn.classRegion = function (d, i) {
-    return this.generateClass(CLASS.region, i) + ' ' + ('class' in d ? d['class'] : '');
+    return this.generateClass(CLASS.region, i) + ' ' + (d.class ? d.class : '');
 };
 c3_chart_internal_fn.classEvent = function (d) {
     return this.generateClass(CLASS.eventRect, d.index);

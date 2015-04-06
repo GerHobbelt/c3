@@ -1,5 +1,7 @@
 c3_chart_internal_fn.initGrid = function () {
-    var $$ = this, config = $$.config, d3 = $$.d3;
+    var $$ = this, 
+        config = $$.config, 
+        d3 = $$.d3;
     $$.grid = $$.main.append('g')
         .attr("clip-path", $$.clipPathForGrid)
         .attr('class', CLASS.grid);
@@ -16,10 +18,13 @@ c3_chart_internal_fn.initGrid = function () {
             .attr('class', CLASS.xgridFocus);
     }
     $$.xgrid = d3.selectAll([]);
-    if (!config.grid_lines_front) { $$.initGridLines(); }
+    if (!config.grid_lines_front) { 
+        $$.initGridLines(); 
+    }
 };
 c3_chart_internal_fn.initGridLines = function () {
-    var $$ = this, d3 = $$.d3;
+    var $$ = this, 
+        d3 = $$.d3;
     $$.gridLines = $$.main.append('g')
         .attr("clip-path", $$.clipPathForGrid)
         .attr('class', CLASS.grid + ' ' + CLASS.gridLines);
@@ -28,7 +33,9 @@ c3_chart_internal_fn.initGridLines = function () {
     $$.xgridLines = d3.selectAll([]);
 };
 c3_chart_internal_fn.updateXGrid = function (withoutUpdate) {
-    var $$ = this, config = $$.config, d3 = $$.d3,
+    var $$ = this, 
+        config = $$.config, 
+        d3 = $$.d3,
         xgridData = $$.generateGridData(config.grid_x_type, $$.x),
         tickOffset = $$.isCategorized() ? $$.xAxis.tickOffset() : 0;
 
@@ -49,13 +56,16 @@ c3_chart_internal_fn.updateXGrid = function (withoutUpdate) {
     $$.xgrid.enter().append('line').attr("class", CLASS.xgrid);
     if (!withoutUpdate) {
         $$.xgrid.attr($$.xgridAttr)
-            .style("opacity", function () { return +d3.select(this).attr(config.axis_rotated ? 'y1' : 'x1') === (config.axis_rotated ? $$.height : 0) ? 0 : 1; });
+            .style("opacity", function () { 
+                return +d3.select(this).attr(config.axis_rotated ? 'y1' : 'x1') === (config.axis_rotated ? $$.height : 0) ? 0 : 1; 
+            });
     }
     $$.xgrid.exit().remove();
 };
 
 c3_chart_internal_fn.updateYGrid = function () {
-    var $$ = this, config = $$.config,
+    var $$ = this, 
+        config = $$.config,
         gridValues = $$.yAxis.tickValues() || $$.y.ticks(config.grid_y_ticks);
     $$.ygrid = $$.main.select('.' + CLASS.ygrids).selectAll('.' + CLASS.ygrid)
         .data(gridValues);
@@ -82,7 +92,9 @@ c3_chart_internal_fn.yGridTextX = function (d) {
     return d.position === 'start' ? 0 : d.position === 'middle' ? this.width / 2 : this.width;
 };
 c3_chart_internal_fn.updateGrid = function (duration) {
-    var $$ = this, main = $$.main, config = $$.config,
+    var $$ = this, 
+        main = $$.main, 
+        config = $$.config,
         xgridLine, ygridLine, yv;
 
     // hide if arc type
@@ -96,7 +108,9 @@ c3_chart_internal_fn.updateGrid = function (duration) {
         .data(config.grid_x_lines);
     // enter
     xgridLine = $$.xgridLines.enter().append('g')
-        .attr("class", function (d) { return CLASS.xgridLine + (d['class'] ? ' ' + d['class'] : ''); });
+        .attr("class", function (d) { 
+            return CLASS.xgridLine + (d.class ? ' ' + d.class : ''); 
+        });
     xgridLine.append('line')
         .style("opacity", 0);
     xgridLine.append('text')
@@ -120,7 +134,9 @@ c3_chart_internal_fn.updateGrid = function (duration) {
         .data(config.grid_y_lines);
     // enter
     ygridLine = $$.ygridLines.enter().append('g')
-        .attr("class", function (d) { return CLASS.ygridLine + (d['class'] ? ' ' + d['class'] : ''); });
+        .attr("class", function (d) { 
+            return CLASS.ygridLine + (d.class ? ' ' + d.class : ''); 
+        });
     ygridLine.append('line')
         .style("opacity", 0);
     ygridLine.append('text')
@@ -142,7 +158,9 @@ c3_chart_internal_fn.updateGrid = function (duration) {
       .transition().duration(duration)
         .attr("x", config.axis_rotated ? $$.xGridTextX.bind($$) : $$.yGridTextX.bind($$))
         .attr("y", yv)
-        .text(function (d) { return d.text; })
+        .text(function (d) { 
+            return d.text; 
+        })
         .style("opacity", 1);
     // exit
     $$.ygridLines.exit().transition().duration(duration)
@@ -150,7 +168,10 @@ c3_chart_internal_fn.updateGrid = function (duration) {
         .remove();
 };
 c3_chart_internal_fn.redrawGrid = function (withTransition) {
-    var $$ = this, config = $$.config, xv = $$.xv.bind($$),
+    console.count('redrawGrid');
+    var $$ = this, 
+        config = $$.config, 
+        xv = $$.xv.bind($$),
         lines = $$.xgridLines.select('line'),
         texts = $$.xgridLines.select('text');
     return [
@@ -163,18 +184,27 @@ c3_chart_internal_fn.redrawGrid = function (withTransition) {
         (withTransition ? texts.transition() : texts)
             .attr("x", config.axis_rotated ? $$.yGridTextX.bind($$) : $$.xGridTextX.bind($$))
             .attr("y", xv)
-            .text(function (d) { return d.text; })
+            .text(function (d) { 
+                return d.text; 
+            })
             .style("opacity", 1)
     ];
 };
 c3_chart_internal_fn.showXGridFocus = function (selectedData) {
-    var $$ = this, config = $$.config,
-        dataToShow = selectedData.filter(function (d) { return d && isValue(d.value); }),
+    var $$ = this, 
+        config = $$.config,
+        dataToShow = selectedData.filter(function (d) { 
+            return d && isValue(d.value); 
+        }),
         focusEl = $$.main.selectAll('line.' + CLASS.xgridFocus),
         xx = $$.xx.bind($$);
-    if (! config.tooltip_show) { return; }
+    if (!config.tooltip_show) { 
+        return; 
+    }
     // Hide when scatter plot exists
-    if ($$.hasType('scatter') || $$.hasArcType()) { return; }
+    if ($$.hasType('scatter') || $$.hasArcType()) { 
+        return; 
+    }
     focusEl
         .style("visibility", "visible")
         .data([dataToShow[0]])
@@ -186,7 +216,8 @@ c3_chart_internal_fn.hideXGridFocus = function () {
     this.main.select('line.' + CLASS.xgridFocus).style("visibility", "hidden");
 };
 c3_chart_internal_fn.updateXgridFocus = function () {
-    var $$ = this, config = $$.config;
+    var $$ = this, 
+        config = $$.config;
     $$.main.select('line.' + CLASS.xgridFocus)
         .attr("x1", config.axis_rotated ? 0 : -10)
         .attr("x2", config.axis_rotated ? $$.width : -10)
@@ -195,7 +226,8 @@ c3_chart_internal_fn.updateXgridFocus = function () {
 };
 c3_chart_internal_fn.generateGridData = function (type, scale) {
     var $$ = this,
-        gridData = [], xDomain, firstYear, lastYear, i,
+        gridData = [], 
+        xDomain, firstYear, lastYear, i,
         tickNum = $$.main.select("." + CLASS.axisX).selectAll('.tick').size();
     if (type === 'year') {
         xDomain = $$.getXDomain();
@@ -207,7 +239,9 @@ c3_chart_internal_fn.generateGridData = function (type, scale) {
     } else {
         gridData = scale.ticks(10);
         if (gridData.length > tickNum) { // use only int
-            gridData = gridData.filter(function (d) { return ("" + d).indexOf('.') < 0; });
+            gridData = gridData.filter(function (d) { 
+                return ('' + d).indexOf('.') < 0; 
+            });
         }
     }
     return gridData;
@@ -216,17 +250,22 @@ c3_chart_internal_fn.getGridFilterToRemove = function (params) {
     return params ? function (line) {
         var found = false;
         [].concat(params).forEach(function (param) {
-            if ((('value' in param && line.value === param.value) || ('class' in param && line['class'] === param['class']))) {
+            if (((param.value != null && line.value === param.value) || (param.class != null && line.class === param.class))) {
                 found = true;
             }
         });
         return found;
-    } : function () { return true; };
+    } : function () { 
+        return true; 
+    };
 };
 c3_chart_internal_fn.removeGridLines = function (params, forX) {
-    var $$ = this, config = $$.config,
+    var $$ = this, 
+        config = $$.config,
         toRemove = $$.getGridFilterToRemove(params),
-        toShow = function (line) { return !toRemove(line); },
+        toShow = function (line) { 
+            return !toRemove(line); 
+        },
         classLines = forX ? CLASS.xgridLines : CLASS.ygridLines,
         classLine = forX ? CLASS.xgridLine : CLASS.ygridLine;
     $$.main.select('.' + classLines).selectAll('.' + classLine).filter(toRemove)

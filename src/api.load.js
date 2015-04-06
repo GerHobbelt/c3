@@ -5,40 +5,40 @@ c3_chart_fn.load = function (args) {
         $$.addXs(args.xs);
     }
     // update classes if exists
-    if ('classes' in args) {
+    if (args.classes) {
         Object.keys(args.classes).forEach(function (id) {
             config.data_classes[id] = args.classes[id];
         });
     }
     // update categories if exists
-    if ('categories' in args && $$.isCategorized()) {
+    if (args.categories && $$.isCategorized()) {
         config.axis_x_categories = args.categories;
     }
     // update names if exists
-    if ('names' in args) {
+    if (args.names) {
         Object.keys(args.names).forEach(function (id) {
             config.data_names[id] = args.names[id];
         });
     }
     // update axes if exists
-    if ('axes' in args) {
+    if (args.axes) {
         Object.keys(args.axes).forEach(function (id) {
             config.data_axes[id] = args.axes[id];
         });
     }
     // update colors if exists
-    if ('colors' in args) {
+    if (args.colors) {
         Object.keys(args.colors).forEach(function (id) {
             config.data_colors[id] = args.colors[id];
         });
     }
     // use cache if exists
-    if ('cacheIds' in args && $$.hasCaches(args.cacheIds)) {
+    if (args.cacheIds && $$.hasCaches(args.cacheIds)) {
         $$.load($$.getCaches(args.cacheIds), args.done);
         return;
     }
-    // unload if needed
-    if ('unload' in args) {
+    // unload if needed (args.unload can be a boolean value TRUE or an ID string or an array of IDs to feed to mapToTargetIds())
+    if (args.unload) {
         // TODO: do not unload if target will load (included in url/rows/columns)
         $$.unload($$.mapToTargetIds((typeof args.unload === 'boolean' && args.unload) ? null : args.unload), function () {
             $$.loadFromArgs(args);

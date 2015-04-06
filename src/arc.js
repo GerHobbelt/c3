@@ -1,7 +1,11 @@
 c3_chart_internal_fn.initPie = function () {
-    var $$ = this, d3 = $$.d3, config = $$.config;
+    var $$ = this, 
+        d3 = $$.d3, 
+        config = $$.config;
     $$.pie = d3.layout.pie().value(function (d) {
-        return d.values.reduce(function (a, b) { return a + b.value; }, 0);
+        return d.values.reduce(function (a, b) { 
+            return a + b.value; 
+        }, 0);
     });
     if (!config.data_order) {
         $$.pie.sort(null);
@@ -9,7 +13,8 @@ c3_chart_internal_fn.initPie = function () {
 };
 
 c3_chart_internal_fn.updateRadius = function () {
-    var $$ = this, config = $$.config,
+    var $$ = this, 
+        config = $$.config,
         w = config.gauge_width || config.donut_width;
     $$.radiusExpanded = Math.min($$.arcWidth, $$.arcHeight) / 2;
     $$.radius = $$.radiusExpanded * 0.95;
@@ -25,9 +30,13 @@ c3_chart_internal_fn.updateArc = function () {
 };
 
 c3_chart_internal_fn.updateAngle = function (d) {
-    var $$ = this, config = $$.config,
-        found = false, index = 0,
-        gMin = config.gauge_min, gMax = config.gauge_max, gTic, gValue;
+    var $$ = this, 
+        config = $$.config,
+        found = false, 
+        index = 0,
+        gMin = config.gauge_min, 
+        gMax = config.gauge_max, 
+        gTic, gValue;
     $$.pie($$.filterTargetsToShow($$.data.targets)).forEach(function (t) {
         if (! found && t.data.id === d.data.id) {
             found = true;
@@ -56,7 +65,9 @@ c3_chart_internal_fn.getSvgArc = function () {
         arc = $$.d3.svg.arc().outerRadius($$.radius).innerRadius($$.innerRadius),
         newArc = function (d, withoutUpdate) {
             var updated;
-            if (withoutUpdate) { return arc(d); } // for interpolate
+            if (withoutUpdate) { // for interpolate 
+                return arc(d); 
+            } 
             updated = $$.updateAngle(d);
             return updated ? arc(updated) : "M 0 0";
         };
@@ -81,7 +92,9 @@ c3_chart_internal_fn.getArc = function (d, withoutUpdate, force) {
 
 c3_chart_internal_fn.transformForArcLabel = function (d) {
     var $$ = this,
-        updated = $$.updateAngle(d), c, x, y, h, ratio, translate = "";
+        updated = $$.updateAngle(d), 
+        c, x, y, h, ratio, 
+        translate = "";
     if (updated && !$$.hasType('gauge')) {
         c = this.svgArc.centroid(updated);
         x = isNaN(c[0]) ? 0 : c[0];
@@ -112,18 +125,23 @@ c3_chart_internal_fn.convertToArcData = function (d) {
 c3_chart_internal_fn.textForArcLabel = function (d) {
     var $$ = this,
         updated, value, ratio, id, format;
-    if (! $$.shouldShowArcLabel()) { return ""; }
+    if (! $$.shouldShowArcLabel()) { 
+        return ""; 
+    }
     updated = $$.updateAngle(d);
     value = updated ? updated.value : null;
     ratio = $$.getArcRatio(updated);
     id = d.data.id;
-    if (! $$.hasType('gauge') && ! $$.meetsArcLabelThreshold(ratio)) { return ""; }
+    if (! $$.hasType('gauge') && ! $$.meetsArcLabelThreshold(ratio)) { 
+        return ""; 
+    }
     format = $$.getArcLabelFormat();
     return format ? format(value, ratio, id) : $$.defaultArcValueFormat(value, ratio);
 };
 
 c3_chart_internal_fn.expandArc = function (targetIds) {
-    var $$ = this, interval;
+    var $$ = this, 
+        interval;
 
     // MEMO: avoid to cancel transition
     if ($$.transiting) {
@@ -141,7 +159,9 @@ c3_chart_internal_fn.expandArc = function (targetIds) {
     targetIds = $$.mapToTargetIds(targetIds);
 
     $$.svg.selectAll($$.selectorTargets(targetIds, '.' + CLASS.chartArc)).each(function (d) {
-        if (! $$.shouldExpand(d.data.id)) { return; }
+        if (! $$.shouldExpand(d.data.id)) { 
+            return; 
+        }
         $$.d3.select(this).selectAll('path')
             .transition().duration(50)
             .attr("d", $$.svgArcExpanded)
@@ -158,7 +178,9 @@ c3_chart_internal_fn.expandArc = function (targetIds) {
 c3_chart_internal_fn.unexpandArc = function (targetIds) {
     var $$ = this;
 
-    if ($$.transiting) { return; }
+    if ($$.transiting) { 
+        return; 
+    }
 
     targetIds = $$.mapToTargetIds(targetIds);
 
@@ -170,12 +192,15 @@ c3_chart_internal_fn.unexpandArc = function (targetIds) {
 };
 
 c3_chart_internal_fn.shouldExpand = function (id) {
-    var $$ = this, config = $$.config;
+    var $$ = this, 
+        config = $$.config;
     return ($$.isDonutType(id) && config.donut_expand) || ($$.isGaugeType(id) && config.gauge_expand) || ($$.isPieType(id) && config.pie_expand);
 };
 
 c3_chart_internal_fn.shouldShowArcLabel = function () {
-    var $$ = this, config = $$.config, shouldShow = true;
+    var $$ = this, 
+        config = $$.config, 
+        shouldShow = true;
     if ($$.hasType('donut')) {
         shouldShow = config.donut_label_show;
     } else if ($$.hasType('pie')) {
@@ -186,13 +211,15 @@ c3_chart_internal_fn.shouldShowArcLabel = function () {
 };
 
 c3_chart_internal_fn.meetsArcLabelThreshold = function (ratio) {
-    var $$ = this, config = $$.config,
+    var $$ = this, 
+        config = $$.config,
         threshold = $$.hasType('donut') ? config.donut_label_threshold : config.pie_label_threshold;
     return ratio >= threshold;
 };
 
 c3_chart_internal_fn.getArcLabelFormat = function () {
-    var $$ = this, config = $$.config,
+    var $$ = this, 
+        config = $$.config,
         format = config.pie_label_format;
     if ($$.hasType('gauge')) {
         format = config.gauge_label_format;
@@ -208,14 +235,17 @@ c3_chart_internal_fn.getArcTitle = function () {
 };
 
 c3_chart_internal_fn.updateTargetsForArc = function (targets) {
-    var $$ = this, main = $$.main,
+    var $$ = this, 
+        main = $$.main,
         mainPieUpdate, mainPieEnter,
         classChartArc = $$.classChartArc.bind($$),
         classArcs = $$.classArcs.bind($$),
         classFocus = $$.classFocus.bind($$);
     mainPieUpdate = main.select('.' + CLASS.chartArcs).selectAll('.' + CLASS.chartArc)
         .data($$.pie(targets))
-        .attr("class", function (d) { return classChartArc(d) + classFocus(d.data); });
+        .attr("class", function (d) { 
+            return classChartArc(d) + classFocus(d.data); 
+        });
     mainPieEnter = mainPieUpdate.enter().append("g")
         .attr("class", classChartArc);
     mainPieEnter.append('g')
@@ -241,14 +271,22 @@ c3_chart_internal_fn.initArc = function () {
 };
 
 c3_chart_internal_fn.redrawArc = function (duration, durationForExit, withTransform) {
-    var $$ = this, d3 = $$.d3, config = $$.config, main = $$.main,
+    console.count('redrawArc');
+    var $$ = this, 
+        d3 = $$.d3, 
+        config = $$.config, 
+        main = $$.main,
         mainArc;
     mainArc = main.selectAll('.' + CLASS.arcs).selectAll('.' + CLASS.arc)
         .data($$.arcData.bind($$));
     mainArc.enter().append('path')
         .attr("class", $$.classArc.bind($$))
-        .style("fill", function (d) { return $$.color(d.data); })
-        .style("cursor", function (d) { return config.interaction_enabled && config.data_selection_isselectable(d) ? "pointer" : null; })
+        .style("fill", function (d) { 
+            return $$.color(d.data); 
+        })
+        .style("cursor", function (d) { 
+            return config.interaction_enabled && config.data_selection_isselectable(d) ? "pointer" : null; 
+        })
         .style("opacity", 0)
         .each(function (d) {
             if ($$.isGaugeType(d.data)) {
@@ -257,8 +295,12 @@ c3_chart_internal_fn.redrawArc = function (duration, durationForExit, withTransf
             this._current = d;
         });
     mainArc
-        .attr("transform", function (d) { return !$$.isGaugeType(d.data) && withTransform ? "scale(0)" : ""; })
-        .style("opacity", function (d) { return d === this._current ? 0 : 1; })
+        .attr("transform", function (d) { 
+            return !$$.isGaugeType(d.data) && withTransform ? "scale(0)" : ""; 
+        })
+        .style("opacity", function (d) { 
+            return d === this._current ? 0 : 1; 
+        })
         .on('mouseover', config.interaction_enabled ? function (d) {
             var updated, arcData;
             if ($$.transiting) { // skip while transiting
@@ -308,12 +350,17 @@ c3_chart_internal_fn.redrawArc = function (duration, durationForExit, withTransf
                 $$.config.data_onclick.call($$.api, arcData, this);
             }
         } : null)
-        .each(function () { $$.transiting = true; })
+        .each(function () { 
+            $$.transiting = true; 
+        })
         .transition().duration(duration)
         .attrTween("d", function (d) {
-            var updated = $$.updateAngle(d), interpolate;
+            var updated = $$.updateAngle(d), 
+                interpolate;
             if (! updated) {
-                return function () { return "M 0 0"; };
+                return function () { 
+                    return "M 0 0"; 
+                };
             }
             //                if (this._current === d) {
             //                    this._current = {
@@ -348,12 +395,18 @@ c3_chart_internal_fn.redrawArc = function (duration, durationForExit, withTransf
         .remove();
     main.selectAll('.' + CLASS.chartArc).select('text')
         .style("opacity", 0)
-        .attr('class', function (d) { return $$.isGaugeType(d.data) ? CLASS.gaugeValue : ''; })
+        .attr('class', function (d) { 
+            return $$.isGaugeType(d.data) ? CLASS.gaugeValue : ''; 
+        })
         .text($$.textForArcLabel.bind($$))
         .attr("transform", $$.transformForArcLabel.bind($$))
-        .style('font-size', function (d) { return $$.isGaugeType(d.data) ? Math.round($$.radius / 5) + 'px' : ''; })
+        .style('font-size', function (d) { 
+            return $$.isGaugeType(d.data) ? Math.round($$.radius / 5) + 'px' : ''; 
+        })
       .transition().duration(duration)
-        .style("opacity", function (d) { return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? 1 : 0; });
+        .style("opacity", function (d) { 
+            return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? 1 : 0; 
+        });
     main.select('.' + CLASS.chartArcsTitle)
         .style("opacity", $$.hasType('donut') || $$.hasType('gauge') ? 1 : 0);
 

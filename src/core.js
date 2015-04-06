@@ -523,6 +523,7 @@ c3_chart_internal_fn.showTargets = function () {
 };
 
 c3_chart_internal_fn.redraw = function (options, transitions) {
+    console.count('redraw');
     var $$ = this, 
         main = $$.main, 
         d3 = $$.d3, 
@@ -813,6 +814,7 @@ c3_chart_internal_fn.updateAndRedraw = function (options) {
     $$.redraw(options, transitions);
 };
 c3_chart_internal_fn.redrawWithoutRescale = function () {
+    console.count('redrawWithoutRescale');
     this.redraw({
         withY: false,
         withSubchart: false,

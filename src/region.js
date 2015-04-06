@@ -5,7 +5,8 @@ c3_chart_internal_fn.initRegion = function () {
         .attr("class", CLASS.regions);
 };
 c3_chart_internal_fn.updateRegion = function (duration) {
-    var $$ = this, config = $$.config;
+    var $$ = this, 
+        config = $$.config;
 
     // hide if arc type
     $$.region.style('visibility', $$.hasArcType() ? 'hidden' : 'visible');
@@ -21,6 +22,7 @@ c3_chart_internal_fn.updateRegion = function (duration) {
         .remove();
 };
 c3_chart_internal_fn.redrawRegion = function (withTransition) {
+    console.count('redrawRegion');
     var $$ = this,
         regions = $$.mainRegion.selectAll('rect'),
         x = $$.regionX.bind($$),
@@ -33,46 +35,58 @@ c3_chart_internal_fn.redrawRegion = function (withTransition) {
             .attr("y", y)
             .attr("width", w)
             .attr("height", h)
-            .style("fill-opacity", function (d) { return isValue(d.opacity) ? d.opacity : 0.1; })
+            .style("fill-opacity", function (d) { 
+                return isValue(d.opacity) ? d.opacity : 0.1; 
+            })
     ];
 };
 c3_chart_internal_fn.regionX = function (d) {
-    var $$ = this, config = $$.config,
-        xPos, yScale = d.axis === 'y' ? $$.y : $$.y2;
+    var $$ = this, 
+        config = $$.config,
+        xPos, 
+        yScale = d.axis === 'y' ? $$.y : $$.y2;
     if (d.axis === 'y' || d.axis === 'y2') {
-        xPos = config.axis_rotated ? ('start' in d ? yScale(d.start) : 0) : 0;
+        xPos = config.axis_rotated ? (d.start ? yScale(d.start) : 0) : 0;
     } else {
-        xPos = config.axis_rotated ? 0 : ('start' in d ? $$.x($$.isTimeSeries() ? $$.parseDate(d.start).valueOf() : d.start) : 0);
+        xPos = config.axis_rotated ? 0 : (d.start ? $$.x($$.isTimeSeries() ? $$.parseDate(d.start).valueOf() : d.start) : 0);
     }
     return xPos;
 };
 c3_chart_internal_fn.regionY = function (d) {
-    var $$ = this, config = $$.config,
-        yPos, yScale = d.axis === 'y' ? $$.y : $$.y2;
+    var $$ = this, 
+        config = $$.config,
+        yPos, 
+        yScale = d.axis === 'y' ? $$.y : $$.y2;
     if (d.axis === 'y' || d.axis === 'y2') {
-        yPos = config.axis_rotated ? 0 : ('end' in d ? yScale(d.end) : 0);
+        yPos = config.axis_rotated ? 0 : (d.end ? yScale(d.end) : 0);
     } else {
-        yPos = config.axis_rotated ? ('start' in d ? $$.x($$.isTimeSeries() ? $$.parseDate(d.start).valueOf() : d.start) : 0) : 0;
+        yPos = config.axis_rotated ? (d.start ? $$.x($$.isTimeSeries() ? $$.parseDate(d.start).valueOf() : d.start) : 0) : 0;
     }
     return yPos;
 };
 c3_chart_internal_fn.regionWidth = function (d) {
-    var $$ = this, config = $$.config,
-        start = $$.regionX(d), end, yScale = d.axis === 'y' ? $$.y : $$.y2;
+    var $$ = this, 
+        config = $$.config,
+        start = $$.regionX(d), 
+        end, 
+        yScale = d.axis === 'y' ? $$.y : $$.y2;
     if (d.axis === 'y' || d.axis === 'y2') {
-        end = config.axis_rotated ? ('end' in d ? yScale(d.end) : $$.width) : $$.width;
+        end = config.axis_rotated ? (d.end ? yScale(d.end) : $$.width) : $$.width;
     } else {
-        end = config.axis_rotated ? $$.width : ('end' in d ? $$.x($$.isTimeSeries() ? $$.parseDate(d.end).valueOf() : d.end) : $$.width);
+        end = config.axis_rotated ? $$.width : (d.end ? $$.x($$.isTimeSeries() ? $$.parseDate(d.end).valueOf() : d.end) : $$.width);
     }
     return end < start ? 0 : end - start;
 };
 c3_chart_internal_fn.regionHeight = function (d) {
-    var $$ = this, config = $$.config,
-        start = this.regionY(d), end, yScale = d.axis === 'y' ? $$.y : $$.y2;
+    var $$ = this, 
+        config = $$.config,
+        start = this.regionY(d), 
+        end, 
+        yScale = d.axis === 'y' ? $$.y : $$.y2;
     if (d.axis === 'y' || d.axis === 'y2') {
-        end = config.axis_rotated ? $$.height : ('start' in d ? yScale(d.start) : $$.height);
+        end = config.axis_rotated ? $$.height : (d.start ? yScale(d.start) : $$.height);
     } else {
-        end = config.axis_rotated ? ('end' in d ? $$.x($$.isTimeSeries() ? $$.parseDate(d.end).valueOf() : d.end) : $$.height) : $$.height;
+        end = config.axis_rotated ? (d.end ? $$.x($$.isTimeSeries() ? $$.parseDate(d.end).valueOf() : d.end) : $$.height) : $$.height;
     }
     return end < start ? 0 : end - start;
 };

@@ -22,6 +22,7 @@ c3_chart_internal_fn.initHeader = function() {
   }
 };
 c3_chart_internal_fn.redrawHeader = function () {
+    console.count('redrawHeader');
     var $$ = this;
     if ($$.header) {
         $$.header

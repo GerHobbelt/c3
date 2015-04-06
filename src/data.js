@@ -330,18 +330,22 @@ c3_chart_internal_fn.isNoneArc = function (d) {
     return this.hasTarget(this.data.targets, d.id);
 },
 c3_chart_internal_fn.isArc = function (d) {
-    return 'data' in d && this.hasTarget(this.data.targets, d.data.id);
+    return d.data && this.hasTarget(this.data.targets, d.data.id);
 };
 c3_chart_internal_fn.findSameXOfValues = function (values, index) {
     var i, 
         targetX = values[index].x, 
         sames = [];
     for (i = index - 1; i >= 0; i--) {
-        if (targetX !== values[i].x) { break; }
+        if (targetX !== values[i].x) { 
+            break; 
+        }
         sames.push(values[i]);
     }
     for (i = index; i < values.length; i++) {
-        if (targetX !== values[i].x) { break; }
+        if (targetX !== values[i].x) { 
+            break; 
+        }
         sames.push(values[i]);
     }
     return sames;

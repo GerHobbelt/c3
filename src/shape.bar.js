@@ -4,14 +4,17 @@ c3_chart_internal_fn.initBar = function () {
         .attr("class", CLASS.chartBars);
 };
 c3_chart_internal_fn.updateTargetsForBar = function (targets) {
-    var $$ = this, config = $$.config,
+    var $$ = this, 
+        config = $$.config,
         mainBarUpdate, mainBarEnter,
         classChartBar = $$.classChartBar.bind($$),
         classBars = $$.classBars.bind($$),
         classFocus = $$.classFocus.bind($$);
     mainBarUpdate = $$.main.select('.' + CLASS.chartBars).selectAll('.' + CLASS.chartBar)
         .data(targets)
-        .attr('class', function (d) { return classChartBar(d) + classFocus(d); });
+        .attr('class', function (d) { 
+            return classChartBar(d) + classFocus(d); 
+        });
     mainBarEnter = mainBarUpdate.enter().append('g')
         .attr('class', classChartBar)
         .style('opacity', 0)
@@ -19,7 +22,9 @@ c3_chart_internal_fn.updateTargetsForBar = function (targets) {
     // Bars for each data
     mainBarEnter.append('g')
         .attr("class", classBars)
-        .style("cursor", function (d) { return config.data_selection_isselectable(d) ? "pointer" : null; });
+        .style("cursor", function (d) { 
+            return config.data_selection_isselectable(d) ? "pointer" : null; 
+        });
 
 };
 c3_chart_internal_fn.updateBar = function (durationForExit) {
@@ -27,7 +32,9 @@ c3_chart_internal_fn.updateBar = function (durationForExit) {
         barData = $$.barData.bind($$),
         classBar = $$.classBar.bind($$),
         initialOpacity = $$.initialOpacity.bind($$),
-        color = function (d) { return $$.color(d.id); };
+        color = function (d) { 
+            return $$.color(d.id); 
+        };
     $$.mainBar = $$.main.selectAll('.' + CLASS.bars).selectAll('.' + CLASS.bar)
         .data(barData);
     $$.mainBar.enter().append('path')
@@ -41,6 +48,7 @@ c3_chart_internal_fn.updateBar = function (durationForExit) {
         .remove();
 };
 c3_chart_internal_fn.redrawBar = function (drawBar, withTransition) {
+    console.count('redrawBar');
     return [
         (withTransition ? this.mainBar.transition() : this.mainBar)
             .attr('d', drawBar)
@@ -49,7 +57,8 @@ c3_chart_internal_fn.redrawBar = function (drawBar, withTransition) {
     ];
 };
 c3_chart_internal_fn.getBarW = function (axis, barTargetsNum) {
-    var $$ = this, config = $$.config,
+    var $$ = this, 
+        config = $$.config,
         w = typeof config.bar_width === 'number' ? config.bar_width : barTargetsNum ? (axis.tickInterval() * config.bar_width_ratio) / barTargetsNum : 0;
     return config.bar_width_max && w > config.bar_width_max ? config.bar_width_max : w;
 };
@@ -59,7 +68,9 @@ c3_chart_internal_fn.getBars = function (i, id) {
 };
 c3_chart_internal_fn.expandBars = function (i, id, reset) {
     var $$ = this;
-    if (reset) { $$.unexpandBars(); }
+    if (reset) { 
+        $$.unexpandBars(); 
+    }
     $$.getBars(i, id).classed(CLASS.EXPANDED, true);
 };
 c3_chart_internal_fn.unexpandBars = function (i) {
@@ -67,7 +78,8 @@ c3_chart_internal_fn.unexpandBars = function (i) {
     $$.getBars(i).classed(CLASS.EXPANDED, false);
 };
 c3_chart_internal_fn.generateDrawBar = function (barIndices, isSub) {
-    var $$ = this, config = $$.config,
+    var $$ = this, 
+        config = $$.config,
         getPoints = $$.generateGetBarPoints(barIndices, isSub);
     return function (d, i) {
         // 4 points that make a bar
@@ -101,7 +113,9 @@ c3_chart_internal_fn.generateGetBarPoints = function (barIndices, isSub) {
             posX = barX(d), posY = barY(d);
         // fix posY not to overflow opposite quadrant
         if ($$.config.axis_rotated) {
-            if ((0 < d.value && posY < y0) || (d.value < 0 && y0 < posY)) { posY = y0; }
+            if ((0 < d.value && posY < y0) || (d.value < 0 && y0 < posY)) { 
+                posY = y0; 
+            }
         }
         // 4 points that make a bar
         return [
@@ -113,10 +127,18 @@ c3_chart_internal_fn.generateGetBarPoints = function (barIndices, isSub) {
     };
 };
 c3_chart_internal_fn.isWithinBar = function (that) {
-    var mouse = this.d3.mouse(that), box = that.getBoundingClientRect(),
-        seg0 = that.pathSegList.getItem(0), seg1 = that.pathSegList.getItem(1),
-        x = Math.min(seg0.x, seg1.x), y = Math.min(seg0.y, seg1.y),
-        w = box.width, h = box.height, offset = 2,
-        sx = x - offset, ex = x + w + offset, sy = y + h + offset, ey = y - offset;
+    var mouse = this.d3.mouse(that), 
+        box = that.getBoundingClientRect(),
+        seg0 = that.pathSegList.getItem(0), 
+        seg1 = that.pathSegList.getItem(1),
+        x = Math.min(seg0.x, seg1.x), 
+        y = Math.min(seg0.y, seg1.y),
+        w = box.width, 
+        h = box.height, 
+        offset = 2,
+        sx = x - offset, 
+        ex = x + w + offset, 
+        sy = y + h + offset, 
+        ey = y - offset;
     return sx < mouse[0] && mouse[0] < ex && ey < mouse[1] && mouse[1] < sy;
 };
