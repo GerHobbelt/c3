@@ -8,7 +8,9 @@ c3_chart_internal_fn.getX = function (min, max, domain, offset) {
         key;
     // Define customized scale if categorized axis
     if ($$.isCategorized()) {
-        offset = offset || function () { return 0; };
+        offset = offset || function () { 
+            return 0; 
+        };
         scale = function (d, raw) {
             var v = _scale(d) + offset(d);
             return raw ? v : Math.ceil(v);
@@ -66,10 +68,14 @@ c3_chart_internal_fn.updateScales = function () {
     $$.subYMin = config.axis_rotated ? 0 : $$.height2;
     $$.subYMax = config.axis_rotated ? $$.width2 : 1;
     // update scales
-    $$.x = $$.getX($$.xMin, $$.xMax, forInit ? undefined : $$.x.orgDomain(), function () { return $$.xAxis.tickOffset(); });
+    $$.x = $$.getX($$.xMin, $$.xMax, forInit ? undefined : $$.x.orgDomain(), function () { 
+        return $$.xAxis.tickOffset(); 
+    });
     $$.y = $$.getY($$.yMin, $$.yMax, forInit ? config.axis_y_default : $$.y.domain());
     $$.y2 = $$.getY($$.yMin, $$.yMax, forInit ? config.axis_y2_default : $$.y2.domain());
-    $$.subX = $$.getX($$.xMin, $$.xMax, $$.orgXDomain, function (d) { return d % 1 ? 0 : $$.subXAxis.tickOffset(); });
+    $$.subX = $$.getX($$.xMin, $$.xMax, $$.orgXDomain, function (d) { 
+        return d % 1 ? 0 : $$.subXAxis.tickOffset(); 
+    });
     $$.subY = $$.getY($$.subYMin, $$.subYMax, forInit ? config.axis_y_default : $$.subY.domain());
     $$.subY2 = $$.getY($$.subYMin, $$.subYMax, forInit ? config.axis_y2_default : $$.subY2.domain());
     // update axes
