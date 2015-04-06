@@ -428,7 +428,7 @@
             bottom: config.margin_bottom ? config.margin_bottom : $$.getHorizontalAxisHeight('y') + legendHeightForBottom + $$.getCurrentPaddingBottom(),
             left: subchartHeight + (hasArc ? 0 : config.margin_left ? config.margin_left : $$.getCurrentPaddingLeft())
         } : {
-            top: 4 + config.margin_top ? config.margin.top : $$.getCurrentPaddingTop(), // for top tick text
+            top: 4 + (config.margin_top ? config.margin.top : $$.getCurrentPaddingTop()), // for top tick text
             right: hasArc ? 0 : config.margin_right ? config.margin_right : $$.getCurrentPaddingRight(),
             bottom: config.margin_bottom ? config.margin_bottom : xAxisHeight + subchartHeight + legendHeightForBottom + $$.getCurrentPaddingBottom(),
             left: hasArc ? 0 : config.margin_left ? config.margin_left : $$.getCurrentPaddingLeft()
