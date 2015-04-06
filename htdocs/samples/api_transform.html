@@ -1,6 +1,19 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="../css/c3.css">
+    <script id="profile_code_chunk">
+      console.profile('C3 demo run');
+
+      function stop_profiling() {
+        console.profileEnd('C3 demo run');
+      }
+      var prof_timer_h = null;
+      function debounce_profile_stop() {
+        clearTimeout(prof_timer_h);
+        prof_timer_h = setTimeout(stop_profiling, 5179);
+      }
+      debounce_profile_stop();
+    </script>
   </head>
   <body>
     <div id="chart"></div>
@@ -19,26 +32,32 @@
       });
 
       setTimeout(function () {
+        debounce_profile_stop();
         chart.transform('bar');
       }, 1000);
 
       setTimeout(function () {
+        debounce_profile_stop();
         chart.transform('pie');
       }, 2000);
 
       setTimeout(function () {
+        debounce_profile_stop();
         chart.transform('donut');
       }, 3000);
 
       setTimeout(function () {
+        debounce_profile_stop();
         chart.transform('area');
       }, 4000);
 
       setTimeout(function () {
+        debounce_profile_stop();
         chart.transform('spline');
       }, 5000);
 
       setTimeout(function () {
+        debounce_profile_stop();
         chart = c3.generate({
           data: {
             columns: [
@@ -57,14 +76,14 @@
       }, 7000);
 
       setTimeout(function () {
+        debounce_profile_stop();
         chart.transform('pie');
       }, 8000);
 
       setTimeout(function () {
+        debounce_profile_stop();
         chart.transform('scatter');
       }, 9000);
-
-
     </script>
   </body>
 </html>

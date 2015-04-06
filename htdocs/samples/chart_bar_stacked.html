@@ -1,6 +1,19 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="../css/c3.css">
+    <script id="profile_code_chunk">
+      console.profile('C3 demo run');
+
+      function stop_profiling() {
+        console.profileEnd('C3 demo run');
+      }
+      var prof_timer_h = null;
+      function debounce_profile_stop() {
+        clearTimeout(prof_timer_h);
+        prof_timer_h = setTimeout(stop_profiling, 5179);
+      }
+      debounce_profile_stop();
+    </script>
   </head>
   <body>
     <div id="chart"></div>
@@ -38,16 +51,19 @@
       }); }, chart = generate();
 
       function update1() {
+        debounce_profile_stop();
         chart.groups([['data1', 'data2', 'data3']])
       }
 
       function update2() {
+        debounce_profile_stop();
         chart.load({
           columns: [['data4', 100, 50, 150, -200, 300, -100]]
         });
       }
 
       function update3() {
+        debounce_profile_stop();
         chart.groups([['data1', 'data2', 'data3', 'data4']])
       }
 
@@ -58,6 +74,7 @@
 
 
       setTimeout(function () {
+        debounce_profile_stop();
         axis_rotated = true;
         chart = generate();
       }, 4000);
@@ -67,6 +84,7 @@
 
 
       setTimeout(function () {
+        debounce_profile_stop();
         axis_x_type = '';
         axis_rotated = false;
         chart = generate();
@@ -77,6 +95,7 @@
 
 
       setTimeout(function () {
+        debounce_profile_stop();
         axis_x_type = '';
         axis_rotated = true;
         chart = generate();
@@ -84,7 +103,6 @@
       setTimeout(update1, 13000);
       setTimeout(update2, 14000);
       setTimeout(update3, 15000);
-
 
     </script>
   </body>

@@ -5,8 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="../images/logo_128.ico" />
     <link rel="stylesheet" type="text/css" href="../css/c3.css">
+    <script id="profile_code_chunk">
+      console.profile('C3 demo run');
+
+      function stop_profiling() {
+        console.profileEnd('C3 demo run');
+      }
+      var prof_timer_h = null;
+      function debounce_profile_stop() {
+        clearTimeout(prof_timer_h);
+        prof_timer_h = setTimeout(stop_profiling, 5179);
+      }
+      debounce_profile_stop();
+    </script>
     <script src="../js/jquery.js"></script>
-    <script src="https://rawgithub.com/brandonaaron/jquery-mousewheel/master/jquery.mousewheel.js"></script>
+    <script src="../js/jquery.mousewheel.js"></script>
     <script src="../js/d3.latest.js" charset="utf-8"></script>
     <script src="../js/c3.js" charset="utf-8"></script>
     <script src="../js/extensions/c3ext.js"></script>

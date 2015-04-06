@@ -1,6 +1,19 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="../css/c3.css">
+    <script id="profile_code_chunk">
+      console.profile('C3 demo run');
+
+      function stop_profiling() {
+        console.profileEnd('C3 demo run');
+      }
+      var prof_timer_h = null;
+      function debounce_profile_stop() {
+        clearTimeout(prof_timer_h);
+        prof_timer_h = setTimeout(stop_profiling, 5179);
+      }
+      debounce_profile_stop();
+    </script>
   </head>
   <body>
     <div id="chart1"></div>

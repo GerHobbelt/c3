@@ -1,6 +1,31 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="../css/c3.css">
+    <script id="profile_code_chunk">
+      console.profile('C3 demo run');
+
+      function stop_profiling() {
+        console.profileEnd('C3 demo run');
+      }
+      var prof_timer_h = null;
+      var prof_timestamp = Date.now();
+      function debounce_profile_stop(t) {
+        clearTimeout(prof_timer_h);
+        t = Math.max(t | 0, 5179);
+        
+        // make sure the farthest-into-the-future delay is kept intact:
+        var new_t = Date.now() + t;
+        var delta_t = new_t - prof_timestamp;
+        if (delta_t < 0) {
+          t = prof_timestamp - new_t;
+        } else {
+          prof_timestamp = new_t;
+        }
+        
+        prof_timer_h = setTimeout(stop_profiling, t);
+      }
+      debounce_profile_stop(50000);
+    </script>
   </head>
   <body>
     <div id="chart"></div>
@@ -61,6 +86,7 @@
       chart = generate();
 
       setTimeout(function () {
+        debounce_profile_stop();
         chart.flow({
           columns: [
             ['x', '2013-01-21'],
@@ -72,6 +98,7 @@
       }, 1000);
 
       setTimeout(function () {
+        debounce_profile_stop();
         chart.flow({
           columns: [
             ['x', '2013-02-01', '2013-02-08', '2013-02-15'],
@@ -85,6 +112,7 @@
       }, 4000);
 
       setTimeout(function () {
+        debounce_profile_stop();
         console.log("Flow 1");
         chart.flow({
           columns: [
@@ -99,6 +127,7 @@
       }, 7000);
 
       setTimeout(function () {
+        debounce_profile_stop();
         chart.flow({
           columns: [
             ['x', '2013-03-15', '2013-05-01'],
@@ -112,10 +141,12 @@
       }, 10000);
 
       setTimeout(function () {
+        debounce_profile_stop();
         chart = generate();
       }, 14000);
 
       setTimeout(function () {
+        debounce_profile_stop();
         chart.flow({
           columns: [
             ['x', '2013-01-21', '2013-01-25', '2013-01-26'],
@@ -127,6 +158,7 @@
       }, 15000);
 
       setTimeout(function () {
+        debounce_profile_stop();
         chart.flow({
           columns: [
             ['x', '2013-02-01'],
@@ -140,6 +172,7 @@
       }, 18000);
 
       setTimeout(function () {
+        debounce_profile_stop();
         chart.flow({
           columns: [
             ['x', '2013-03-01'],
@@ -156,11 +189,13 @@
     run();
 
     setTimeout(function () {
+      debounce_profile_stop();
       padding = {left: 0, right: 0};
       run();
     }, 25000);
 
     setTimeout(function () {
+      debounce_profile_stop();
       types = {
         data2: 'area',
         data3: 'bar',

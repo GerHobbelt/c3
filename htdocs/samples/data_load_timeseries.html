@@ -1,6 +1,19 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="../css/c3.css">
+    <script id="profile_code_chunk">
+      console.profile('C3 demo run');
+
+      function stop_profiling() {
+        console.profileEnd('C3 demo run');
+      }
+      var prof_timer_h = null;
+      function debounce_profile_stop() {
+        clearTimeout(prof_timer_h);
+        prof_timer_h = setTimeout(stop_profiling, 5179);
+      }
+      debounce_profile_stop();
+    </script>
   </head>
   <body>
     <div id="chart"></div>
@@ -28,18 +41,21 @@
       });
 
       setTimeout(function () {
+        debounce_profile_stop();
         chart.load({
           url: '../data/c3_test2_ts.csv'
         });
       }, 1000);
 
       setTimeout(function () {
+        debounce_profile_stop();
         chart.unload({
           ids: 'data2'
         });
       }, 2000);
 
       setTimeout(function () {
+        debounce_profile_stop();
         chart.load({
           columns: [
             ['data1', 30, 20, 50, 40, 60, 50],

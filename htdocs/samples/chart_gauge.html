@@ -1,6 +1,19 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="../css/c3.css">
+    <script id="profile_code_chunk">
+      console.profile('C3 demo run');
+
+      function stop_profiling() {
+        console.profileEnd('C3 demo run');
+      }
+      var prof_timer_h = null;
+      function debounce_profile_stop() {
+        clearTimeout(prof_timer_h);
+        prof_timer_h = setTimeout(stop_profiling, 5179);
+      }
+      debounce_profile_stop();
+    </script>
   </head>
   <body>
     <div id="chart"></div>
@@ -88,87 +101,101 @@
       var cycleDemo = function () {
 
         setTimeout(function () {
+          debounce_profile_stop();
           d3.select('#chart .c3-chart-arcs-background')
             .transition()
             .style('fill', '#333');
         }, 1000);
 
         setTimeout(function () {
-            chart.load({
-              columns: [[ 'data', 10 ]]
-            });
+          debounce_profile_stop();
+          chart.load({
+            columns: [[ 'data', 10 ]]
+          });
         }, 2000);
 
         setTimeout(function () {
-            chart.load({
-              columns: [[ 'data', 50 ]]
-            });
+          debounce_profile_stop();
+          chart.load({
+            columns: [[ 'data', 50 ]]
+          });
         }, 3000);
 
         setTimeout(function () {
-            chart.load({
-              columns: [[ 'data', 91.4 ]]
-            });
+          debounce_profile_stop();
+          chart.load({
+            columns: [[ 'data', 91.4 ]]
+          });
         }, 4000);
 
         setTimeout(function () {
+          debounce_profile_stop();
           d3.select('#chart .c3-chart-arcs-background')
             .transition()
             .style('fill', '#e0e0e0');
         }, 5000);
 
         setTimeout(function () {
-            chart.load({
-              columns: [[ 'data', 0 ]]
-            });
+          debounce_profile_stop();
+          chart.load({
+            columns: [[ 'data', 0 ]]
+          });
         }, 6000);
 
         setTimeout(function () {
-            chart.load({
-              columns: [[ 'data', 50 ]]
-            });
+          debounce_profile_stop();
+          chart.load({
+            columns: [[ 'data', 50 ]]
+          });
         }, 7000);
 
         setTimeout(function () {
-            chart.load({
-              columns: [[ 'data', 91.4 ]]
-            });
+          debounce_profile_stop();
+          chart.load({
+            columns: [[ 'data', 91.4 ]]
+          });
         }, 8000);
 
         setTimeout(function () {
-            chart.load({
-              columns: [[ 'data', 0 ]]
-            });
+          debounce_profile_stop();
+          chart.load({
+            columns: [[ 'data', 0 ]]
+          });
         }, 9000);
 
         setTimeout(function () {
-            chart.load({
-              columns: [[ 'data', 50 ]]
-            });
+          debounce_profile_stop();
+          chart.load({
+            columns: [[ 'data', 50 ]]
+          });
         }, 10000);
 
         setTimeout(function () {
-            chart.load({
-              columns: [[ 'data', 91.4 ]]
-            });
+          debounce_profile_stop();
+          chart.load({
+            columns: [[ 'data', 91.4 ]]
+          });
         }, 11000);
 
         setTimeout(function () {
-            chart.load({
-              columns: [[ 'data', 0 ]]
-            });
+          debounce_profile_stop();
+          chart.load({
+            columns: [[ 'data', 0 ]]
+          });
         }, 12000);
 
         setTimeout(function () {
-            chart.load({
-              columns: [[ 'data', 50 ]]
-            });
+          debounce_profile_stop();
+          chart.load({
+            columns: [[ 'data', 50 ]]
+          });
         }, 13000);
 
         setTimeout(function () {
-            chart.load({
-              columns: [[ 'data', 91.4 ]]
-            });
+          debounce_profile_stop();
+          chart.load({
+            columns: [[ 'data', 91.4 ]]
+          });
         }, 14000);
 
       }
