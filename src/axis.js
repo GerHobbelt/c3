@@ -51,7 +51,9 @@ Axis.prototype.getXAxis = function getXAxis(scale, orient, tickFormat, tickValue
         axis = c3_axis($$.d3, axisParams).scale(scale).orient(orient);
 
     if ($$.isTimeSeries() && tickValues) {
-        tickValues = tickValues.map(function (v) { return $$.parseDate(v); });
+        tickValues = tickValues.map(function (v) { 
+            return $$.parseDate(v); 
+        });
     }
 
     // Set tick
@@ -80,9 +82,14 @@ Axis.prototype.updateXAxisTickValues = function updateXAxisTickValues(targets, a
     }
     return tickValues;
 };
-Axis.prototype.getYAxis = function getYAxis(scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition) {
+Axis.prototype.getYAxis = function getYAxis(scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, isY2Axis) {
+    // TODO: refactor the whole axis_x/y/y2 stuff to become one config block per axis: axis_x.xyz, axis_y.xyz, axis_y2.xyz -->
+    // that way we can pass in the config block and not copy individual settings nor hardcode-check inside like we do now. :-(
     var axisParams = {
             withOuterTick: withOuterTick,
+            tickMultiline: !isY2Axis ? config.axis_y_tick_multiline : config.axis_y2_tick_multiline,
+            tickWidth: !isY2Axis ? config.axis_y_tick_width : config.axis_y2_tick_width,
+            tickTextRotate: withoutRotateTickText ? 0 : !isY2Axis ? config.axis_y_tick_rotate : config.axis_y2_tick_rotate,
             withoutTransition: withoutTransition,
         },
         $$ = this.owner,
@@ -90,7 +97,7 @@ Axis.prototype.getYAxis = function getYAxis(scale, orient, tickFormat, tickValue
         config = $$.config,
         axis = c3_axis(d3, axisParams).scale(scale).orient(orient).tickFormat(tickFormat);
     if ($$.isTimeSeriesY()) {
-        axis.ticks(d3.time[config.axis_y_tick_time_value], config.axis_y_tick_time_interval);
+        axis.ticks(d3.time[!isY2Axis ? config.axis_y_tick_time_value : config.axis_y2_tick_time_value], !isY2Axis ? config.axis_y_tick_time_interval : config.axis_y2_tick_time_interval);
     } else {
         axis.tickValues(tickValues);
     }
@@ -291,10 +298,10 @@ Axis.prototype.getMaxTickWidth = function getMaxTickWidth(id, withoutRecompute) 
         targetsToShow = $$.filterTargetsToShow($$.data.targets);
         if (id === 'y') {
             scale = $$.y.copy().domain($$.getYDomain(targetsToShow, 'y'));
-            axis = this.getYAxis(scale, $$.yOrient, config.axis_y_tick_format, $$.yAxisTickValues, false, true);
+            axis = this.getYAxis(scale, $$.yOrient, config.axis_y_tick_format, $$.yAxisTickValues, false, true, false);
         } else if (id === 'y2') {
             scale = $$.y2.copy().domain($$.getYDomain(targetsToShow, 'y2'));
-            axis = this.getYAxis(scale, $$.y2Orient, config.axis_y2_tick_format, $$.y2AxisTickValues, false, true);
+            axis = this.getYAxis(scale, $$.y2Orient, config.axis_y2_tick_format, $$.y2AxisTickValues, false, true, true);
         } else {
             scale = $$.x.copy().domain($$.getXDomain(targetsToShow));
             axis = this.getXAxis(scale, $$.xOrient, $$.xAxisTickFormat, $$.xAxisTickValues, false, true, true);

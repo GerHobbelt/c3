@@ -1238,7 +1238,8 @@
             axis_y_label: {},
             axis_y_tick_format: undefined,
             axis_y_tick_outer: true,
-            axis_y_tick_values: null,
+            axis_y_tick_values: null,        
+            axis_y_tick_rotate: 0,
             axis_y_tick_count: undefined,
             axis_y_tick_time_value: undefined,
             axis_y_tick_time_interval: undefined,
@@ -1254,6 +1255,7 @@
             axis_y2_tick_format: undefined,
             axis_y2_tick_outer: true,
             axis_y2_tick_values: null,
+            axis_y2_tick_rotate: 0,
             axis_y2_tick_count: undefined,
             axis_y2_padding: {},
             axis_y2_default: undefined,
@@ -4970,11 +4972,31 @@
         var $$ = this.owner;
         return this.textAnchorForAxisLabel($$.config.axis_rotated, this.getY2AxisLabelPosition());
     };
+<<<<<<< HEAD
     Axis.prototype.getMaxTickWidth = function getMaxTickWidth(id, withoutRecompute) {
         var $$ = this.owner, 
             config = $$.config,
             maxWidth = 0, 
             targetsToShow, scale, axis, dummy, svg;
+=======
+    c3_chart_internal_fn.yForRotatedTickText = function (r) {
+        return 11.5 - 2.5 * (r / 15) * (r > 0 ? 1 : -1);
+    };
+    c3_chart_internal_fn.rotateTickText = function (axis, transition, rotate) {    
+        var mirrored = (axis.classed(c3_chart_internal_fn.CLASS.axisY) && !this.config.axis_rotated);
+        axis.selectAll('.tick text')
+            .style("text-anchor", ((rotate > 0) ^ mirrored) ? "start" : "end");
+        transition.selectAll('.tick text')
+            .attr("y", this.yForRotatedTickText(rotate))
+            .attr("transform", "rotate(" + rotate + ")")
+          .selectAll('tspan')
+            .attr('dx', this.xForRotatedTickText(rotate));
+    };
+
+    c3_chart_internal_fn.getMaxTickWidth = function (id, withoutRecompute) {
+        var $$ = this, config = $$.config,
+            maxWidth = 0, targetsToShow, scale, axis, body, svg;
+>>>>>>> Tima_edits
         if (withoutRecompute && $$.currentMaxTickWidths[id]) {
             return $$.currentMaxTickWidths[id];
         }
@@ -5088,6 +5110,20 @@
         transitions.axisY.call($$.yAxis);
         transitions.axisY2.call($$.y2Axis);
         transitions.axisSubX.call($$.subXAxis);
+<<<<<<< HEAD
+=======
+        // rotate tick text if needed
+        if (config.axis_x_tick_rotate) {
+            $$.rotateTickText($$.axes.x, transitions.axisX, config.axis_x_tick_rotate);
+            $$.rotateTickText($$.axes.subx, transitions.axisSubX, config.axis_x_tick_rotate);
+        }
+        if (config.axis_y_tick_rotate) {
+            $$.rotateTickText($$.axes.y, transitions.axisY, config.axis_y_tick_rotate);
+        }
+        if (config.axis_y2_tick_rotate) {
+            $$.rotateTickText($$.axes.y2, transitions.axisY2, config.axis_y2_tick_rotate);
+        }
+>>>>>>> Tima_edits
     };
 
     c3_chart_internal_fn.getClipPath = function (id) {
