@@ -16,6 +16,7 @@
 
 bower.json -diff merge=ours
 component.json -diff merge=ours
+htdocs/js/c3.js -diff merge=ours
 c3.js -diff merge=ours
 c3.min.js -diff merge=ours
 c3.css -diff merge=ours
