@@ -25,7 +25,8 @@
         "beforeAll": false,
         "it": false,
         "expect": false,
-        "d3": false
+        "d3": false,
+        "console": false
     }
 
 }
