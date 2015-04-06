@@ -6,7 +6,7 @@ c3_chart_fn.transform = function (type, targetIds) {
 
 c3_chart_internal_fn.transformTo = function (targetIds, type, optionsForRedraw) {
     var $$ = this,
-        withTransitionForAxis = !$$.hasArcType(),
+        withTransitionForAxis = $$.config.transition_duration && !$$.hasArcType(),
         options = optionsForRedraw || {withTransitionForAxis: withTransitionForAxis};
     options.withTransitionForTransform = false;
     $$.transiting = false;

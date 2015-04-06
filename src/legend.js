@@ -144,8 +144,8 @@ c3_chart_internal_fn.updateLegend = function (targetIds, options, transitions) {
     var texts, rects, tiles, background;
 
     options = options || {};
-    withTransition = getOption(options, "withTransition", true);
-    withTransitionForTransform = getOption(options, "withTransitionForTransform", true);
+    withTransition = getOption(options, "withTransition", $$.config.transition_duration > 0);
+    withTransitionForTransform = getOption(options, "withTransitionForTransform", withTransition);
 
     function getTextBox(textElement, id) {
         if (!$$.legendItemTextBox[id]) {

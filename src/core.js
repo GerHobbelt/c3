@@ -546,7 +546,7 @@ c3_chart_internal_fn.redraw = function (options, transitions) {
     options = options || {};
     withY = getOption(options, "withY", true);
     withSubchart = getOption(options, "withSubchart", true);
-    withTransition = getOption(options, "withTransition", true);
+    withTransition = getOption(options, "withTransition", $$.config.transition_duration > 0);
     withTransform = getOption(options, "withTransform", false);
     withUpdateXDomain = getOption(options, "withUpdateXDomain", false);
     withUpdateOrgXDomain = getOption(options, "withUpdateOrgXDomain", false);
@@ -791,7 +791,7 @@ c3_chart_internal_fn.updateAndRedraw = function (options) {
         transitions;
     options = options || {};
     // same with redraw
-    options.withTransition = getOption(options, "withTransition", true);
+    options.withTransition = getOption(options, "withTransition", $$.config.transition_duration > 0);
     options.withTransform = getOption(options, "withTransform", false);
     options.withLegend = getOption(options, "withLegend", false);
     // NOT same with redraw
