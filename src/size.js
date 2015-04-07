@@ -1,9 +1,11 @@
 c3_chart_internal_fn.getCurrentWidth = function C3_INTERNAL_getCurrentWidth() {
-    var $$ = this, config = $$.config;
+    var $$ = this, 
+        config = $$.config;
     return config.size_width ? config.size_width : $$.getParentWidth();
 };
 c3_chart_internal_fn.getCurrentHeight = function C3_INTERNAL_getCurrentHeight() {
-    var $$ = this, config = $$.config,
+    var $$ = this, 
+        config = $$.config,
         h = config.size_height ? config.size_height : $$.getParentHeight();
     return h > 0 ? h : 320 / ($$.hasType('gauge') ? 2 : 1);
 };
@@ -21,7 +23,8 @@ c3_chart_internal_fn.getCurrentPaddingBottom = function C3_INTERNAL_getCurrentPa
     return isValue(config.padding_bottom) ? config.padding_bottom : 0;
 };
 c3_chart_internal_fn.getCurrentPaddingLeft = function C3_INTERNAL_getCurrentPaddingLeft(withoutRecompute) {
-    var $$ = this, config = $$.config;
+    var $$ = this, 
+        config = $$.config;
     if (isValue(config.padding_left)) {
         return config.padding_left;
     } else if (config.axis_rotated) {
@@ -33,8 +36,10 @@ c3_chart_internal_fn.getCurrentPaddingLeft = function C3_INTERNAL_getCurrentPadd
     }
 };
 c3_chart_internal_fn.getCurrentPaddingRight = function C3_INTERNAL_getCurrentPaddingRight() {
-    var $$ = this, config = $$.config,
-        defaultPadding = 10, legendWidthOnRight = $$.isLegendRight ? $$.getLegendWidth() + 20 : 0;
+    var $$ = this, 
+        config = $$.config,
+        defaultPadding = 10, 
+        legendWidthOnRight = $$.isLegendRight ? $$.getLegendWidth() + 20 : 0;
     if (isValue(config.padding_right)) {
         return config.padding_right + 1; // 1 is needed not to hide tick line
     } else if (config.axis_rotated) {
@@ -47,7 +52,8 @@ c3_chart_internal_fn.getCurrentPaddingRight = function C3_INTERNAL_getCurrentPad
 };
 
 c3_chart_internal_fn.getParentRectValue = function C3_INTERNAL_getParentRectValue(key) {
-    var parent = this.selectChart.node(), v;
+    var parent = this.selectChart.node(), 
+        v;
     while (parent && parent.tagName !== 'BODY') {
         try {
             v = parent.getBoundingClientRect()[key];
@@ -75,7 +81,8 @@ c3_chart_internal_fn.getParentHeight = function C3_INTERNAL_getParentHeight() {
 
 
 c3_chart_internal_fn.getSvgLeft = function C3_INTERNAL_getSvgLeft(withoutRecompute) {
-    var $$ = this, config = $$.config,
+    var $$ = this, 
+        config = $$.config,
         hasLeftAxisRect = config.axis_rotated || (!config.axis_rotated && !config.axis_y_inner),
         leftAxisClass = config.axis_rotated ? CLASS.axisX : CLASS.axisY,
         leftAxis = $$.main.select('.' + leftAxisClass).node(),
@@ -88,18 +95,21 @@ c3_chart_internal_fn.getSvgLeft = function C3_INTERNAL_getSvgLeft(withoutRecompu
 
 
 c3_chart_internal_fn.getAxisWidthByAxisId = function C3_INTERNAL_getAxisWidthByAxisId(id, withoutRecompute) {
-    var $$ = this, position = $$.axis.getLabelPositionById(id);
+    var $$ = this, 
+        position = $$.axis.getLabelPositionById(id);
     return $$.axis.getMaxTickWidth(id, withoutRecompute) + (position.isInner ? 20 : 40);
 };
 c3_chart_internal_fn.getHorizontalAxisHeight = function C3_INTERNAL_getHorizontalAxisHeight(axisId) {
-    var $$ = this, config = $$.config, h = 30;
+    var $$ = this, 
+        config = $$.config, 
+        h = 30;
     if (axisId === 'x' && !config.axis_x_show) { return 8; }
     if (axisId === 'x' && config.axis_x_height) { return config.axis_x_height; }
     if (axisId === 'y' && !config.axis_y_show) { return config.legend_show && !$$.isLegendRight && !$$.isLegendInset ? 10 : 1; }
     if (axisId === 'y2' && !config.axis_y2_show) { return $$.rotated_padding_top; }
     // Calculate x axis height when tick rotated
     if (axisId === 'x' && !config.axis_rotated && config.axis_x_tick_rotate) {
-        h = 30 + $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - config.axis_x_tick_rotate) / 180);
+        h += $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - config.axis_x_tick_rotate) / 180);
     }
     return h + ($$.axis.getLabelPositionById(axisId).isInner ? 0 : 10) + (axisId === 'y2' ? -10 : 0);
 };
