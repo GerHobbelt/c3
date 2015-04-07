@@ -85,16 +85,16 @@ Axis.prototype.updateXAxisTickValues = function updateXAxisTickValues(targets, a
 Axis.prototype.getYAxis = function getYAxis(scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, withoutRotateTickText, isY2Axis) {
     // TODO: refactor the whole axis_x/y/y2 stuff to become one config block per axis: axis_x.xyz, axis_y.xyz, axis_y2.xyz -->
     // that way we can pass in the config block and not copy individual settings nor hardcode-check inside like we do now. :-(
-    var axisParams = {
+    var $$ = this.owner,
+        d3 = $$.d3,
+        config = $$.config,
+        axisParams = {
             withOuterTick: withOuterTick,
             tickMultiline: !isY2Axis ? config.axis_y_tick_multiline : config.axis_y2_tick_multiline,
             tickWidth: !isY2Axis ? config.axis_y_tick_width : config.axis_y2_tick_width,
             tickTextRotate: withoutRotateTickText ? 0 : !isY2Axis ? config.axis_y_tick_rotate : config.axis_y2_tick_rotate,
             withoutTransition: withoutTransition,
         },
-        $$ = this.owner,
-        d3 = $$.d3,
-        config = $$.config,
         axis = c3_axis(d3, axisParams).scale(scale).orient(orient).tickFormat(tickFormat);
     if ($$.isTimeSeriesY()) {
         axis.ticks(d3.time[!isY2Axis ? config.axis_y_tick_time_value : config.axis_y2_tick_time_value], !isY2Axis ? config.axis_y_tick_time_interval : config.axis_y2_tick_time_interval);

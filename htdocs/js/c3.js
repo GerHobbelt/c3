@@ -832,7 +832,7 @@
         return this.config.axis_x_type === 'timeseries';
     };
     c3_chart_internal_fn.isCategorized = function () {
-        return this.config.axis_x_type.indexOf('categor') >= 0;
+        return this.config.axis_x_type.indexOf('category') >= 0;
     };
     c3_chart_internal_fn.isCustomX = function () {
         var $$ = this, 
@@ -1238,7 +1238,10 @@
             axis_y_label: {},
             axis_y_tick_format: undefined,
             axis_y_tick_outer: true,
+            axis_y_tick_multiline: false,
+            axis_y_tick_width: null,
             axis_y_tick_values: null,
+            axis_y_tick_rotate: 0,
             axis_y_tick_count: undefined,
             axis_y_tick_time_value: undefined,
             axis_y_tick_time_interval: undefined,
@@ -1253,7 +1256,10 @@
             axis_y2_label: {},
             axis_y2_tick_format: undefined,
             axis_y2_tick_outer: true,
+            axis_y2_tick_multiline: false,
+            axis_y2_tick_width: null,
             axis_y2_tick_values: null,
+            axis_y2_tick_rotate: 0,
             axis_y2_tick_count: undefined,
             axis_y2_padding: {},
             axis_y2_default: undefined,
@@ -1374,10 +1380,13 @@
     c3_chart_internal_fn.getX = function (min, max, domain, offset) {
         var $$ = this,
             scale = $$.getScale(min, max, $$.isTimeSeries()),
-            _scale = domain ? scale.domain(domain) : scale, key;
+            _scale = domain ? scale.domain(domain) : scale, 
+            key;
         // Define customized scale if categorized axis
         if ($$.isCategorized()) {
-            offset = offset || function () { return 0; };
+            offset = offset || function () { 
+                return 0; 
+            };
             scale = function (d, raw) {
                 var v = _scale(d) + offset(d);
                 return raw ? v : Math.ceil(v);
@@ -1410,7 +1419,9 @@
     };
     c3_chart_internal_fn.getY = function (min, max, domain) {
         var scale = this.getScale(min, max, this.isTimeSeriesY());
-        if (domain) { scale.domain(domain); }
+        if (domain) { 
+            scale.domain(domain); 
+        }
         return scale;
     };
     c3_chart_internal_fn.getYScale = function (id) {
@@ -1420,7 +1431,8 @@
         return this.axis.getId(id) === 'y2' ? this.subY2 : this.subY;
     };
     c3_chart_internal_fn.updateScales = function () {
-        var $$ = this, config = $$.config,
+        var $$ = this, 
+            config = $$.config,
             forInit = !$$.x;
         // update edges
         $$.xMin = config.axis_rotated ? 1 : 0;
@@ -1432,10 +1444,14 @@
         $$.subYMin = config.axis_rotated ? 0 : $$.height2;
         $$.subYMax = config.axis_rotated ? $$.width2 : 1;
         // update scales
-        $$.x = $$.getX($$.xMin, $$.xMax, forInit ? undefined : $$.x.orgDomain(), function () { return $$.xAxis.tickOffset(); });
+        $$.x = $$.getX($$.xMin, $$.xMax, forInit ? undefined : $$.x.orgDomain(), function () { 
+            return $$.xAxis.tickOffset(); 
+        });
         $$.y = $$.getY($$.yMin, $$.yMax, forInit ? config.axis_y_default : $$.y.domain());
         $$.y2 = $$.getY($$.yMin, $$.yMax, forInit ? config.axis_y2_default : $$.y2.domain());
-        $$.subX = $$.getX($$.xMin, $$.xMax, $$.orgXDomain, function (d) { return d % 1 ? 0 : $$.subXAxis.tickOffset(); });
+        $$.subX = $$.getX($$.xMin, $$.xMax, $$.orgXDomain, function (d) { 
+            return d % 1 ? 0 : $$.subXAxis.tickOffset(); 
+        });
         $$.subY = $$.getY($$.subYMin, $$.subYMax, forInit ? config.axis_y_default : $$.subY.domain());
         $$.subY2 = $$.getY($$.subYMin, $$.subYMax, forInit ? config.axis_y2_default : $$.subY2.domain());
         // update axes
@@ -1444,18 +1460,24 @@
         $$.yAxisTickValues = $$.axis.getYAxisTickValues();
         $$.y2AxisTickValues = $$.axis.getY2AxisTickValues();
 
-        $$.xAxis = $$.axis.getXAxis($$.x, $$.xOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer);
-        $$.subXAxis = $$.axis.getXAxis($$.subX, $$.subXOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer);
-        $$.yAxis = $$.axis.getYAxis($$.y, $$.yOrient, config.axis_y_tick_format, $$.yAxisTickValues, config.axis_y_tick_outer);
-        $$.y2Axis = $$.axis.getYAxis($$.y2, $$.y2Orient, config.axis_y2_tick_format, $$.y2AxisTickValues, config.axis_y2_tick_outer);
+        $$.xAxis = $$.axis.getXAxis($$.x, $$.xOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer, false, false);
+        $$.subXAxis = $$.axis.getXAxis($$.subX, $$.subXOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer, false, false);
+        $$.yAxis = $$.axis.getYAxis($$.y, $$.yOrient, config.axis_y_tick_format, $$.yAxisTickValues, config.axis_y_tick_outer, false, false, false);
+        $$.y2Axis = $$.axis.getYAxis($$.y2, $$.y2Orient, config.axis_y2_tick_format, $$.y2AxisTickValues, config.axis_y2_tick_outer, false, false, true);
 
         // Set initialized scales to brush and zoom
         if (!forInit) {
-            if ($$.brush) { $$.brush.scale($$.subX); }
-            if (config.zoom_enabled) { $$.zoom.scale($$.x); }
+            if ($$.brush) { 
+                $$.brush.scale($$.subX); 
+            }
+            if (config.zoom_enabled) { 
+                $$.zoom.scale($$.x); 
+            }
         }
         // update for arc
-        if ($$.updateArc) { $$.updateArc(); }
+        if ($$.updateArc) { 
+            $$.updateArc(); 
+        }
     };
 
     c3_chart_internal_fn.getYDomainMin = function (targets) {
@@ -3979,6 +4001,13 @@
         $$.ygridLines = main.select('.' + CLASS.ygridLines).selectAll('.' + CLASS.ygridLine)
             .data(config.grid_y_lines);
         // enter
+        var dy_pos = function(d) {
+          if(yv(d) < 0) {
+            return 9;
+          } else {
+            return -5;
+          }
+        };
         ygridLine = $$.ygridLines.enter().append('g')
             .attr("class", function (d) { 
                 return CLASS.ygridLine + (d.class ? ' ' + d.class : ''); 
@@ -3989,21 +4018,29 @@
             .attr("text-anchor", $$.gridTextAnchor)
             .attr("transform", config.axis_rotated ? "rotate(-90)" : "")
             .attr('dx', $$.gridTextDx)
-            .attr('dy', -5)
+            .attr('dy', dy_pos)
             .style("opacity", 0);
         // update
-        yv = $$.yv.bind($$);
+        var yv_pos = function(d) {
+          var yv = $$.yv(d);
+          if(yv < 0) {
+            return 1;
+          } else if (yv > $$.height) {
+            return $$.height - 1;
+          }
+          return yv;
+        };
         $$.ygridLines.select('line')
           .transition().duration(duration)
             .attr("x1", config.axis_rotated ? yv : 0)
             .attr("x2", config.axis_rotated ? yv : $$.width)
-            .attr("y1", config.axis_rotated ? 0 : yv)
-            .attr("y2", config.axis_rotated ? $$.height : yv)
+            .attr("y1", config.axis_rotated ? 0 : yv_pos)
+            .attr("y2", config.axis_rotated ? $$.height : yv_pos)
             .style("opacity", 1);
         $$.ygridLines.select('text')
           .transition().duration(duration)
             .attr("x", config.axis_rotated ? $$.xGridTextX.bind($$) : $$.yGridTextX.bind($$))
-            .attr("y", yv)
+            .attr("y", yv_pos)
             .text(function (d) { 
                 return d.text; 
             })
@@ -4742,7 +4779,9 @@
             axis = c3_axis($$.d3, axisParams).scale(scale).orient(orient);
 
         if ($$.isTimeSeries() && tickValues) {
-            tickValues = tickValues.map(function (v) { return $$.parseDate(v); });
+            tickValues = tickValues.map(function (v) { 
+                return $$.parseDate(v); 
+            });
         }
 
         // Set tick
@@ -4771,17 +4810,22 @@
         }
         return tickValues;
     };
-    Axis.prototype.getYAxis = function getYAxis(scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition) {
-        var axisParams = {
-                withOuterTick: withOuterTick,
-                withoutTransition: withoutTransition,
-            },
-            $$ = this.owner,
+    Axis.prototype.getYAxis = function getYAxis(scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, withoutRotateTickText, isY2Axis) {
+        // TODO: refactor the whole axis_x/y/y2 stuff to become one config block per axis: axis_x.xyz, axis_y.xyz, axis_y2.xyz -->
+        // that way we can pass in the config block and not copy individual settings nor hardcode-check inside like we do now. :-(
+        var $$ = this.owner,
             d3 = $$.d3,
             config = $$.config,
+            axisParams = {
+                withOuterTick: withOuterTick,
+                tickMultiline: !isY2Axis ? config.axis_y_tick_multiline : config.axis_y2_tick_multiline,
+                tickWidth: !isY2Axis ? config.axis_y_tick_width : config.axis_y2_tick_width,
+                tickTextRotate: withoutRotateTickText ? 0 : !isY2Axis ? config.axis_y_tick_rotate : config.axis_y2_tick_rotate,
+                withoutTransition: withoutTransition,
+            },
             axis = c3_axis(d3, axisParams).scale(scale).orient(orient).tickFormat(tickFormat);
         if ($$.isTimeSeriesY()) {
-            axis.ticks(d3.time[config.axis_y_tick_time_value], config.axis_y_tick_time_interval);
+            axis.ticks(d3.time[!isY2Axis ? config.axis_y_tick_time_value : config.axis_y2_tick_time_value], !isY2Axis ? config.axis_y_tick_time_interval : config.axis_y2_tick_time_interval);
         } else {
             axis.tickValues(tickValues);
         }
@@ -4982,10 +5026,10 @@
             targetsToShow = $$.filterTargetsToShow($$.data.targets);
             if (id === 'y') {
                 scale = $$.y.copy().domain($$.getYDomain(targetsToShow, 'y'));
-                axis = this.getYAxis(scale, $$.yOrient, config.axis_y_tick_format, $$.yAxisTickValues, false, true);
+                axis = this.getYAxis(scale, $$.yOrient, config.axis_y_tick_format, $$.yAxisTickValues, false, true, true, false);
             } else if (id === 'y2') {
                 scale = $$.y2.copy().domain($$.getYDomain(targetsToShow, 'y2'));
-                axis = this.getYAxis(scale, $$.y2Orient, config.axis_y2_tick_format, $$.y2AxisTickValues, false, true);
+                axis = this.getYAxis(scale, $$.y2Orient, config.axis_y2_tick_format, $$.y2AxisTickValues, false, true, true, true);
             } else {
                 scale = $$.x.copy().domain($$.getXDomain(targetsToShow));
                 axis = this.getXAxis(scale, $$.xOrient, $$.xAxisTickFormat, $$.xAxisTickValues, false, true, true);
