@@ -1,4 +1,4 @@
-c3_chart_fn.load = function (args) {
+c3_chart_fn.load = function C3_API_load(args) {
     var $$ = this.internal, config = $$.config;
     // update xs if specified
     if (args.xs) {
@@ -52,7 +52,7 @@ c3_chart_fn.load = function (args) {
     }
 };
 
-c3_chart_fn.unload = function (args) {
+c3_chart_fn.unload = function C3_API_unload(args) {
     var $$ = this.internal;
     args = args || {};
     if (args instanceof Array) {

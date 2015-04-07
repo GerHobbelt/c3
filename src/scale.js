@@ -1,7 +1,7 @@
-c3_chart_internal_fn.getScale = function (min, max, forTimeseries) {
+c3_chart_internal_fn.getScale = function C3_INTERNAL_getScale(min, max, forTimeseries) {
     return (forTimeseries ? this.d3.time.scale() : this.d3.scale.linear()).range([min, max]);
 };
-c3_chart_internal_fn.getX = function (min, max, domain, offset) {
+c3_chart_internal_fn.getX = function C3_INTERNAL_getX(min, max, domain, offset) {
     var $$ = this,
         scale = $$.getScale(min, max, $$.isTimeSeries()),
         _scale = domain ? scale.domain(domain) : scale, 
@@ -41,20 +41,20 @@ c3_chart_internal_fn.getX = function (min, max, domain, offset) {
     }
     return scale;
 };
-c3_chart_internal_fn.getY = function (min, max, domain) {
+c3_chart_internal_fn.getY = function C3_INTERNAL_getY(min, max, domain) {
     var scale = this.getScale(min, max, this.isTimeSeriesY());
     if (domain) { 
         scale.domain(domain); 
     }
     return scale;
 };
-c3_chart_internal_fn.getYScale = function (id) {
+c3_chart_internal_fn.getYScale = function C3_INTERNAL_getYScale(id) {
     return this.axis.getId(id) === 'y2' ? this.y2 : this.y;
 };
-c3_chart_internal_fn.getSubYScale = function (id) {
+c3_chart_internal_fn.getSubYScale = function C3_INTERNAL_getSubYScale(id) {
     return this.axis.getId(id) === 'y2' ? this.subY2 : this.subY;
 };
-c3_chart_internal_fn.updateScales = function () {
+c3_chart_internal_fn.updateScales = function C3_INTERNAL_updateScales() {
     var $$ = this, 
         config = $$.config,
         forInit = !$$.x;

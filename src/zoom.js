@@ -1,4 +1,4 @@
-c3_chart_internal_fn.initZoom = function () {
+c3_chart_internal_fn.initZoom = function C3_INTERNAL_initZoom() {
     var $$ = this, 
         d3 = $$.d3, 
         config = $$.config, 
@@ -37,13 +37,13 @@ c3_chart_internal_fn.initZoom = function () {
         return this;
     };
 };
-c3_chart_internal_fn.updateZoom = function () {
+c3_chart_internal_fn.updateZoom = function C3_INTERNAL_updateZoom() {
     var $$ = this, 
         z = $$.config.zoom_enabled ? $$.zoom : function () {};
     $$.main.select('.' + CLASS.zoomRect).call(z).on("dblclick.zoom", null);
     $$.main.selectAll('.' + CLASS.eventRect).call(z).on("dblclick.zoom", null);
 };
-c3_chart_internal_fn.redrawForZoom = function () {
+c3_chart_internal_fn.redrawForZoom = function C3_INTERNAL_redrawForZoom() {
     console.count('redrawForZoom');
     var $$ = this, 
         d3 = $$.d3, 

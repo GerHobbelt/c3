@@ -1,4 +1,4 @@
-c3_chart_fn.focus = function (targetIds) {
+c3_chart_fn.focus = function C3_API_focus(targetIds) {
     var $$ = this.internal, candidates;
 
     targetIds = $$.mapToTargetIds(targetIds);
@@ -18,7 +18,7 @@ c3_chart_fn.focus = function (targetIds) {
     });
 };
 
-c3_chart_fn.defocus = function (targetIds) {
+c3_chart_fn.defocus = function C3_API_defocus(targetIds) {
     var $$ = this.internal, candidates;
 
     targetIds = $$.mapToTargetIds(targetIds);
@@ -36,7 +36,7 @@ c3_chart_fn.defocus = function (targetIds) {
     $$.defocusedTargetIds = targetIds;
 };
 
-c3_chart_fn.revert = function (targetIds) {
+c3_chart_fn.revert = function C3_API_revert(targetIds) {
     var $$ = this.internal, candidates;
 
     targetIds = $$.mapToTargetIds(targetIds);

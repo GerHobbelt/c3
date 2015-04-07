@@ -1,4 +1,4 @@
-c3_chart_internal_fn.getYDomainMin = function (targets) {
+c3_chart_internal_fn.getYDomainMin = function C3_INTERNAL_getYDomainMin(targets) {
     var $$ = this, config = $$.config,
         ids = $$.mapToIds(targets), ys = $$.getValuesAsIdKeyed(targets),
         j, k, baseId, idsInGroup, id, hasNegativeValue;
@@ -29,7 +29,7 @@ c3_chart_internal_fn.getYDomainMin = function (targets) {
     }
     return $$.d3.min(Object.keys(ys).map(function (key) { return $$.d3.min(ys[key]); }));
 };
-c3_chart_internal_fn.getYDomainMax = function (targets) {
+c3_chart_internal_fn.getYDomainMax = function C3_INTERNAL_getYDomainMax(targets) {
     var $$ = this, config = $$.config,
         ids = $$.mapToIds(targets), ys = $$.getValuesAsIdKeyed(targets),
         j, k, baseId, idsInGroup, id, hasPositiveValue;
@@ -60,7 +60,7 @@ c3_chart_internal_fn.getYDomainMax = function (targets) {
     }
     return $$.d3.max(Object.keys(ys).map(function (key) { return $$.d3.max(ys[key]); }));
 };
-c3_chart_internal_fn.getYDomain = function (targets, axisId, xDomain) {
+c3_chart_internal_fn.getYDomain = function C3_INTERNAL_getYDomain(targets, axisId, xDomain) {
     var $$ = this, config = $$.config,
         targetsByAxisId = targets.filter(function (t) { return $$.axis.getId(t.id) === axisId; }),
         yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId,
@@ -142,19 +142,19 @@ c3_chart_internal_fn.getYDomain = function (targets, axisId, xDomain) {
     domain = [yDomainMin - padding_bottom, yDomainMax + padding_top];
     return isInverted ? domain.reverse() : domain;
 };
-c3_chart_internal_fn.getXDomainMin = function (targets) {
+c3_chart_internal_fn.getXDomainMin = function C3_INTERNAL_getXDomainMin(targets) {
     var $$ = this, config = $$.config;
     return isDefined(config.axis_x_min) ?
         ($$.isTimeSeries() ? this.parseDate(config.axis_x_min) : config.axis_x_min) :
     $$.d3.min(targets, function (t) { return $$.d3.min(t.values, function (v) { return v.x; }); });
 };
-c3_chart_internal_fn.getXDomainMax = function (targets) {
+c3_chart_internal_fn.getXDomainMax = function C3_INTERNAL_getXDomainMax(targets) {
     var $$ = this, config = $$.config;
     return isDefined(config.axis_x_max) ?
         ($$.isTimeSeries() ? this.parseDate(config.axis_x_max) : config.axis_x_max) :
     $$.d3.max(targets, function (t) { return $$.d3.max(t.values, function (v) { return v.x; }); });
 };
-c3_chart_internal_fn.getXDomainPadding = function (domain) {
+c3_chart_internal_fn.getXDomainPadding = function C3_INTERNAL_getXDomainPadding(domain) {
     var $$ = this, config = $$.config,
         diff = domain[1] - domain[0],
         maxDataCount, padding, paddingLeft, paddingRight;
@@ -176,7 +176,7 @@ c3_chart_internal_fn.getXDomainPadding = function (domain) {
     }
     return {left: paddingLeft, right: paddingRight};
 };
-c3_chart_internal_fn.getXDomain = function (targets) {
+c3_chart_internal_fn.getXDomain = function C3_INTERNAL_getXDomain(targets) {
     var $$ = this,
         xDomain = [$$.getXDomainMin(targets), $$.getXDomainMax(targets)],
         firstX = xDomain[0], lastX = xDomain[1],
@@ -200,7 +200,7 @@ c3_chart_internal_fn.getXDomain = function (targets) {
     }
     return [min, max];
 };
-c3_chart_internal_fn.updateXDomain = function (targets, withUpdateXDomain, withUpdateOrgXDomain, withTrim, domain) {
+c3_chart_internal_fn.updateXDomain = function C3_INTERNAL_updateXDomain(targets, withUpdateXDomain, withUpdateOrgXDomain, withTrim, domain) {
     var $$ = this, config = $$.config;
 
     if (withUpdateOrgXDomain) {
@@ -220,7 +220,7 @@ c3_chart_internal_fn.updateXDomain = function (targets, withUpdateXDomain, withU
 
     return $$.x.domain();
 };
-c3_chart_internal_fn.trimXDomain = function (domain) {
+c3_chart_internal_fn.trimXDomain = function C3_INTERNAL_trimXDomain(domain) {
     var $$ = this;
     if (domain[0] <= $$.orgXDomain[0]) {
         domain[1] = +domain[1] + ($$.orgXDomain[0] - domain[0]);

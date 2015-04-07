@@ -1,4 +1,4 @@
-c3_chart_internal_fn.drag = function (mouse) {
+c3_chart_internal_fn.drag = function C3_INTERNAL_drag(mouse) {
     var $$ = this, config = $$.config, main = $$.main, d3 = $$.d3;
     var sx, sy, mx, my, minX, maxX, minY, maxY;
 
@@ -56,7 +56,7 @@ c3_chart_internal_fn.drag = function (mouse) {
         });
 };
 
-c3_chart_internal_fn.dragstart = function (mouse) {
+c3_chart_internal_fn.dragstart = function C3_INTERNAL_dragstart(mouse) {
     var $$ = this, config = $$.config;
     if ($$.hasArcType()) { return; }
     if (! config.data_selection_enabled) { return; } // do nothing if not selectable
@@ -67,7 +67,7 @@ c3_chart_internal_fn.dragstart = function (mouse) {
     $$.dragging = true;
 };
 
-c3_chart_internal_fn.dragend = function () {
+c3_chart_internal_fn.dragend = function C3_INTERNAL_dragend() {
     var $$ = this, config = $$.config;
     if ($$.hasArcType()) { return; }
     if (! config.data_selection_enabled) { return; } // do nothing if not selectable

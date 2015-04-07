@@ -1,4 +1,4 @@
-c3_chart_fn.show = function (targetIds, options) {
+c3_chart_fn.show = function C3_API_show(targetIds, options) {
     var $$ = this.internal, 
         targets;
 
@@ -21,7 +21,7 @@ c3_chart_fn.show = function (targetIds, options) {
     $$.redraw({withUpdateOrgXDomain: true, withUpdateXDomain: true, withLegend: true});
 };
 
-c3_chart_fn.hide = function (targetIds, options) {
+c3_chart_fn.hide = function C3_API_hide(targetIds, options) {
     var $$ = this.internal, 
         targets;
 
@@ -44,7 +44,7 @@ c3_chart_fn.hide = function (targetIds, options) {
     $$.redraw({withUpdateOrgXDomain: true, withUpdateXDomain: true, withLegend: true});
 };
 
-c3_chart_fn.toggle = function (targetIds, options) {
+c3_chart_fn.toggle = function C3_API_toggle(targetIds, options) {
     var that = this, 
         $$ = this.internal;
     $$.mapToTargetIds(targetIds).forEach(function (targetId) {
@@ -52,7 +52,7 @@ c3_chart_fn.toggle = function (targetIds, options) {
     });
 };
 
-c3_chart_fn.toggleLabels = function (value) {
+c3_chart_fn.toggleLabels = function C3_API_toggleLabels(value) {
     var $$ = this.internal, 
         config = $$.config;
     if (config.data_labels !== (value || false)) {

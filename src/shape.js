@@ -1,4 +1,4 @@
-c3_chart_internal_fn.getShapeIndices = function (typeFilter) {
+c3_chart_internal_fn.getShapeIndices = function C3_INTERNAL_getShapeIndices(typeFilter) {
     var $$ = this, config = $$.config,
         indices = {}, i = 0, j, k;
     $$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$)).forEach(function (d) {
@@ -16,21 +16,21 @@ c3_chart_internal_fn.getShapeIndices = function (typeFilter) {
     indices.__max__ = i - 1;
     return indices;
 };
-c3_chart_internal_fn.getShapeX = function (offset, targetsNum, indices, isSub) {
+c3_chart_internal_fn.getShapeX = function C3_INTERNAL_getShapeX(offset, targetsNum, indices, isSub) {
     var $$ = this, scale = isSub ? $$.subX : $$.x;
     return function (d) {
         var index = d.id in indices ? indices[d.id] : 0;
         return d.x || d.x === 0 ? scale(d.x) - offset * (targetsNum / 2 - index) : 0;
     };
 };
-c3_chart_internal_fn.getShapeY = function (isSub) {
+c3_chart_internal_fn.getShapeY = function C3_INTERNAL_getShapeY(isSub) {
     var $$ = this;
     return function (d) {
         var scale = isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id);
         return scale(d.value);
     };
 };
-c3_chart_internal_fn.getShapeOffset = function (typeFilter, indices, isSub) {
+c3_chart_internal_fn.getShapeOffset = function C3_INTERNAL_getShapeOffset(typeFilter, indices, isSub) {
     var $$ = this,
         targets = $$.orderTargets($$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))),
         targetIds = targets.map(function (t) { return t.id; });
@@ -49,7 +49,7 @@ c3_chart_internal_fn.getShapeOffset = function (typeFilter, indices, isSub) {
         return offset;
     };
 };
-c3_chart_internal_fn.isWithinShape = function (that, d) {
+c3_chart_internal_fn.isWithinShape = function C3_INTERNAL_isWithinShape(that, d) {
     var $$ = this,
         shape = $$.d3.select(that), isWithin;
     if (!$$.isTargetToShow(d.id)) {
@@ -65,7 +65,7 @@ c3_chart_internal_fn.isWithinShape = function (that, d) {
 };
 
 
-c3_chart_internal_fn.getInterpolate = function (d) {
+c3_chart_internal_fn.getInterpolate = function C3_INTERNAL_getInterpolate(d) {
     var $$ = this;
     return $$.isSplineType(d) ? "cardinal" : $$.isStepType(d) ? $$.config.line_step_type : "linear";
 };

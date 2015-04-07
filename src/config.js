@@ -1,4 +1,4 @@
-c3_chart_internal_fn.getDefaultConfig = function () {
+c3_chart_internal_fn.getDefaultConfig = function C3_INTERNAL_getDefaultConfig() {
     var config = {
         bindto: '#chart',
         size_width: undefined,
@@ -225,7 +225,7 @@ c3_chart_internal_fn.getDefaultConfig = function () {
 };
 c3_chart_internal_fn.additionalConfig = {};
 
-c3_chart_internal_fn.loadConfig = function (config) {
+c3_chart_internal_fn.loadConfig = function C3_INTERNAL_loadConfig(config) {
     var this_config = this.config, target, keys, read;
     function find() {
         var key = keys.shift();

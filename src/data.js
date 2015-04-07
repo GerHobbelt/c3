@@ -1,17 +1,17 @@
-c3_chart_internal_fn.isX = function (key) {
+c3_chart_internal_fn.isX = function C3_INTERNAL_isX(key) {
     var $$ = this, 
         config = $$.config;
     return (config.data_x && key === config.data_x) || (notEmpty(config.data_xs) && hasValue(config.data_xs, key));
 };
-c3_chart_internal_fn.isNotX = function (key) {
+c3_chart_internal_fn.isNotX = function C3_INTERNAL_isNotX(key) {
     return !this.isX(key);
 };
-c3_chart_internal_fn.getXKey = function (id) {
+c3_chart_internal_fn.getXKey = function C3_INTERNAL_getXKey(id) {
     var $$ = this, 
         config = $$.config;
     return config.data_x ? config.data_x : notEmpty(config.data_xs) ? config.data_xs[id] : null;
 };
-c3_chart_internal_fn.getXValuesOfXKey = function (key, targets) {
+c3_chart_internal_fn.getXValuesOfXKey = function C3_INTERNAL_getXValuesOfXKey(key, targets) {
     var $$ = this,
         xValues, 
         ids = targets && notEmpty(targets) ? $$.mapToIds(targets) : [];
@@ -22,39 +22,39 @@ c3_chart_internal_fn.getXValuesOfXKey = function (key, targets) {
     });
     return xValues;
 };
-c3_chart_internal_fn.getIndexByX = function (x) {
+c3_chart_internal_fn.getIndexByX = function C3_INTERNAL_getIndexByX(x) {
     var $$ = this,
         data = $$.filterByX($$.data.targets, x);
     return data.length ? data[0].index : null;
 };
-c3_chart_internal_fn.getXValue = function (id, i) {
+c3_chart_internal_fn.getXValue = function C3_INTERNAL_getXValue(id, i) {
     var $$ = this;
     return id in $$.data.xs && $$.data.xs[id] && isValue($$.data.xs[id][i]) ? $$.data.xs[id][i] : i;
 };
-c3_chart_internal_fn.getOtherTargetXs = function () {
+c3_chart_internal_fn.getOtherTargetXs = function C3_INTERNAL_getOtherTargetXs() {
     var $$ = this,
         idsForX = Object.keys($$.data.xs);
     return idsForX.length ? $$.data.xs[idsForX[0]] : null;
 };
-c3_chart_internal_fn.getOtherTargetX = function (index) {
+c3_chart_internal_fn.getOtherTargetX = function C3_INTERNAL_getOtherTargetX(index) {
     var xs = this.getOtherTargetXs();
     return xs && index < xs.length ? xs[index] : null;
 };
-c3_chart_internal_fn.addXs = function (xs) {
+c3_chart_internal_fn.addXs = function C3_INTERNAL_addXs(xs) {
     var $$ = this;
     Object.keys(xs).forEach(function (id) {
         $$.config.data_xs[id] = xs[id];
     });
 };
-c3_chart_internal_fn.hasMultipleX = function (xs) {
+c3_chart_internal_fn.hasMultipleX = function C3_INTERNAL_hasMultipleX(xs) {
     return this.d3.set(Object.keys(xs).map(function (id) { 
         return xs[id]; 
     })).size() > 1;
 };
-c3_chart_internal_fn.isMultipleX = function () {
+c3_chart_internal_fn.isMultipleX = function C3_INTERNAL_isMultipleX() {
     return notEmpty(this.config.data_xs) || !this.config.data_xSort || this.hasType('scatter');
 };
-c3_chart_internal_fn.addName = function (data) {
+c3_chart_internal_fn.addName = function C3_INTERNAL_addName(data) {
     var $$ = this, 
         name;
     if (data) {
@@ -63,13 +63,13 @@ c3_chart_internal_fn.addName = function (data) {
     }
     return data;
 };
-c3_chart_internal_fn.getValueOnIndex = function (values, index) {
+c3_chart_internal_fn.getValueOnIndex = function C3_INTERNAL_getValueOnIndex(values, index) {
     var valueOnIndex = values.filter(function (v) { 
         return v.index === index; 
     });
     return valueOnIndex.length ? valueOnIndex[0] : null;
 };
-c3_chart_internal_fn.updateTargetX = function (targets, x) {
+c3_chart_internal_fn.updateTargetX = function C3_INTERNAL_updateTargetX(targets, x) {
     var $$ = this;
     targets.forEach(function (t) {
         t.values.forEach(function (v, i) {
@@ -78,7 +78,7 @@ c3_chart_internal_fn.updateTargetX = function (targets, x) {
         $$.data.xs[t.id] = x;
     });
 };
-c3_chart_internal_fn.updateTargetXs = function (targets, xs) {
+c3_chart_internal_fn.updateTargetXs = function C3_INTERNAL_updateTargetXs(targets, xs) {
     var $$ = this;
     targets.forEach(function (t) {
         if (xs[t.id]) {
@@ -86,7 +86,7 @@ c3_chart_internal_fn.updateTargetXs = function (targets, xs) {
         }
     });
 };
-c3_chart_internal_fn.generateTargetX = function (rawX, id, index) {
+c3_chart_internal_fn.generateTargetX = function C3_INTERNAL_generateTargetX(rawX, id, index) {
     var $$ = this, x;
     if ($$.isTimeSeries()) {
         x = rawX ? $$.parseDate(rawX) : $$.parseDate($$.getXValue(id, index));
@@ -99,7 +99,7 @@ c3_chart_internal_fn.generateTargetX = function (rawX, id, index) {
     }
     return x;
 };
-c3_chart_internal_fn.cloneTarget = function (target) {
+c3_chart_internal_fn.cloneTarget = function C3_INTERNAL_cloneTarget(target) {
     return {
         id : target.id,
         id_org : target.id_org,
@@ -108,7 +108,7 @@ c3_chart_internal_fn.cloneTarget = function (target) {
         })
     };
 };
-c3_chart_internal_fn.updateXs = function () {
+c3_chart_internal_fn.updateXs = function C3_INTERNAL_updateXs() {
     var $$ = this;
     if ($$.data.targets.length) {
         $$.xs = [];
@@ -117,21 +117,21 @@ c3_chart_internal_fn.updateXs = function () {
         });
     }
 };
-c3_chart_internal_fn.getPrevX = function (i) {
+c3_chart_internal_fn.getPrevX = function C3_INTERNAL_getPrevX(i) {
     var x = this.xs[i - 1];
     return typeof x !== 'undefined' ? x : null;
 };
-c3_chart_internal_fn.getNextX = function (i) {
+c3_chart_internal_fn.getNextX = function C3_INTERNAL_getNextX(i) {
     var x = this.xs[i + 1];
     return typeof x !== 'undefined' ? x : null;
 };
-c3_chart_internal_fn.getMaxDataCount = function () {
+c3_chart_internal_fn.getMaxDataCount = function C3_INTERNAL_getMaxDataCount() {
     var $$ = this;
     return $$.d3.max($$.data.targets, function (t) { 
         return t.values.length; 
     });
 };
-c3_chart_internal_fn.getMaxDataCountTarget = function (targets) {
+c3_chart_internal_fn.getMaxDataCountTarget = function C3_INTERNAL_getMaxDataCountTarget(targets) {
     var length = targets.length, 
         max = 0, 
         maxTarget;
@@ -147,7 +147,7 @@ c3_chart_internal_fn.getMaxDataCountTarget = function (targets) {
     }
     return maxTarget;
 };
-c3_chart_internal_fn.getEdgeX = function (targets) {
+c3_chart_internal_fn.getEdgeX = function C3_INTERNAL_getEdgeX(targets) {
     var $$ = this;
     return !targets.length ? [0, 0] : [
         $$.d3.min(targets, function (t) { 
@@ -158,16 +158,16 @@ c3_chart_internal_fn.getEdgeX = function (targets) {
         })
     ];
 };
-c3_chart_internal_fn.mapToIds = function (targets) {
+c3_chart_internal_fn.mapToIds = function C3_INTERNAL_mapToIds(targets) {
     return targets.map(function (d) { 
         return d.id; 
     });
 };
-c3_chart_internal_fn.mapToTargetIds = function (ids) {
+c3_chart_internal_fn.mapToTargetIds = function C3_INTERNAL_mapToTargetIds(ids) {
     var $$ = this;
     return ids ? (isString(ids) ? [ids] : ids) : $$.mapToIds($$.data.targets);
 };
-c3_chart_internal_fn.hasTarget = function (targets, id) {
+c3_chart_internal_fn.hasTarget = function C3_INTERNAL_hasTarget(targets, id) {
     var ids = this.mapToIds(targets), i;
     for (i = 0; i < ids.length; i++) {
         if (ids[i] === id) {
@@ -176,19 +176,19 @@ c3_chart_internal_fn.hasTarget = function (targets, id) {
     }
     return false;
 };
-c3_chart_internal_fn.isTargetToShow = function (targetId) {
+c3_chart_internal_fn.isTargetToShow = function C3_INTERNAL_isTargetToShow(targetId) {
     return this.hiddenTargetIds.indexOf(targetId) < 0;
 };
-c3_chart_internal_fn.isLegendToShow = function (targetId) {
+c3_chart_internal_fn.isLegendToShow = function C3_INTERNAL_isLegendToShow(targetId) {
     return this.hiddenLegendIds.indexOf(targetId) < 0;
 };
-c3_chart_internal_fn.filterTargetsToShow = function (targets) {
+c3_chart_internal_fn.filterTargetsToShow = function C3_INTERNAL_filterTargetsToShow(targets) {
     var $$ = this;
     return targets.filter(function (t) { 
         return $$.isTargetToShow(t.id); 
     });
 };
-c3_chart_internal_fn.mapTargetsToUniqueXs = function (targets) {
+c3_chart_internal_fn.mapTargetsToUniqueXs = function C3_INTERNAL_mapTargetsToUniqueXs(targets) {
     var $$ = this;
     var xs = $$.d3.set($$.d3.merge(targets.map(function (t) { 
         return t.values.map(function (v) { 
@@ -201,23 +201,23 @@ c3_chart_internal_fn.mapTargetsToUniqueXs = function (targets) {
         return +x; 
     });
 };
-c3_chart_internal_fn.addHiddenTargetIds = function (targetIds) {
+c3_chart_internal_fn.addHiddenTargetIds = function C3_INTERNAL_addHiddenTargetIds(targetIds) {
     this.hiddenTargetIds = this.hiddenTargetIds.concat(targetIds);
 };
-c3_chart_internal_fn.removeHiddenTargetIds = function (targetIds) {
+c3_chart_internal_fn.removeHiddenTargetIds = function C3_INTERNAL_removeHiddenTargetIds(targetIds) {
     this.hiddenTargetIds = this.hiddenTargetIds.filter(function (id) { 
         return targetIds.indexOf(id) < 0; 
     });
 };
-c3_chart_internal_fn.addHiddenLegendIds = function (targetIds) {
+c3_chart_internal_fn.addHiddenLegendIds = function C3_INTERNAL_addHiddenLegendIds(targetIds) {
     this.hiddenLegendIds = this.hiddenLegendIds.concat(targetIds);
 };
-c3_chart_internal_fn.removeHiddenLegendIds = function (targetIds) {
+c3_chart_internal_fn.removeHiddenLegendIds = function C3_INTERNAL_removeHiddenLegendIds(targetIds) {
     this.hiddenLegendIds = this.hiddenLegendIds.filter(function (id) { 
         return targetIds.indexOf(id) < 0; 
     });
 };
-c3_chart_internal_fn.getValuesAsIdKeyed = function (targets) {
+c3_chart_internal_fn.getValuesAsIdKeyed = function C3_INTERNAL_getValuesAsIdKeyed(targets) {
     var ys = {};
     targets.forEach(function (t) {
         ys[t.id] = [];
@@ -227,7 +227,7 @@ c3_chart_internal_fn.getValuesAsIdKeyed = function (targets) {
     });
     return ys;
 };
-c3_chart_internal_fn.checkValueInTargets = function (targets, checker) {
+c3_chart_internal_fn.checkValueInTargets = function C3_INTERNAL_checkValueInTargets(targets, checker) {
     var ids = Object.keys(targets), 
         i, j, values;
     for (i = 0; i < ids.length; i++) {
@@ -240,25 +240,25 @@ c3_chart_internal_fn.checkValueInTargets = function (targets, checker) {
     }
     return false;
 };
-c3_chart_internal_fn.hasNegativeValueInTargets = function (targets) {
+c3_chart_internal_fn.hasNegativeValueInTargets = function C3_INTERNAL_hasNegativeValueInTargets(targets) {
     return this.checkValueInTargets(targets, function (v) { 
         return v < 0; 
     });
 };
-c3_chart_internal_fn.hasPositiveValueInTargets = function (targets) {
+c3_chart_internal_fn.hasPositiveValueInTargets = function C3_INTERNAL_hasPositiveValueInTargets(targets) {
     return this.checkValueInTargets(targets, function (v) { 
         return v > 0; 
     });
 };
-c3_chart_internal_fn.isOrderDesc = function () {
+c3_chart_internal_fn.isOrderDesc = function C3_INTERNAL_isOrderDesc() {
     var config = this.config;
     return typeof(config.data_order) === 'string' && config.data_order.toLowerCase() === 'desc';
 };
-c3_chart_internal_fn.isOrderAsc = function () {
+c3_chart_internal_fn.isOrderAsc = function C3_INTERNAL_isOrderAsc() {
     var config = this.config;
     return typeof(config.data_order) === 'string' && config.data_order.toLowerCase() === 'asc';
 };
-c3_chart_internal_fn.orderTargets = function (targets) {
+c3_chart_internal_fn.orderTargets = function C3_INTERNAL_orderTargets(targets) {
     var $$ = this, 
         config = $$.config, 
         orderAsc = $$.isOrderAsc(), 
@@ -277,7 +277,7 @@ c3_chart_internal_fn.orderTargets = function (targets) {
     } // TODO: accept name array for order
     return targets;
 };
-c3_chart_internal_fn.filterByX = function (targets, x) {
+c3_chart_internal_fn.filterByX = function C3_INTERNAL_filterByX(targets, x) {
     return this.d3.merge(targets.map(function (t) { 
         return t.values; 
     }))
@@ -285,12 +285,12 @@ c3_chart_internal_fn.filterByX = function (targets, x) {
         return v.x - x === 0; 
     });
 };
-c3_chart_internal_fn.filterRemoveNull = function (data) {
+c3_chart_internal_fn.filterRemoveNull = function C3_INTERNAL_filterRemoveNull(data) {
     return data.filter(function (d) { 
         return isValue(d.value); 
     });
 };
-c3_chart_internal_fn.filterByXDomain = function (targets, xDomain) {
+c3_chart_internal_fn.filterByXDomain = function C3_INTERNAL_filterByXDomain(targets, xDomain) {
     return targets.map(function (t) {
         return {
             id: t.id,
@@ -301,7 +301,7 @@ c3_chart_internal_fn.filterByXDomain = function (targets, xDomain) {
         };
     });
 };
-c3_chart_internal_fn.hasDataLabel = function () {
+c3_chart_internal_fn.hasDataLabel = function C3_INTERNAL_hasDataLabel() {
     var config = this.config;
     if (typeof config.data_labels === 'boolean' && config.data_labels) {
         return true;
@@ -310,7 +310,7 @@ c3_chart_internal_fn.hasDataLabel = function () {
     }
     return false;
 };
-c3_chart_internal_fn.getDataLabelLength = function (min, max, key) {
+c3_chart_internal_fn.getDataLabelLength = function C3_INTERNAL_getDataLabelLength(min, max, key) {
     var $$ = this,
         lengths = [0, 0], 
         paddingCoef = 1.3;
@@ -326,13 +326,13 @@ c3_chart_internal_fn.getDataLabelLength = function (min, max, key) {
         .remove();
     return lengths;
 };
-c3_chart_internal_fn.isNoneArc = function (d) {
+c3_chart_internal_fn.isNoneArc = function C3_INTERNAL_isNoneArc(d) {
     return this.hasTarget(this.data.targets, d.id);
 },
-c3_chart_internal_fn.isArc = function (d) {
+c3_chart_internal_fn.isArc = function C3_INTERNAL_isArc(d) {
     return d.data && this.hasTarget(this.data.targets, d.data.id);
 };
-c3_chart_internal_fn.findSameXOfValues = function (values, index) {
+c3_chart_internal_fn.findSameXOfValues = function C3_INTERNAL_findSameXOfValues(values, index) {
     var i, 
         targetX = values[index].x, 
         sames = [];
@@ -351,7 +351,7 @@ c3_chart_internal_fn.findSameXOfValues = function (values, index) {
     return sames;
 };
 
-c3_chart_internal_fn.findClosestFromTargets = function (targets, pos) {
+c3_chart_internal_fn.findClosestFromTargets = function C3_INTERNAL_findClosestFromTargets(targets, pos) {
     var $$ = this, 
         candidates;
 
@@ -363,7 +363,7 @@ c3_chart_internal_fn.findClosestFromTargets = function (targets, pos) {
     // decide closest point and return
     return $$.findClosest(candidates, pos);
 };
-c3_chart_internal_fn.findClosest = function (values, pos) {
+c3_chart_internal_fn.findClosest = function C3_INTERNAL_findClosest(values, pos) {
     var $$ = this, 
         minDist = 100, 
         closest;
@@ -391,7 +391,7 @@ c3_chart_internal_fn.findClosest = function (values, pos) {
 
     return closest;
 };
-c3_chart_internal_fn.dist = function (data, pos) {
+c3_chart_internal_fn.dist = function C3_INTERNAL_dist(data, pos) {
     var $$ = this, 
         config = $$.config,
         xIndex = config.axis_rotated ? 1 : 0,
@@ -400,7 +400,7 @@ c3_chart_internal_fn.dist = function (data, pos) {
         x = $$.x(data.x);
     return Math.pow(x - pos[xIndex], 2) + Math.pow(y - pos[yIndex], 2);
 };
-c3_chart_internal_fn.convertValuesToStep = function (values) {
+c3_chart_internal_fn.convertValuesToStep = function C3_INTERNAL_convertValuesToStep(values) {
     var converted = [].concat(values), 
         i;
 
@@ -425,7 +425,7 @@ c3_chart_internal_fn.convertValuesToStep = function (values) {
 
     return converted;
 };
-c3_chart_internal_fn.updateDataAttributes = function (name, attrs) {
+c3_chart_internal_fn.updateDataAttributes = function C3_INTERNAL_updateDataAttributes(name, attrs) {
     var $$ = this, 
         config = $$.config, 
         current = config['data_' + name];

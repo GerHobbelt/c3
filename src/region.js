@@ -1,10 +1,10 @@
-c3_chart_internal_fn.initRegion = function () {
+c3_chart_internal_fn.initRegion = function C3_INTERNAL_initRegion() {
     var $$ = this;
     $$.region = $$.main.append('g')
         .attr("clip-path", $$.clipPath)
         .attr("class", CLASS.regions);
 };
-c3_chart_internal_fn.updateRegion = function (duration) {
+c3_chart_internal_fn.updateRegion = function C3_INTERNAL_updateRegion(duration) {
     var $$ = this, 
         config = $$.config;
 
@@ -21,7 +21,7 @@ c3_chart_internal_fn.updateRegion = function (duration) {
         .style("opacity", 0)
         .remove();
 };
-c3_chart_internal_fn.redrawRegion = function (withTransition) {
+c3_chart_internal_fn.redrawRegion = function C3_INTERNAL_redrawRegion(withTransition) {
     console.count('redrawRegion');
     var $$ = this,
         regions = $$.mainRegion.selectAll('rect'),
@@ -40,7 +40,7 @@ c3_chart_internal_fn.redrawRegion = function (withTransition) {
             })
     ];
 };
-c3_chart_internal_fn.regionX = function (d) {
+c3_chart_internal_fn.regionX = function C3_INTERNAL_regionX(d) {
     var $$ = this, 
         config = $$.config,
         xPos, 
@@ -52,7 +52,7 @@ c3_chart_internal_fn.regionX = function (d) {
     }
     return xPos;
 };
-c3_chart_internal_fn.regionY = function (d) {
+c3_chart_internal_fn.regionY = function C3_INTERNAL_regionY(d) {
     var $$ = this, 
         config = $$.config,
         yPos, 
@@ -64,7 +64,7 @@ c3_chart_internal_fn.regionY = function (d) {
     }
     return yPos;
 };
-c3_chart_internal_fn.regionWidth = function (d) {
+c3_chart_internal_fn.regionWidth = function C3_INTERNAL_regionWidth(d) {
     var $$ = this, 
         config = $$.config,
         start = $$.regionX(d), 
@@ -77,7 +77,7 @@ c3_chart_internal_fn.regionWidth = function (d) {
     }
     return end < start ? 0 : end - start;
 };
-c3_chart_internal_fn.regionHeight = function (d) {
+c3_chart_internal_fn.regionHeight = function C3_INTERNAL_regionHeight(d) {
     var $$ = this, 
         config = $$.config,
         start = this.regionY(d), 
@@ -90,6 +90,6 @@ c3_chart_internal_fn.regionHeight = function (d) {
     }
     return end < start ? 0 : end - start;
 };
-c3_chart_internal_fn.isRegionOnX = function (d) {
+c3_chart_internal_fn.isRegionOnX = function C3_INTERNAL_isRegionOnX(d) {
     return !d.axis || d.axis === 'x';
 };

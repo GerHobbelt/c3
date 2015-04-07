@@ -48,7 +48,7 @@ function ChartInternal(api) {
     $$.axes = {};
 }
 
-c3.generate = function (config) {
+c3.generate = function C3_API_generate(config) {
     return new Chart(config);
 };
 
@@ -65,7 +65,7 @@ c3_chart_fn = c3.chart.fn;
 c3_chart_internal_fn = c3.chart.internal.fn;
 c3_chart_internal_axis_fn = c3.chart.internal.axis.fn;
 
-c3_chart_internal_fn.init = function () {
+c3_chart_internal_fn.init = function C3_INTERNAL_init() {
     var $$ = this, 
         config = $$.config;
 
@@ -88,7 +88,7 @@ c3_chart_internal_fn.init = function () {
     }
 };
 
-c3_chart_internal_fn.initParams = function () {
+c3_chart_internal_fn.initParams = function C3_INTERNAL_initParams() {
     var $$ = this, 
         d3 = $$.d3, 
         config = $$.config;
@@ -163,7 +163,7 @@ c3_chart_internal_fn.initParams = function () {
     $$.axes.subx = d3.selectAll([]); // needs when excluding subchart.js
 };
 
-c3_chart_internal_fn.initChartElements = function () {
+c3_chart_internal_fn.initChartElements = function C3_INTERNAL_initChartElements() {
     if (this.initBar) { 
         this.initBar(); 
     }
@@ -181,7 +181,7 @@ c3_chart_internal_fn.initChartElements = function () {
     }
 };
 
-c3_chart_internal_fn.initWithData = function (data) {
+c3_chart_internal_fn.initWithData = function C3_INTERNAL_initWithData(data) {
     var $$ = this, 
         d3 = $$.d3, 
         config = $$.config;
@@ -383,7 +383,7 @@ c3_chart_internal_fn.initWithData = function (data) {
     $$.api.element = $$.selectChart.node();
 };
 
-c3_chart_internal_fn.smoothLines = function (el, type) {
+c3_chart_internal_fn.smoothLines = function C3_INTERNAL_smoothLines(el, type) {
     var $$ = this;
     if (type === 'grid') {
         el.each(function () {
@@ -403,7 +403,7 @@ c3_chart_internal_fn.smoothLines = function (el, type) {
 };
 
 
-c3_chart_internal_fn.updateSizes = function () {
+c3_chart_internal_fn.updateSizes = function C3_INTERNAL_updateSizes() {
     var $$ = this, 
         config = $$.config;
     var legendHeight = $$.legend ? $$.getLegendHeight() : 0,
@@ -486,7 +486,7 @@ c3_chart_internal_fn.updateSizes = function () {
     }
 };
 
-c3_chart_internal_fn.updateTargets = function (targets) {
+c3_chart_internal_fn.updateTargets = function C3_INTERNAL_updateTargets(targets) {
     var $$ = this;
 
     /*-- Main --*/
@@ -513,7 +513,7 @@ c3_chart_internal_fn.updateTargets = function (targets) {
     // Fade-in each chart
     $$.showTargets();
 };
-c3_chart_internal_fn.showTargets = function () {
+c3_chart_internal_fn.showTargets = function C3_INTERNAL_showTargets() {
     var $$ = this;
     $$.svg.selectAll('.' + CLASS.target).filter(function (d) { 
             return $$.isTargetToShow(d.id); 
@@ -522,7 +522,7 @@ c3_chart_internal_fn.showTargets = function () {
         .style("opacity", 1);
 };
 
-c3_chart_internal_fn.redraw = function (options, transitions) {
+c3_chart_internal_fn.redraw = function C3_INTERNAL_redraw(options, transitions) {
     console.count('redraw');
     var $$ = this, 
         main = $$.main, 
@@ -785,7 +785,7 @@ c3_chart_internal_fn.redraw = function (options, transitions) {
     });
 };
 
-c3_chart_internal_fn.updateAndRedraw = function (options) {
+c3_chart_internal_fn.updateAndRedraw = function C3_INTERNAL_updateAndRedraw(options) {
     var $$ = this, 
         config = $$.config, 
         transitions;
@@ -813,7 +813,7 @@ c3_chart_internal_fn.updateAndRedraw = function (options) {
     // Draw with new sizes & scales
     $$.redraw(options, transitions);
 };
-c3_chart_internal_fn.redrawWithoutRescale = function () {
+c3_chart_internal_fn.redrawWithoutRescale = function C3_INTERNAL_redrawWithoutRescale() {
     console.count('redrawWithoutRescale');
     this.redraw({
         withY: false,
@@ -823,23 +823,23 @@ c3_chart_internal_fn.redrawWithoutRescale = function () {
     });
 };
 
-c3_chart_internal_fn.isTimeSeries = function () {
+c3_chart_internal_fn.isTimeSeries = function C3_INTERNAL_isTimeSeries() {
     return this.config.axis_x_type === 'timeseries';
 };
-c3_chart_internal_fn.isCategorized = function () {
+c3_chart_internal_fn.isCategorized = function C3_INTERNAL_isCategorized() {
     return this.config.axis_x_type.indexOf('category') >= 0;
 };
-c3_chart_internal_fn.isCustomX = function () {
+c3_chart_internal_fn.isCustomX = function C3_INTERNAL_isCustomX() {
     var $$ = this, 
         config = $$.config;
     return !$$.isTimeSeries() && (config.data_x || notEmpty(config.data_xs));
 };
 
-c3_chart_internal_fn.isTimeSeriesY = function () {
+c3_chart_internal_fn.isTimeSeriesY = function C3_INTERNAL_isTimeSeriesY() {
     return this.config.axis_y_type === 'timeseries';
 };
 
-c3_chart_internal_fn.getTranslate = function (target) {
+c3_chart_internal_fn.getTranslate = function C3_INTERNAL_getTranslate(target) {
     var $$ = this, 
         config = $$.config, 
         x, y;
@@ -870,23 +870,23 @@ c3_chart_internal_fn.getTranslate = function (target) {
     }
     return "translate(" + x + "," + y + ")";
 };
-c3_chart_internal_fn.initialOpacity = function (d) {
+c3_chart_internal_fn.initialOpacity = function C3_INTERNAL_initialOpacity(d) {
     return d.value !== null && this.withoutFadeIn[d.id] ? 1 : 0;
 };
-c3_chart_internal_fn.initialOpacityForCircle = function (d) {
+c3_chart_internal_fn.initialOpacityForCircle = function C3_INTERNAL_initialOpacityForCircle(d) {
     return d.value !== null && this.withoutFadeIn[d.id] ? this.opacityForCircle(d) : 0;
 };
-c3_chart_internal_fn.opacityForCircle = function (d) {
+c3_chart_internal_fn.opacityForCircle = function C3_INTERNAL_opacityForCircle(d) {
     var opacity = this.config.point_show ? 1 : 0;
     return isValue(d.value) ? (this.isScatterType(d) ? 0.5 : opacity) : 0;
 };
-c3_chart_internal_fn.opacityForText = function () {
+c3_chart_internal_fn.opacityForText = function C3_INTERNAL_opacityForText() {
     return this.hasDataLabel() ? 1 : 0;
 };
-c3_chart_internal_fn.xx = function (d) {
+c3_chart_internal_fn.xx = function C3_INTERNAL_xx(d) {
     return d ? this.x(d.x) : null;
 };
-c3_chart_internal_fn.xv = function (d) {
+c3_chart_internal_fn.xv = function C3_INTERNAL_xv(d) {
     var $$ = this, 
         value = d.value;
     if ($$.isTimeSeries()) {
@@ -897,16 +897,16 @@ c3_chart_internal_fn.xv = function (d) {
     }
     return Math.ceil($$.x(value));
 };
-c3_chart_internal_fn.yv = function (d) {
+c3_chart_internal_fn.yv = function C3_INTERNAL_yv(d) {
     var $$ = this,
         yScale = d.axis && d.axis === 'y2' ? $$.y2 : $$.y;
     return Math.ceil(yScale(d.value));
 };
-c3_chart_internal_fn.subxx = function (d) {
+c3_chart_internal_fn.subxx = function C3_INTERNAL_subxx(d) {
     return d ? this.subX(d.x) : null;
 };
 
-c3_chart_internal_fn.transformMain = function (withTransition, transitions) {
+c3_chart_internal_fn.transformMain = function C3_INTERNAL_transformMain(withTransition, transitions) {
     var $$ = this,
         xAxis, yAxis, y2Axis;
     if (transitions && transitions.axisX) {
@@ -940,7 +940,7 @@ c3_chart_internal_fn.transformMain = function (withTransition, transitions) {
     $$.main.select('.' + CLASS.chartArcs).attr("transform", $$.getTranslate('arc'));
 };
 
-c3_chart_internal_fn.transformAll = function (withTransition, transitions) {
+c3_chart_internal_fn.transformAll = function C3_INTERNAL_transformAll(withTransition, transitions) {
     var $$ = this;
     $$.transformMain(withTransition, transitions);
     if ($$.config.subchart_show) { 
@@ -951,7 +951,7 @@ c3_chart_internal_fn.transformAll = function (withTransition, transitions) {
     }
 };
 
-c3_chart_internal_fn.updateSvgSize = function () {
+c3_chart_internal_fn.updateSvgSize = function C3_INTERNAL_updateSvgSize() {
     var $$ = this,
         brush = $$.svg.select(".c3-brush .background");
     $$.svg.attr('width', $$.currentWidth).attr('height', $$.currentHeight);
@@ -979,7 +979,7 @@ c3_chart_internal_fn.updateSvgSize = function () {
 };
 
 
-c3_chart_internal_fn.updateDimension = function (withoutAxis) {
+c3_chart_internal_fn.updateDimension = function C3_INTERNAL_updateDimension(withoutAxis) {
     var $$ = this;
     if (!withoutAxis) {
         if ($$.config.axis_rotated) {
@@ -996,7 +996,7 @@ c3_chart_internal_fn.updateDimension = function (withoutAxis) {
     $$.transformAll(false);
 };
 
-c3_chart_internal_fn.observeInserted = function (selection) {
+c3_chart_internal_fn.observeInserted = function C3_INTERNAL_observeInserted(selection) {
     var $$ = this, 
         observer;
     if (typeof MutationObserver === 'undefined') {
@@ -1032,7 +1032,7 @@ c3_chart_internal_fn.observeInserted = function (selection) {
 };
 
 
-c3_chart_internal_fn.generateResize = function () {
+c3_chart_internal_fn.generateResize = function C3_INTERNAL_generateResize() {
     var resizeFunctions = [];
     function callResizeFunctions() {
         resizeFunctions.forEach(function (f) {
@@ -1045,7 +1045,7 @@ c3_chart_internal_fn.generateResize = function () {
     return callResizeFunctions;
 };
 
-c3_chart_internal_fn.endall = function (transition, callback) {
+c3_chart_internal_fn.endall = function C3_INTERNAL_endall(transition, callback) {
     var n = 0;
     transition
         .each(function () { 
@@ -1057,7 +1057,7 @@ c3_chart_internal_fn.endall = function (transition, callback) {
             }
         });
 };
-c3_chart_internal_fn.generateWait = function () {
+c3_chart_internal_fn.generateWait = function C3_INTERNAL_generateWait() {
     var transitionsToWait = [],
         f = function (transition, callback) {
             var timer = setInterval(function () {
@@ -1085,7 +1085,7 @@ c3_chart_internal_fn.generateWait = function () {
     return f;
 };
 
-c3_chart_internal_fn.parseDate = function (date) {
+c3_chart_internal_fn.parseDate = function C3_INTERNAL_parseDate(date) {
     var $$ = this, parsedDate;
     if (date instanceof Date) {
         parsedDate = date;
@@ -1100,7 +1100,7 @@ c3_chart_internal_fn.parseDate = function (date) {
     return parsedDate;
 };
 
-c3_chart_internal_fn.isTabVisible = function () {
+c3_chart_internal_fn.isTabVisible = function C3_INTERNAL_isTabVisible() {
     var hidden;
     if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
         hidden = "hidden";

@@ -1,4 +1,4 @@
-c3_chart_internal_fn.generateColor = function () {
+c3_chart_internal_fn.generateColor = function C3_INTERNAL_generateColor() {
     var $$ = this, config = $$.config, d3 = $$.d3,
         colors = config.data_colors,
         pattern = notEmpty(config.color_pattern) ? config.color_pattern : d3.scale.category10().range(),
@@ -25,7 +25,7 @@ c3_chart_internal_fn.generateColor = function () {
         return callback instanceof Function ? callback(color, d) : color;
     };
 };
-c3_chart_internal_fn.generateLevelColor = function () {
+c3_chart_internal_fn.generateLevelColor = function C3_INTERNAL_generateLevelColor() {
     var $$ = this, config = $$.config,
         colors = config.color_pattern,
         threshold = config.color_threshold,

@@ -1,4 +1,4 @@
-c3_chart_internal_fn.initLegend = function () {
+c3_chart_internal_fn.initLegend = function C3_INTERNAL_initLegend() {
     var $$ = this;
     $$.legendItemTextBox = {};
     $$.legendHasRendered = false;
@@ -12,11 +12,11 @@ c3_chart_internal_fn.initLegend = function () {
     // MEMO: translate will be upated by this, so transform not needed in updateLegend()
     $$.updateLegendWithDefaults();
 };
-c3_chart_internal_fn.updateLegendWithDefaults = function () {
+c3_chart_internal_fn.updateLegendWithDefaults = function C3_INTERNAL_updateLegendWithDefaults() {
     var $$ = this;
     $$.updateLegend($$.mapToIds($$.data.targets), {withTransform: false, withTransitionForTransform: false, withTransition: false});
 };
-c3_chart_internal_fn.updateSizeForLegend = function (legendHeight, legendWidth) {
+c3_chart_internal_fn.updateSizeForLegend = function C3_INTERNAL_updateSizeForLegend(legendHeight, legendWidth) {
     var $$ = this, 
         config = $$.config, 
         insetLegendPosition = {
@@ -31,24 +31,24 @@ c3_chart_internal_fn.updateSizeForLegend = function (legendHeight, legendWidth) 
         left: $$.isLegendRight ? $$.currentWidth - legendWidth : $$.isLegendInset ? insetLegendPosition.left : 0
     };
 };
-c3_chart_internal_fn.transformLegend = function (withTransition) {
+c3_chart_internal_fn.transformLegend = function C3_INTERNAL_transformLegend(withTransition) {
     var $$ = this;
     (withTransition ? $$.legend.transition() : $$.legend).attr("transform", $$.getTranslate('legend'));
 };
-c3_chart_internal_fn.updateLegendStep = function (step) {
+c3_chart_internal_fn.updateLegendStep = function C3_INTERNAL_updateLegendStep(step) {
     this.legendStep = step;
 };
-c3_chart_internal_fn.updateLegendItemWidth = function (w) {
+c3_chart_internal_fn.updateLegendItemWidth = function C3_INTERNAL_updateLegendItemWidth(w) {
     this.legendItemWidth = w;
 };
-c3_chart_internal_fn.updateLegendItemHeight = function (h) {
+c3_chart_internal_fn.updateLegendItemHeight = function C3_INTERNAL_updateLegendItemHeight(h) {
     this.legendItemHeight = h;
 };
-c3_chart_internal_fn.getLegendWidth = function () {
+c3_chart_internal_fn.getLegendWidth = function C3_INTERNAL_getLegendWidth() {
     var $$ = this;
     return $$.config.legend_show ? $$.isLegendRight || $$.isLegendInset ? $$.legendItemWidth * ($$.legendStep + 1) : $$.currentWidth : 0;
 };
-c3_chart_internal_fn.getLegendHeight = function () {
+c3_chart_internal_fn.getLegendHeight = function C3_INTERNAL_getLegendHeight() {
     var $$ = this, h = 0;
     if ($$.config.legend_show) {
         if ($$.isLegendRight) {
@@ -59,13 +59,13 @@ c3_chart_internal_fn.getLegendHeight = function () {
     }
     return h;
 };
-c3_chart_internal_fn.opacityForLegend = function (legendItem) {
+c3_chart_internal_fn.opacityForLegend = function C3_INTERNAL_opacityForLegend(legendItem) {
     return legendItem.classed(CLASS.legendItemHidden) ? null : 1;
 };
-c3_chart_internal_fn.opacityForUnfocusedLegend = function (legendItem) {
+c3_chart_internal_fn.opacityForUnfocusedLegend = function C3_INTERNAL_opacityForUnfocusedLegend(legendItem) {
     return legendItem.classed(CLASS.legendItemHidden) ? null : 0.3;
 };
-c3_chart_internal_fn.toggleFocusLegend = function (targetIds, focus) {
+c3_chart_internal_fn.toggleFocusLegend = function C3_INTERNAL_toggleFocusLegend(targetIds, focus) {
     var $$ = this;
     targetIds = $$.mapToTargetIds(targetIds);
     $$.legend.selectAll('.' + CLASS.legendItem)
@@ -79,7 +79,7 @@ c3_chart_internal_fn.toggleFocusLegend = function (targetIds, focus) {
             return opacity.call($$, $$.d3.select(this));
         });
 };
-c3_chart_internal_fn.revertLegend = function () {
+c3_chart_internal_fn.revertLegend = function C3_INTERNAL_revertLegend() {
     var $$ = this, 
         d3 = $$.d3;
     $$.legend.selectAll('.' + CLASS.legendItem)
@@ -89,7 +89,7 @@ c3_chart_internal_fn.revertLegend = function () {
             return $$.opacityForLegend(d3.select(this)); 
         });
 };
-c3_chart_internal_fn.showLegend = function (targetIds) {
+c3_chart_internal_fn.showLegend = function C3_INTERNAL_showLegend(targetIds) {
     var $$ = this, 
         config = $$.config;
     if (!config.legend_show) {
@@ -107,7 +107,7 @@ c3_chart_internal_fn.showLegend = function (targetIds) {
             return $$.opacityForLegend($$.d3.select(this)); 
         });
 };
-c3_chart_internal_fn.hideLegend = function (targetIds) {
+c3_chart_internal_fn.hideLegend = function C3_INTERNAL_hideLegend(targetIds) {
     var $$ = this, 
         config = $$.config;
     if (config.legend_show && isEmpty(targetIds)) {
@@ -119,10 +119,10 @@ c3_chart_internal_fn.hideLegend = function (targetIds) {
         .style('opacity', 0)
         .style('visibility', 'hidden');
 };
-c3_chart_internal_fn.clearLegendItemTextBoxCache = function () {
+c3_chart_internal_fn.clearLegendItemTextBoxCache = function C3_INTERNAL_clearLegendItemTextBoxCache() {
     this.legendItemTextBox = {};
 };
-c3_chart_internal_fn.updateLegend = function (targetIds, options, transitions) {
+c3_chart_internal_fn.updateLegend = function C3_INTERNAL_updateLegend(targetIds, options, transitions) {
     var $$ = this, 
         config = $$.config;
     var xForLegend, xForLegendText, xForLegendRect, yForLegend, yForLegendText, yForLegendRect;

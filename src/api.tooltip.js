@@ -1,4 +1,4 @@
-c3_chart_fn.tooltip = function () {};
+c3_chart_fn.tooltip = function C3_API_tooltip() {};
 c3_chart_fn.tooltip.show = function (args) {
     var $$ = this.internal, index, mouse;
 

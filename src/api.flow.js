@@ -1,4 +1,4 @@
-c3_chart_fn.flow = function (args) {
+c3_chart_fn.flow = function C3_API_flow(args) {
     var $$ = this.internal,
         targets, data, 
         notfoundIds = [], 
@@ -158,7 +158,7 @@ c3_chart_fn.flow = function (args) {
     });
 };
 
-c3_chart_internal_fn.generateFlow = function (args) {
+c3_chart_internal_fn.generateFlow = function C3_INTERNAL_generateFlow(args) {
     var $$ = this, 
         config = $$.config, 
         d3 = $$.d3;

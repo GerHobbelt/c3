@@ -1,4 +1,4 @@
-c3_chart_internal_fn.convertUrlToData = function (url, mimeType, keys, done) {
+c3_chart_internal_fn.convertUrlToData = function C3_INTERNAL_convertUrlToData(url, mimeType, keys, done) {
     var $$ = this, type = mimeType ? mimeType : 'csv';
     $$.d3.xhr(url, function (error, data) {
         var d;
@@ -15,7 +15,7 @@ c3_chart_internal_fn.convertUrlToData = function (url, mimeType, keys, done) {
         done.call($$, d);
     });
 };
-c3_chart_internal_fn.convertXsvToData = function (xsv, parser) {
+c3_chart_internal_fn.convertXsvToData = function C3_INTERNAL_convertXsvToData(xsv, parser) {
     var rows = parser.parseRows(xsv), d;
     if (rows.length === 1) {
         d = [{}];
@@ -27,13 +27,13 @@ c3_chart_internal_fn.convertXsvToData = function (xsv, parser) {
     }
     return d;
 };
-c3_chart_internal_fn.convertCsvToData = function (csv) {
+c3_chart_internal_fn.convertCsvToData = function C3_INTERNAL_convertCsvToData(csv) {
     return this.convertXsvToData(csv, this.d3.csv);
 };
-c3_chart_internal_fn.convertTsvToData = function (tsv) {
+c3_chart_internal_fn.convertTsvToData = function C3_INTERNAL_convertTsvToData(tsv) {
     return this.convertXsvToData(tsv, this.d3.tsv);
 };
-c3_chart_internal_fn.convertJsonToData = function (json, keys) {
+c3_chart_internal_fn.convertJsonToData = function C3_INTERNAL_convertJsonToData(json, keys) {
     var $$ = this,
         new_rows = [], targetKeys, data;
     $$.config.json_original = json;
@@ -63,7 +63,7 @@ c3_chart_internal_fn.convertJsonToData = function (json, keys) {
     }
     return data;
 };
-c3_chart_internal_fn.convertRowsToData = function (rows) {
+c3_chart_internal_fn.convertRowsToData = function C3_INTERNAL_convertRowsToData(rows) {
     var keys = rows[0], new_row = {}, new_rows = [], i, j;
     for (i = 1; i < rows.length; i++) {
         new_row = {};
@@ -77,7 +77,7 @@ c3_chart_internal_fn.convertRowsToData = function (rows) {
     }
     return new_rows;
 };
-c3_chart_internal_fn.convertColumnsToData = function (columns) {
+c3_chart_internal_fn.convertColumnsToData = function C3_INTERNAL_convertColumnsToData(columns) {
     var new_rows = [], i, j, key;
     for (i = 0; i < columns.length; i++) {
         key = columns[i][0];
@@ -93,7 +93,7 @@ c3_chart_internal_fn.convertColumnsToData = function (columns) {
     }
     return new_rows;
 };
-c3_chart_internal_fn.convertDataToTargets = function (data, appendXs) {
+c3_chart_internal_fn.convertDataToTargets = function C3_INTERNAL_convertDataToTargets(data, appendXs) {
     var $$ = this, config = $$.config,
         ids = $$.d3.keys(data[0]).filter($$.isNotX, $$),
         xs = $$.d3.keys(data[0]).filter($$.isX, $$),

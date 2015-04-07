@@ -1,4 +1,4 @@
-c3_chart_internal_fn.initTooltip = function () {
+c3_chart_internal_fn.initTooltip = function C3_INTERNAL_initTooltip() {
     var $$ = this, config = $$.config, i;
     $$.tooltip = $$.selectChart
         .style("position", "relative")
@@ -24,7 +24,7 @@ c3_chart_internal_fn.initTooltip = function () {
             .style("display", "block");
     }
 };
-c3_chart_internal_fn.getTooltipContent = function (d, defaultTitleFormat, defaultValueFormat, color) {
+c3_chart_internal_fn.getTooltipContent = function C3_INTERNAL_getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color) {
     var $$ = this, config = $$.config,
         titleFormat = config.tooltip_format_title || defaultTitleFormat,
         nameFormat = config.tooltip_format_name || function (name) { return name; },
@@ -51,7 +51,7 @@ c3_chart_internal_fn.getTooltipContent = function (d, defaultTitleFormat, defaul
     }
     return text + "</table>";
 };
-c3_chart_internal_fn.tooltipPosition = function (dataToShow, tWidth, tHeight, element) {
+c3_chart_internal_fn.tooltipPosition = function C3_INTERNAL_tooltipPosition(dataToShow, tWidth, tHeight, element) {
     var $$ = this, config = $$.config, d3 = $$.d3;
     var svgLeft, tooltipLeft, tooltipRight, tooltipTop, chartRight;
     var forArc = $$.hasArcType(),
@@ -87,7 +87,7 @@ c3_chart_internal_fn.tooltipPosition = function (dataToShow, tWidth, tHeight, el
     }
     return {top: tooltipTop, left: tooltipLeft};
 };
-c3_chart_internal_fn.showTooltip = function (selectedData, element) {
+c3_chart_internal_fn.showTooltip = function C3_INTERNAL_showTooltip(selectedData, element) {
     var $$ = this, config = $$.config;
     var tWidth, tHeight, position;
     var forArc = $$.hasArcType(),
@@ -108,6 +108,6 @@ c3_chart_internal_fn.showTooltip = function (selectedData, element) {
         .style("top", position.top + "px")
         .style("left", position.left + 'px');
 };
-c3_chart_internal_fn.hideTooltip = function () {
+c3_chart_internal_fn.hideTooltip = function C3_INTERNAL_hideTooltip() {
     this.tooltip.style("display", "none");
 };

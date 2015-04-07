@@ -1,4 +1,4 @@
-c3_chart_fn.regions = function (regions) {
+c3_chart_fn.regions = function C3_API_regions(regions) {
     var $$ = this.internal, 
         config = $$.config;
     if (!regions) { 

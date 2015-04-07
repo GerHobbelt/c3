@@ -1,4 +1,4 @@
-c3_chart_fn.data = function (targetIds) {
+c3_chart_fn.data = function C3_API_data(targetIds) {
     var targets = this.internal.data.targets;
     return typeof targetIds === 'undefined' ? targets : targets.filter(function (t) {
         return [].concat(targetIds).indexOf(t.id) >= 0;

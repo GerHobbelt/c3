@@ -1,10 +1,10 @@
-c3_chart_internal_fn.initEventRect = function () {
+c3_chart_internal_fn.initEventRect = function C3_INTERNAL_initEventRect() {
     var $$ = this;
     $$.main.select('.' + CLASS.chart).append("g")
         .attr("class", CLASS.eventRects)
         .style('fill-opacity', 0);
 };
-c3_chart_internal_fn.redrawEventRect = function () {
+c3_chart_internal_fn.redrawEventRect = function C3_INTERNAL_redrawEventRect() {
     console.count('redrawEventRect');
     var $$ = this, 
         config = $$.config,
@@ -45,7 +45,7 @@ c3_chart_internal_fn.redrawEventRect = function () {
         eventRectUpdate.exit().remove();
     }
 };
-c3_chart_internal_fn.updateEventRect = function (eventRectUpdate) {
+c3_chart_internal_fn.updateEventRect = function C3_INTERNAL_updateEventRect(eventRectUpdate) {
     var $$ = this, 
         config = $$.config,
         x, y, w, h, rectW, rectX;
@@ -121,7 +121,7 @@ c3_chart_internal_fn.updateEventRect = function (eventRectUpdate) {
     }
 
 };
-c3_chart_internal_fn.generateEventRectsForSingleX = function (eventRectEnter) {
+c3_chart_internal_fn.generateEventRectsForSingleX = function C3_INTERNAL_generateEventRectsForSingleX(eventRectEnter) {
     var $$ = this, 
         d3 = $$.d3, 
         config = $$.config;
@@ -258,7 +258,7 @@ c3_chart_internal_fn.generateEventRectsForSingleX = function (eventRectEnter) {
         );
 };
 
-c3_chart_internal_fn.generateEventRectsForMultipleXs = function (eventRectEnter) {
+c3_chart_internal_fn.generateEventRectsForMultipleXs = function C3_INTERNAL_generateEventRectsForMultipleXs(eventRectEnter) {
     var $$ = this, 
         d3 = $$.d3, 
         config = $$.config;
@@ -380,7 +380,7 @@ c3_chart_internal_fn.generateEventRectsForMultipleXs = function (eventRectEnter)
             ) : function () {}
         );
 };
-c3_chart_internal_fn.dispatchEvent = function (type, index, mouse) {
+c3_chart_internal_fn.dispatchEvent = function C3_INTERNAL_dispatchEvent(type, index, mouse) {
     var $$ = this,
         selector = '.' + CLASS.eventRect + (!$$.isMultipleX() ? '-' + index : ''),
         eventRect = $$.main.select(selector).node(),

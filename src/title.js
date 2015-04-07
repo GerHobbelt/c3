@@ -1,4 +1,4 @@
-c3_chart_internal_fn.initTitle = function () {
+c3_chart_internal_fn.initTitle = function C3_INTERNAL_initTitle() {
     var $$ = this;
     $$.title = $$.svg.append("text")
           .text($$.config.title_text)
@@ -7,7 +7,7 @@ c3_chart_internal_fn.initTitle = function () {
           .attr("y", $$.config.title_y);
 };
 
-c3_chart_internal_fn.redrawTitle = function () {
+c3_chart_internal_fn.redrawTitle = function C3_INTERNAL_redrawTitle() {
     console.count('redrawTitle');
     var $$ = this;
     $$.title

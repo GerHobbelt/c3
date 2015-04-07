@@ -1,4 +1,4 @@
-c3_chart_internal_fn.load = function (targets, args) {
+c3_chart_internal_fn.load = function C3_INTERNAL_load(targets, args) {
     var $$ = this;
     if (targets) {
         // filter loading targets if needed
@@ -35,7 +35,7 @@ c3_chart_internal_fn.load = function (targets, args) {
         args.done(); 
     }
 };
-c3_chart_internal_fn.loadFromArgs = function (args) {
+c3_chart_internal_fn.loadFromArgs = function C3_INTERNAL_loadFromArgs(args) {
     var $$ = this;
     if (args.data) {
         $$.load($$.convertDataToTargets(args.data), args);
@@ -58,7 +58,7 @@ c3_chart_internal_fn.loadFromArgs = function (args) {
         $$.load(null, args);
     }
 };
-c3_chart_internal_fn.unload = function (targetIds, done) {
+c3_chart_internal_fn.unload = function C3_INTERNAL_unload(targetIds, done) {
     var $$ = this;
     if (!done) {
         done = function () {};

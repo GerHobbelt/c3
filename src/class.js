@@ -74,58 +74,58 @@ var CLASS = c3_chart_internal_fn.CLASS = {
     SELECTED: '_selected_',
     INCLUDED: '_included_'
 };
-c3_chart_internal_fn.generateClass = function (prefix, targetId) {
+c3_chart_internal_fn.generateClass = function C3_INTERNAL_generateClass(prefix, targetId) {
     return " " + prefix + " " + prefix + this.getTargetSelectorSuffix(targetId);
 };
-c3_chart_internal_fn.classText = function (d) {
+c3_chart_internal_fn.classText = function C3_INTERNAL_classText(d) {
     return this.generateClass(CLASS.text, d.index);
 };
-c3_chart_internal_fn.classTexts = function (d) {
+c3_chart_internal_fn.classTexts = function C3_INTERNAL_classTexts(d) {
     return this.generateClass(CLASS.texts, d.id);
 };
-c3_chart_internal_fn.classShape = function (d) {
+c3_chart_internal_fn.classShape = function C3_INTERNAL_classShape(d) {
     return this.generateClass(CLASS.shape, d.index);
 };
-c3_chart_internal_fn.classShapes = function (d) {
+c3_chart_internal_fn.classShapes = function C3_INTERNAL_classShapes(d) {
     return this.generateClass(CLASS.shapes, d.id);
 };
-c3_chart_internal_fn.classLine = function (d) {
+c3_chart_internal_fn.classLine = function C3_INTERNAL_classLine(d) {
     return this.classShape(d) + this.generateClass(CLASS.line, d.id);
 };
-c3_chart_internal_fn.classLines = function (d) {
+c3_chart_internal_fn.classLines = function C3_INTERNAL_classLines(d) {
     return this.classShapes(d) + this.generateClass(CLASS.lines, d.id);
 };
-c3_chart_internal_fn.classCircle = function (d) {
+c3_chart_internal_fn.classCircle = function C3_INTERNAL_classCircle(d) {
     return this.classShape(d) + this.generateClass(CLASS.circle, d.index);
 };
-c3_chart_internal_fn.classCircles = function (d) {
+c3_chart_internal_fn.classCircles = function C3_INTERNAL_classCircles(d) {
     return this.classShapes(d) + this.generateClass(CLASS.circles, d.id);
 };
-c3_chart_internal_fn.classBar = function (d) {
+c3_chart_internal_fn.classBar = function C3_INTERNAL_classBar(d) {
     return this.classShape(d) + this.generateClass(CLASS.bar, d.index);
 };
-c3_chart_internal_fn.classBars = function (d) {
+c3_chart_internal_fn.classBars = function C3_INTERNAL_classBars(d) {
     return this.classShapes(d) + this.generateClass(CLASS.bars, d.id);
 };
-c3_chart_internal_fn.classArc = function (d) {
+c3_chart_internal_fn.classArc = function C3_INTERNAL_classArc(d) {
     return this.classShape(d.data) + this.generateClass(CLASS.arc, d.data.id);
 };
-c3_chart_internal_fn.classArcs = function (d) {
+c3_chart_internal_fn.classArcs = function C3_INTERNAL_classArcs(d) {
     return this.classShapes(d.data) + this.generateClass(CLASS.arcs, d.data.id);
 };
-c3_chart_internal_fn.classArea = function (d) {
+c3_chart_internal_fn.classArea = function C3_INTERNAL_classArea(d) {
     return this.classShape(d) + this.generateClass(CLASS.area, d.id);
 };
-c3_chart_internal_fn.classAreas = function (d) {
+c3_chart_internal_fn.classAreas = function C3_INTERNAL_classAreas(d) {
     return this.classShapes(d) + this.generateClass(CLASS.areas, d.id);
 };
-c3_chart_internal_fn.classRegion = function (d, i) {
+c3_chart_internal_fn.classRegion = function C3_INTERNAL_classRegion(d, i) {
     return this.generateClass(CLASS.region, i) + ' ' + (d.class ? d.class : '');
 };
-c3_chart_internal_fn.classEvent = function (d) {
+c3_chart_internal_fn.classEvent = function C3_INTERNAL_classEvent(d) {
     return this.generateClass(CLASS.eventRect, d.index);
 };
-c3_chart_internal_fn.classTarget = function (id) {
+c3_chart_internal_fn.classTarget = function C3_INTERNAL_classTarget(id) {
     var $$ = this;
     var additionalClassSuffix = $$.config.data_classes[id], additionalClass = '';
     if (additionalClassSuffix) {
@@ -133,42 +133,42 @@ c3_chart_internal_fn.classTarget = function (id) {
     }
     return $$.generateClass(CLASS.target, id) + additionalClass;
 };
-c3_chart_internal_fn.classFocus = function (d) {
+c3_chart_internal_fn.classFocus = function C3_INTERNAL_classFocus(d) {
     return this.classFocused(d) + this.classDefocused(d);
 };
-c3_chart_internal_fn.classFocused = function (d) {
+c3_chart_internal_fn.classFocused = function C3_INTERNAL_classFocused(d) {
     return ' ' + (this.focusedTargetIds.indexOf(d.id) >= 0 ? CLASS.focused : '');
 };
-c3_chart_internal_fn.classDefocused = function (d) {
+c3_chart_internal_fn.classDefocused = function C3_INTERNAL_classDefocused(d) {
     return ' ' + (this.defocusedTargetIds.indexOf(d.id) >= 0 ? CLASS.defocused : '');
 };
-c3_chart_internal_fn.classChartText = function (d) {
+c3_chart_internal_fn.classChartText = function C3_INTERNAL_classChartText(d) {
     return CLASS.chartText + this.classTarget(d.id);
 };
-c3_chart_internal_fn.classChartLine = function (d) {
+c3_chart_internal_fn.classChartLine = function C3_INTERNAL_classChartLine(d) {
     return CLASS.chartLine + this.classTarget(d.id);
 };
-c3_chart_internal_fn.classChartBar = function (d) {
+c3_chart_internal_fn.classChartBar = function C3_INTERNAL_classChartBar(d) {
     return CLASS.chartBar + this.classTarget(d.id);
 };
-c3_chart_internal_fn.classChartArc = function (d) {
+c3_chart_internal_fn.classChartArc = function C3_INTERNAL_classChartArc(d) {
     return CLASS.chartArc + this.classTarget(d.data.id);
 };
-c3_chart_internal_fn.getTargetSelectorSuffix = function (targetId) {
+c3_chart_internal_fn.getTargetSelectorSuffix = function C3_INTERNAL_getTargetSelectorSuffix(targetId) {
     return targetId || targetId === 0 ? ('-' + targetId).replace(/[\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\]/g, '-') : '';
 };
-c3_chart_internal_fn.selectorTarget = function (id, prefix) {
+c3_chart_internal_fn.selectorTarget = function C3_INTERNAL_selectorTarget(id, prefix) {
     return (prefix || '') + '.' + CLASS.target + this.getTargetSelectorSuffix(id);
 };
-c3_chart_internal_fn.selectorTargets = function (ids, prefix) {
+c3_chart_internal_fn.selectorTargets = function C3_INTERNAL_selectorTargets(ids, prefix) {
     var $$ = this;
     ids = ids || [];
     return ids.length ? ids.map(function (id) { return $$.selectorTarget(id, prefix); }) : null;
 };
-c3_chart_internal_fn.selectorLegend = function (id) {
+c3_chart_internal_fn.selectorLegend = function C3_INTERNAL_selectorLegend(id) {
     return '.' + CLASS.legendItem + this.getTargetSelectorSuffix(id);
 };
-c3_chart_internal_fn.selectorLegends = function (ids) {
+c3_chart_internal_fn.selectorLegends = function C3_INTERNAL_selectorLegends(ids) {
     var $$ = this;
     return ids && ids.length ? ids.map(function (id) { return $$.selectorLegend(id); }) : null;
 };

@@ -1,4 +1,4 @@
-c3_chart_fn.xgrids = function (grids) {
+c3_chart_fn.xgrids = function C3_API_xgrids(grids) {
     var $$ = this.internal, config = $$.config;
     if (! grids) { return config.grid_x_lines; }
     config.grid_x_lines = grids;
@@ -14,7 +14,7 @@ c3_chart_fn.xgrids.remove = function (params) { // TODO: multiple
     $$.removeGridLines(params, true);
 };
 
-c3_chart_fn.ygrids = function (grids) {
+c3_chart_fn.ygrids = function C3_API_ygrids(grids) {
     var $$ = this.internal, config = $$.config;
     if (! grids) { return config.grid_y_lines; }
     config.grid_y_lines = grids;

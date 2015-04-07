@@ -21,7 +21,7 @@ c3_chart_internal_fn.initHeader = function() {
       }
   }
 };
-c3_chart_internal_fn.redrawHeader = function () {
+c3_chart_internal_fn.redrawHeader = function C3_INTERNAL_redrawHeader() {
     console.count('redrawHeader');
     var $$ = this;
     if ($$.header) {

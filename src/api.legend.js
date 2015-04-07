@@ -1,4 +1,4 @@
-c3_chart_fn.legend = function () {};
+c3_chart_fn.legend = function C3_API_legend() {};
 c3_chart_fn.legend.show = function (targetIds) {
     var $$ = this.internal;
     $$.showLegend($$.mapToTargetIds(targetIds));
