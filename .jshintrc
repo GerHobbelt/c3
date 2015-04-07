@@ -21,9 +21,11 @@
     "globals": {
         "jasmine": false,
         "describe": false,
+        "xdescribe": false,
         "beforeEach": false,
         "beforeAll": false,
         "it": false,
+        "xit": false,
         "expect": false,
         "d3": false,
         "console": false
