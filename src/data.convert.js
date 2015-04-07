@@ -1,5 +1,6 @@
 c3_chart_internal_fn.convertUrlToData = function C3_INTERNAL_convertUrlToData(url, mimeType, keys, done) {
-    var $$ = this, type = mimeType ? mimeType : 'csv';
+    var $$ = this, 
+        type = mimeType ? mimeType : 'csv';
     $$.d3.xhr(url, function (error, data) {
         var d;
         if (!data) {
@@ -16,7 +17,8 @@ c3_chart_internal_fn.convertUrlToData = function C3_INTERNAL_convertUrlToData(ur
     });
 };
 c3_chart_internal_fn.convertXsvToData = function C3_INTERNAL_convertXsvToData(xsv, parser) {
-    var rows = parser.parseRows(xsv), d;
+    var rows = parser.parseRows(xsv), 
+        d;
     if (rows.length === 1) {
         d = [{}];
         rows[0].forEach(function (id) {
@@ -35,7 +37,8 @@ c3_chart_internal_fn.convertTsvToData = function C3_INTERNAL_convertTsvToData(ts
 };
 c3_chart_internal_fn.convertJsonToData = function C3_INTERNAL_convertJsonToData(json, keys) {
     var $$ = this,
-        new_rows = [], targetKeys, data;
+        new_rows = [], 
+        targetKeys, data;
     $$.config.json_original = json;
     if (keys) { // when keys specified, json would be an array that includes objects
         if (keys.x) {
@@ -64,37 +67,45 @@ c3_chart_internal_fn.convertJsonToData = function C3_INTERNAL_convertJsonToData(
     return data;
 };
 c3_chart_internal_fn.convertRowsToData = function C3_INTERNAL_convertRowsToData(rows) {
-    var keys = rows[0], new_row = {}, new_rows = [], i, j;
-    for (i = 1; i < rows.length; i++) {
+    var keys = rows[0], 
+        new_row = {}, 
+        new_rows = [], 
+        i, j,
+        ilen, jlen, row;
+    for (i = 1, ilen = rows.length; i < ilen; i++) {
         new_row = {};
-        for (j = 0; j < rows[i].length; j++) {
-            if (isUndefined(rows[i][j])) {
+        row = rows[i];
+        for (j = 0, jlen = row.length; j < jlen; j++) {
+            if (isUndefined(row[j])) {
                 throw new Error("Source data is missing a component at (" + i + "," + j + ")!");
             }
-            new_row[keys[j]] = rows[i][j];
+            new_row[keys[j]] = row[j];
         }
         new_rows.push(new_row);
     }
     return new_rows;
 };
 c3_chart_internal_fn.convertColumnsToData = function C3_INTERNAL_convertColumnsToData(columns) {
-    var new_rows = [], i, j, key;
-    for (i = 0; i < columns.length; i++) {
-        key = columns[i][0];
-        for (j = 1; j < columns[i].length; j++) {
+    var new_rows = [], 
+        i, j, ilen, jlen, key, column;
+    for (i = 0, ilen = columns.length; i < ilen; i++) {
+        column = columns[i];
+        key = column[0];
+        for (j = 1, jlen = column.length; j < jlen; j++) {
             if (isUndefined(new_rows[j - 1])) {
                 new_rows[j - 1] = {};
             }
-            if (isUndefined(columns[i][j])) {
+            if (isUndefined(column[j])) {
                 throw new Error("Source data is missing a component at (" + i + "," + j + ")!");
             }
-            new_rows[j - 1][key] = columns[i][j];
+            new_rows[j - 1][key] = column[j];
         }
     }
     return new_rows;
 };
 c3_chart_internal_fn.convertDataToTargets = function C3_INTERNAL_convertDataToTargets(data, appendXs) {
-    var $$ = this, config = $$.config,
+    var $$ = this, 
+        config = $$.config,
         ids = $$.d3.keys(data[0]).filter($$.isNotX, $$),
         xs = $$.d3.keys(data[0]).filter($$.isX, $$),
         targets;
@@ -107,9 +118,13 @@ c3_chart_internal_fn.convertDataToTargets = function C3_INTERNAL_convertDataToTa
             // if included in input data
             if (xs.indexOf(xKey) >= 0) {
                 $$.data.xs[id] = (appendXs && $$.data.xs[id] ? $$.data.xs[id] : []).concat(
-                    data.map(function (d) { return d[xKey]; })
-                        .filter(isValue)
-                        .map(function (rawX, i) { return $$.generateTargetX(rawX, id, i); })
+                    data.map(function (d) { 
+                        return d[xKey]; 
+                    })
+                    .filter(isValue)
+                    .map(function (rawX, i) { 
+                        return $$.generateTargetX(rawX, id, i); 
+                    })
                 );
             }
             // if not included in input data, find from preloaded data of other id's x
@@ -122,7 +137,9 @@ c3_chart_internal_fn.convertDataToTargets = function C3_INTERNAL_convertDataToTa
             }
             // MEMO: if no x included, use same x of current will be used
         } else {
-            $$.data.xs[id] = data.map(function (d, i) { return i; });
+            $$.data.xs[id] = data.map(function (d, i) { 
+                return i; 
+            });
         }
     });
 
@@ -141,18 +158,28 @@ c3_chart_internal_fn.convertDataToTargets = function C3_INTERNAL_convertDataToTa
             id: convertedId,
             id_org: id,
             values: data.map(function (d, i) {
-                var xKey = $$.getXKey(id), rawX = d[xKey], x = $$.generateTargetX(rawX, id, i);
+                var xKey = $$.getXKey(id), 
+                    rawX = d[xKey], 
+                    x = $$.generateTargetX(rawX, id, i);
                 // use x as categories if custom x and categorized
                 if ($$.isCustomX() && $$.isCategorized() && index === 0 && rawX) {
-                    if (i === 0) { config.axis_x_categories = []; }
+                    if (i === 0) { 
+                        config.axis_x_categories = []; 
+                    }
                     config.axis_x_categories.push(rawX);
                 }
                 // mark as x = undefined if value is undefined and filter to remove after mapped
                 if (isUndefined(d[id]) || $$.data.xs[id].length <= i) {
                     x = undefined;
                 }
-                return {x: x, value: d[id] !== null && !isNaN(d[id]) ? +d[id] : null, id: convertedId};
-            }).filter(function (v) { return isDefined(v.x); })
+                return {
+                    x: x, 
+                    value: d[id] !== null && !isNaN(d[id]) ? +d[id] : null, 
+                    id: convertedId
+                };
+            }).filter(function (v) { 
+                return isDefined(v.x); 
+            })
         };
     });
 
@@ -180,7 +207,9 @@ c3_chart_internal_fn.convertDataToTargets = function C3_INTERNAL_convertDataToTa
 
     // set target types
     if (config.data_type) {
-        $$.setTargetType($$.mapToIds(targets).filter(function (id) { return ! (id in config.data_types); }), config.data_type);
+        $$.setTargetType($$.mapToIds(targets).filter(function (id) { 
+            return ! (id in config.data_types); 
+        }), config.data_type);
     }
 
     // cache as original id keyed

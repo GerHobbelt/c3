@@ -101,10 +101,14 @@ c3_chart_internal_fn.generateTargetX = function C3_INTERNAL_generateTargetX(rawX
 };
 c3_chart_internal_fn.cloneTarget = function C3_INTERNAL_cloneTarget(target) {
     return {
-        id : target.id,
-        id_org : target.id_org,
-        values : target.values.map(function (d) {
-            return {x: d.x, value: d.value, id: d.id};
+        id: target.id,
+        id_org: target.id_org,
+        values: target.values.map(function (d) {
+            return {
+                x: d.x, 
+                value: d.value, 
+                id: d.id
+            };
         })
     };
 };

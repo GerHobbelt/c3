@@ -1,5 +1,6 @@
 c3_chart_fn.load = function C3_API_load(args) {
-    var $$ = this.internal, config = $$.config;
+    var $$ = this.internal, 
+        config = $$.config;
     // update xs if specified
     if (args.xs) {
         $$.addXs(args.xs);
@@ -62,6 +63,8 @@ c3_chart_fn.unload = function C3_API_unload(args) {
     }
     $$.unload($$.mapToTargetIds(args.ids), function () {
         $$.redraw({withUpdateOrgXDomain: true, withUpdateXDomain: true, withLegend: true});
-        if (args.done) { args.done(); }
+        if (args.done) { 
+            args.done(); 
+        }
     });
 };
