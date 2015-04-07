@@ -7,6 +7,7 @@ c3_chart_fn.resize = function C3_API_resize(size) {
 };
 
 c3_chart_fn.flush = function C3_API_flush() {
+    console.count('flush');
     var $$ = this.internal;
     $$.updateAndRedraw({withLegend: true, withTransition: false, withTransitionForTransform: false});
 };

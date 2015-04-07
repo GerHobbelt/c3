@@ -368,13 +368,13 @@ c3_chart_internal_fn.initWithData = function C3_INTERNAL_initWithData(data) {
         window.onresize = $$.generateResize();
     }
     if (window.onresize.add) {
-        window.onresize.add(function () {
+        window.onresize.add(function C3_INTERNAL_execConfigOnResize() {
             config.onresize.call($$);
         });
-        window.onresize.add(function () {
+        window.onresize.add(function C3_INTERNAL_execApiFlush() {
             $$.api.flush();
         });
-        window.onresize.add(function () {
+        window.onresize.add(function C3_INTERNAL_execConfigOnResized() {
             config.onresized.call($$);
         });
     }
@@ -786,6 +786,7 @@ c3_chart_internal_fn.redraw = function C3_INTERNAL_redraw(options, transitions) 
 };
 
 c3_chart_internal_fn.updateAndRedraw = function C3_INTERNAL_updateAndRedraw(options) {
+    console.count('updateAndRedraw');
     var $$ = this, 
         config = $$.config, 
         transitions;
@@ -1033,13 +1034,14 @@ c3_chart_internal_fn.observeInserted = function C3_INTERNAL_observeInserted(sele
 
 
 c3_chart_internal_fn.generateResize = function C3_INTERNAL_generateResize() {
+    console.count('generateResize');
     var resizeFunctions = [];
     function callResizeFunctions() {
-        resizeFunctions.forEach(function (f) {
+        resizeFunctions.forEach(function C3_INTERNAL_execResizeFunction(f) {
             f();
         });
     }
-    callResizeFunctions.add = function (f) {
+    callResizeFunctions.add = function C3_INTERNAL_addResizeFunction(f) {
         resizeFunctions.push(f);
     };
     return callResizeFunctions;
