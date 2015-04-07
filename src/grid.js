@@ -133,8 +133,9 @@ c3_chart_internal_fn.updateGrid = function (duration) {
     $$.ygridLines = main.select('.' + CLASS.ygridLines).selectAll('.' + CLASS.ygridLine)
         .data(config.grid_y_lines);
     // enter
-    var dy_pos = function(d) {
-      if(yv(d) < 0) {
+    var dy_pos = function dy_pos(d) {
+      var yv = $$.yv(d);
+      if(yv < 0) {
         return 9;
       } else {
         return -5;
@@ -153,7 +154,7 @@ c3_chart_internal_fn.updateGrid = function (duration) {
         .attr('dy', dy_pos)
         .style("opacity", 0);
     // update
-    var yv_pos = function(d) {
+    var yv_pos = function yv_pos(d) {
       var yv = $$.yv(d);
       if(yv < 0) {
         return 1;
