@@ -1,4 +1,4 @@
-describe('c3 chart types', function () {
+xdescribe('c3 chart types', function () {
     'use strict';
 
     var chart, args;

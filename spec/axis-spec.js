@@ -526,7 +526,7 @@ describe('c3 chart axis', function () {
 
     describe('axis.x.tick.rotate', function () {
 
-        describe('not rotated', function () {
+        describe('rotated', function () {
 
             it('should update args successfully', function () {
                 args = {
@@ -574,7 +574,7 @@ describe('c3 chart axis', function () {
 
     describe('axis.y.tick.rotate', function () {
 
-        describe('not rotated', function () {
+        describe('rotated', function () {
 
             it('should update args successfully', function () {
                 args = {

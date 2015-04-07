@@ -1,6 +1,6 @@
 var setMouseEvent = window.setMouseEvent;
 
-describe('c3 chart shape bar', function () {
+xdescribe('c3 chart shape bar', function () {
     'use strict';
 
     var chart, args;

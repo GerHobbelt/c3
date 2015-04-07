@@ -1,4 +1,4 @@
-describe('c3 chart zoom', function () {
+xdescribe('c3 chart zoom', function () {
     'use strict';
 
     var chart;

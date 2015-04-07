@@ -1,4 +1,4 @@
-describe('c3 chart tooltip', function () {
+xdescribe('c3 chart tooltip', function () {
     'use strict';
 
     var chart;
