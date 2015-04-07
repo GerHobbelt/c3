@@ -95,7 +95,7 @@ c3_chart_internal_fn.updateGrid = function C3_INTERNAL_updateGrid(duration) {
     var $$ = this, 
         main = $$.main, 
         config = $$.config,
-        xgridLine, ygridLine, yv;
+        xgridLine, ygridLine;
 
     // hide if arc type
     $$.grid.style('visibility', $$.hasArcType() ? 'hidden' : 'visible');
@@ -165,8 +165,8 @@ c3_chart_internal_fn.updateGrid = function C3_INTERNAL_updateGrid(duration) {
     };
     $$.ygridLines.select('line')
       .transition().duration(duration)
-        .attr("x1", config.axis_rotated ? yv : 0)
-        .attr("x2", config.axis_rotated ? yv : $$.width)
+        .attr("x1", config.axis_rotated ? yv_pos : 0)
+        .attr("x2", config.axis_rotated ? yv_pos : $$.width)
         .attr("y1", config.axis_rotated ? 0 : yv_pos)
         .attr("y2", config.axis_rotated ? $$.height : yv_pos)
         .style("opacity", 1);
