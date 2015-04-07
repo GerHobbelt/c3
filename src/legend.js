@@ -8,8 +8,8 @@ c3_chart_internal_fn.initLegend = function C3_INTERNAL_initLegend() {
         $$.hiddenLegendIds = $$.mapToIds($$.data.targets);
         return;
     }
-    // MEMO: call here to update legend box and tranlate for all
-    // MEMO: translate will be upated by this, so transform not needed in updateLegend()
+    // MEMO: call here to update legend box and translate for all
+    // MEMO: translate will be updated by this, so transform not needed in updateLegend()
     $$.updateLegendWithDefaults();
 };
 c3_chart_internal_fn.updateLegendWithDefaults = function C3_INTERNAL_updateLegendWithDefaults() {
