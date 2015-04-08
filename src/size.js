@@ -83,7 +83,7 @@ c3_chart_internal_fn.getSvgLeft = function (withoutRecompute) {
 
 
 c3_chart_internal_fn.getAxisWidthByAxisId = function (id, withoutRecompute) {
-    var $$ = this, position = $$.axis.getLabelPositionById(id);
+    var $$ = this;
     return $$.axis.getMaxTickWidth(id, withoutRecompute);
 };
 c3_chart_internal_fn.getHorizontalAxisHeight = function (axisId) {
