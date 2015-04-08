@@ -2891,11 +2891,13 @@
     };
 
     c3_chart_internal_fn.getCurrentWidth = function C3_INTERNAL_getCurrentWidth() {
-        var $$ = this, config = $$.config;
+        var $$ = this, 
+            config = $$.config;
         return config.size_width ? config.size_width : $$.getParentWidth();
     };
     c3_chart_internal_fn.getCurrentHeight = function C3_INTERNAL_getCurrentHeight() {
-        var $$ = this, config = $$.config,
+        var $$ = this, 
+            config = $$.config,
             h = config.size_height ? config.size_height : $$.getParentHeight();
         return h > 0 ? h : 320 / ($$.hasType('gauge') ? 2 : 1);
     };
@@ -2913,7 +2915,8 @@
         return isValue(config.padding_bottom) ? config.padding_bottom : 0;
     };
     c3_chart_internal_fn.getCurrentPaddingLeft = function C3_INTERNAL_getCurrentPaddingLeft(withoutRecompute) {
-        var $$ = this, config = $$.config;
+        var $$ = this, 
+            config = $$.config;
         if (isValue(config.padding_left)) {
             return config.padding_left;
         } else if (config.axis_rotated) {
@@ -2925,8 +2928,10 @@
         }
     };
     c3_chart_internal_fn.getCurrentPaddingRight = function C3_INTERNAL_getCurrentPaddingRight() {
-        var $$ = this, config = $$.config,
-            defaultPadding = 10, legendWidthOnRight = $$.isLegendRight ? $$.getLegendWidth() + 20 : 0;
+        var $$ = this, 
+            config = $$.config,
+            defaultPadding = 10, 
+            legendWidthOnRight = $$.isLegendRight ? $$.getLegendWidth() + 20 : 0;
         if (isValue(config.padding_right)) {
             return config.padding_right + 1; // 1 is needed not to hide tick line
         } else if (config.axis_rotated) {
@@ -2939,7 +2944,8 @@
     };
 
     c3_chart_internal_fn.getParentRectValue = function C3_INTERNAL_getParentRectValue(key) {
-        var parent = this.selectChart.node(), v;
+        var parent = this.selectChart.node(), 
+            v;
         while (parent && parent.tagName !== 'BODY') {
             try {
                 v = parent.getBoundingClientRect()[key];
@@ -2967,7 +2973,8 @@
 
 
     c3_chart_internal_fn.getSvgLeft = function C3_INTERNAL_getSvgLeft(withoutRecompute) {
-        var $$ = this, config = $$.config,
+        var $$ = this, 
+            config = $$.config,
             hasLeftAxisRect = config.axis_rotated || (!config.axis_rotated && !config.axis_y_inner),
             leftAxisClass = config.axis_rotated ? CLASS.axisX : CLASS.axisY,
             leftAxis = $$.main.select('.' + leftAxisClass).node(),
@@ -2980,18 +2987,21 @@
 
 
     c3_chart_internal_fn.getAxisWidthByAxisId = function C3_INTERNAL_getAxisWidthByAxisId(id, withoutRecompute) {
-        var $$ = this, position = $$.axis.getLabelPositionById(id);
+        var $$ = this, 
+            position = $$.axis.getLabelPositionById(id);
         return $$.axis.getMaxTickWidth(id, withoutRecompute) + (position.isInner ? 20 : 40);
     };
     c3_chart_internal_fn.getHorizontalAxisHeight = function C3_INTERNAL_getHorizontalAxisHeight(axisId) {
-        var $$ = this, config = $$.config, h = 30;
+        var $$ = this, 
+            config = $$.config, 
+            h = 30;
         if (axisId === 'x' && !config.axis_x_show) { return 8; }
         if (axisId === 'x' && config.axis_x_height) { return config.axis_x_height; }
         if (axisId === 'y' && !config.axis_y_show) { return config.legend_show && !$$.isLegendRight && !$$.isLegendInset ? 10 : 1; }
         if (axisId === 'y2' && !config.axis_y2_show) { return $$.rotated_padding_top; }
         // Calculate x axis height when tick rotated
         if (axisId === 'x' && !config.axis_rotated && config.axis_x_tick_rotate) {
-            h = 30 + $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - config.axis_x_tick_rotate) / 180);
+            h += $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - config.axis_x_tick_rotate) / 180);
         }
         return h + ($$.axis.getLabelPositionById(axisId).isInner ? 0 : 10) + (axisId === 'y2' ? -10 : 0);
     };
@@ -3998,7 +4008,7 @@
         var $$ = this, 
             main = $$.main, 
             config = $$.config,
-            xgridLine, ygridLine, yv;
+            xgridLine, ygridLine;
 
         // hide if arc type
         $$.grid.style('visibility', $$.hasArcType() ? 'hidden' : 'visible');
@@ -4068,8 +4078,8 @@
         };
         $$.ygridLines.select('line')
           .transition().duration(duration)
-            .attr("x1", config.axis_rotated ? yv : 0)
-            .attr("x2", config.axis_rotated ? yv : $$.width)
+            .attr("x1", config.axis_rotated ? yv_pos : 0)
+            .attr("x2", config.axis_rotated ? yv_pos : $$.width)
             .attr("y1", config.axis_rotated ? 0 : yv_pos)
             .attr("y2", config.axis_rotated ? $$.height : yv_pos)
             .style("opacity", 1);
@@ -4856,10 +4866,11 @@
                 withOuterTick: withOuterTick,
                 tickMultiline: !isY2Axis ? config.axis_y_tick_multiline : config.axis_y2_tick_multiline,
                 tickWidth: !isY2Axis ? config.axis_y_tick_width : config.axis_y2_tick_width,
-                tickTextRotate: withoutRotateTickText ? 0 : !isY2Axis ? config.axis_y_tick_rotate : config.axis_y2_tick_rotate,
+                tickTextRotate: /* withoutRotateTickText ? 0 : !isY2Axis ? */ config.axis_y_tick_rotate ,// : config.axis_y2_tick_rotate,
                 withoutTransition: withoutTransition,
             },
             axis = c3_axis(d3, axisParams).scale(scale).orient(orient).tickFormat(tickFormat);
+            console.log('y axis rotate: ', axisParams.tickTextRotate, withOuterTick, withoutTransition, withoutRotateTickText, isY2Axis);
         if ($$.isTimeSeriesY()) {
             axis.ticks(d3.time[!isY2Axis ? config.axis_y_tick_time_value : config.axis_y2_tick_time_value], !isY2Axis ? config.axis_y_tick_time_interval : config.axis_y2_tick_time_interval);
         } else {
@@ -7506,9 +7517,17 @@
     // 3. multiline tick text
     var tickTextCharSize;
     function c3_axis(d3, params) {
-        var scale = d3.scale.linear(), orient = "bottom", innerTickSize = 6, outerTickSize, tickPadding = 3, tickValues = null, tickFormat, tickArguments;
+        var scale = d3.scale.linear(), 
+            orient = "bottom", 
+            innerTickSize = 6, 
+            outerTickSize, 
+            tickPadding = 3, 
+            tickValues = null, 
+            tickFormat, tickArguments;
 
-        var tickOffset = 0, tickCulling = true, tickCentered;
+        var tickOffset = 0, 
+            tickCulling = true, 
+            tickCentered;
 
         params = params || {};
         outerTickSize = params.withOuterTick ? 6 : 0;
@@ -7528,7 +7547,8 @@
             return start < stop ? [ start, stop ] : [ stop, start ];
         }
         function generateTicks(scale) {
-            var i, domain, ticks = [];
+            var i, domain, 
+                ticks = [];
             if (scale.ticks) {
                 return scale.ticks.apply(scale, tickArguments);
             }
@@ -7542,7 +7562,8 @@
             return ticks;
         }
         function copyScale() {
-            var newScale = scale.copy(), domain;
+            var newScale = scale.copy(), 
+                domain;
             if (params.isCategory) {
                 domain = scale.domain();
                 newScale.domain([domain[0], domain[1] - 1]);
@@ -7581,7 +7602,8 @@
             g.each(function () {
                 var g = axis.g = d3.select(this);
 
-                var scale0 = this.__chart__ || scale, scale1 = this.__chart__ = copyScale();
+                var scale0 = this.__chart__ || scale, 
+                    scale1 = this.__chart__ = copyScale();
 
                 var ticks = tickValues ? tickValues : generateTicks(scale1),
                     tick = g.selectAll(".tick").data(ticks, scale1),
@@ -7610,14 +7632,17 @@
                     tickOffset = tickX = 0;
                 }
 
-                var text, tspan, sizeFor1Char = getSizeFor1Char(g.select('.tick')), counts = [];
+                var text, tspan, 
+                    sizeFor1Char = getSizeFor1Char(g.select('.tick')), 
+                    counts = [];
                 var tickLength = Math.max(innerTickSize, 0) + tickPadding,
                     isVertical = orient === 'left' || orient === 'right';
 
                 // this should be called only when category axis
                 function splitTickText(d, maxWidth) {
                     var tickText = textFormatted(d),
-                        subtext, spaceIndex, preserveSpace, textWidth, splitted = [];
+                        subtext, spaceIndex, preserveSpace, textWidth, 
+                        splitted = [];
 
                     if (Object.prototype.toString.call(tickText) === "[object Array]") {
                         return tickText;
@@ -7676,14 +7701,20 @@
                         var splitted = params.tickMultiline ? splitTickText(d, params.tickWidth) : [].concat(textFormatted(d));
                         counts[i] = splitted.length;
                         return splitted.map(function (s) {
-                            return { index: i, splitted: s };
+                            return { 
+                                index: i, 
+                                splitted: s 
+                            };
                         });
                     });
                 tspan.enter().append('tspan');
                 tspan.exit().remove();
-                tspan.text(function (d) { return d.splitted; });
+                tspan.text(function (d) { 
+                    return d.splitted; 
+                });
 
                 var rotate = params.tickTextRotate;
+                console.log('axis rotate: ', rotate);
 
                 function textAnchorForText(rotate) {
                     if (!rotate) {
@@ -7730,10 +7761,13 @@
                         tickTransform = axisX;
                         lineEnter.attr("y2", -innerTickSize);
                         textEnter.attr("y", -tickLength);
-                        lineUpdate.attr("x2", 0).attr("y2", -innerTickSize);
-                        textUpdate.attr("x", 0).attr("y", -tickLength);
-                        text.style("text-anchor", "middle");
-                        tspan.attr('x', 0).attr("dy", "0em");
+                        lineUpdate.attr("x2", 0).attr("y2", function (d) {
+                            return -tickSize(d);
+                        });
+                        textUpdate.attr("x", 0).attr("y", -yForText(rotate))
+                            .style("text-anchor", textAnchorForText(-rotate))
+                            .attr("transform", textTransform(-rotate));
+                        tspan.attr('x', 0).attr("dy", "0em" /* tspanDy */ ).attr('dx', dxForText(-rotate));
                         pathUpdate.attr("d", "M" + range[0] + "," + -outerTickSize + "V0H" + range[1] + "V" + -outerTickSize);
                         break;
                     }
@@ -7743,8 +7777,10 @@
                         lineEnter.attr("x2", -innerTickSize);
                         textEnter.attr("x", -tickLength);
                         lineUpdate.attr("x2", -innerTickSize).attr("y1", tickY).attr("y2", tickY);
-                        textUpdate.attr("x", -tickLength).attr("y", tickOffset);
-                        text.style("text-anchor", "end");
+                        textUpdate.attr("x", -tickLength).attr("y", tickOffset)
+                            .style("text-anchor", textAnchorForText(-rotate))
+                            .style("text-anchor", "end")
+                            .attr("transform", textTransform(-rotate));
                         tspan.attr('x', -tickLength).attr("dy", tspanDy);
                         pathUpdate.attr("d", "M" + -outerTickSize + "," + range[0] + "H0V" + range[1] + "H" + -outerTickSize);
                         break;
@@ -7755,15 +7791,18 @@
                         lineEnter.attr("x2", innerTickSize);
                         textEnter.attr("x", tickLength);
                         lineUpdate.attr("x2", innerTickSize).attr("y2", 0);
-                        textUpdate.attr("x", tickLength).attr("y", 0);
-                        text.style("text-anchor", "start");
+                        textUpdate.attr("x", tickLength).attr("y", 0)
+                            .style("text-anchor", textAnchorForText(rotate))
+                            .style("text-anchor", "start")
+                            .attr("transform", textTransform(rotate));
                         tspan.attr('x', tickLength).attr("dy", tspanDy);
                         pathUpdate.attr("d", "M" + outerTickSize + "," + range[0] + "H0V" + range[1] + "H" + outerTickSize);
                         break;
                     }
                 }
                 if (scale1.rangeBand) {
-                    var x = scale1, dx = x.rangeBand() / 2;
+                    var x = scale1, 
+                        dx = x.rangeBand() / 2;
                     scale0 = scale1 = function (d) {
                         return x(d) + dx;
                     };
@@ -7777,22 +7816,30 @@
             });
         }
         axis.scale = function (x) {
-            if (!arguments.length) { return scale; }
+            if (!arguments.length) { 
+                return scale; 
+            }
             scale = x;
             return axis;
         };
         axis.orient = function (x) {
-            if (!arguments.length) { return orient; }
+            if (!arguments.length) { 
+                return orient; 
+            }
             orient = x in {top: 1, right: 1, bottom: 1, left: 1} ? x + "" : "bottom";
             return axis;
         };
         axis.tickFormat = function (format) {
-            if (!arguments.length) { return tickFormat; }
+            if (!arguments.length) { 
+                return tickFormat; 
+            }
             tickFormat = format;
             return axis;
         };
         axis.tickCentered = function (isCentered) {
-            if (!arguments.length) { return tickCentered; }
+            if (!arguments.length) { 
+                return tickCentered; 
+            }
             tickCentered = isCentered;
             return axis;
         };
@@ -7811,12 +7858,16 @@
             return interval === Infinity ? 0 : interval;
         };
         axis.ticks = function () {
-            if (!arguments.length) { return tickArguments; }
+            if (!arguments.length) { 
+                return tickArguments; 
+            }
             tickArguments = arguments;
             return axis;
         };
         axis.tickCulling = function (culling) {
-            if (!arguments.length) { return tickCulling; }
+            if (!arguments.length) { 
+                return tickCulling; 
+            }
             tickCulling = culling;
             return axis;
         };
@@ -7827,7 +7878,9 @@
                 };
             }
             else {
-                if (!arguments.length) { return tickValues; }
+                if (!arguments.length) { 
+                    return tickValues; 
+                }
                 tickValues = x;
             }
             return axis;

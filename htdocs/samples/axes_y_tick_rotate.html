@@ -1,0 +1,73 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="../css/c3.css">
+    <script id="profile_code_chunk">
+      console.profile('C3 demo run');
+
+      function stop_profiling() {
+        console.profileEnd('C3 demo run');
+      }
+      var prof_timer_h = null;
+      function debounce_profile_stop() {
+        clearTimeout(prof_timer_h);
+        prof_timer_h = setTimeout(stop_profiling, 5179);
+      }
+      debounce_profile_stop();
+    </script>
+  </head>
+  <body>
+    <div id="chart"></div>
+
+    <script src="../js/d3.latest.js" charset="utf-8"></script>
+    <script src="../js/c3.js" charset="utf-8"></script>
+    <script>
+      var chart = c3.generate({
+        data: {
+          columns: [
+            ['data1', 30, 200, 100, 400, 150, 250, 100, 600],
+            ['data2', 50, 20, 10, 40, 15, 25],
+          ]
+        },
+        axis: {
+//          rotated: true,
+          x: {
+            tick: {
+              format: function () { return "hx"; },
+              //rotate: 30,
+            },
+            label: {
+              text: 'Hogehoge',
+              position: 'outer-middle'
+            },
+            height: 90,
+          },
+          y: {
+            tick: {
+              format: function () { return "hobobobobobobo"; },
+              rotate: 30
+            },
+            label: {
+              text: 'Y Label',
+              position: 'outer-center'
+            }
+          }
+        },
+        subchart: {
+          show: true
+        }
+      });
+
+      setTimeout(function () {
+        debounce_profile_stop();
+        chart.load({
+          columns: [
+//            ['data1', 30, 200, 100, 400, 150, 250, 100, 400],
+            ['data1', 1030, 2000, 1000, 1400, 1500, 1250, 1100, 140000],
+          ]
+        })
+      }, 1000);
+
+
+    </script>
+  </body>
+</html>
