@@ -2652,8 +2652,8 @@
     
     
     c3_chart_internal_fn.getAxisWidthByAxisId = function (id, withoutRecompute) {
-        var $$ = this, position = $$.axis.getLabelPositionById(id);
-        return $$.axis.getMaxTickWidth(id, withoutRecompute) + (position.isInner ? 20 : 40);
+        var $$ = this;
+        return $$.axis.getMaxTickWidth(id, withoutRecompute);
     };
     c3_chart_internal_fn.getHorizontalAxisHeight = function (axisId) {
         var $$ = this, config = $$.config, h = 30;
