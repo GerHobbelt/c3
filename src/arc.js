@@ -337,7 +337,10 @@ c3_chart_internal_fn.redrawArc = function (duration, durationForExit, withTransf
         .style('opacity', 0)
         .remove();
     main.selectAll('.' + CLASS.chartArc).select('text')
-        .style("opacity", 0)
+        .style('opacity', function(d) {
+            var hasOpacityTransition = !$$.isGaugeType(d.data) || $$.config.gauge_label_transition;
+            return hasOpacityTransition ? 0 : d3.select(this).style('opacity');
+        })
         .attr('class', function (d) { return $$.isGaugeType(d.data) ? CLASS.gaugeValue : ''; })
         .text($$.textForArcLabel.bind($$))
         .attr("transform", $$.transformForArcLabel.bind($$))
