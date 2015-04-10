@@ -133,6 +133,7 @@ module.exports = (grunt) ->
 # dependencies:
     grunt.registerTask 'build', ['concat', 'jshint', 'jasmine', 'sass', 'cssmin', 'uglify', 'karma']
     grunt.registerTask 'update_web', ['build', 'copy:web']
+    grunt.registerTask 'quickbuild', ['concat', 'copy:web', 'cssmin', 'uglify']
 
 # main / default:
     grunt.registerTask 'default', ['update_web']
