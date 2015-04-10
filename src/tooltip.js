@@ -56,7 +56,7 @@ c3_chart_internal_fn.tooltipPosition = function C3_INTERNAL_tooltipPosition(data
     var svgLeft, tooltipLeft, tooltipRight, tooltipTop, chartRight;
     var forArc = $$.hasArcType(),
         mouse = d3.mouse(element);
-  // Determin tooltip position
+    // Determine tooltip position
     if (forArc) {
         tooltipLeft = (($$.width - ($$.isLegendRight ? $$.getLegendWidth() : 0)) / 2) + mouse[0];
         tooltipTop = ($$.height / 2) + mouse[1] + 20;
@@ -75,7 +75,7 @@ c3_chart_internal_fn.tooltipPosition = function C3_INTERNAL_tooltipPosition(data
         }
 
         if (tooltipRight > chartRight) {
-            // 20 is needed for Firefox to keep tooletip width
+            // 20 is needed for Firefox to keep tooltip width
             tooltipLeft -= tooltipRight - chartRight + 20;
         }
         if (tooltipTop + tHeight > $$.currentHeight) {
