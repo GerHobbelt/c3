@@ -86,7 +86,7 @@ function c3_axis(d3, params) {
         return params.withoutTransition ? selection : d3.transition(selection);
     }
     function axis(g) {
-        g.each(function () {
+        g.each(function C3_INTERNAL_update_axis() {
             var g = axis.g = d3.select(this);
 
             var scale0 = this.__chart__ || scale, 
@@ -151,7 +151,7 @@ function c3_axis(d3, params) {
                         }
                         subtext = text.substr(0, i + 1);
                         textWidth = sizeFor1Char.w * subtext.length;
-                        // if text width gets over tick width, split by space index or crrent index
+                        // if text width gets over tick width, split by space index or current index
                         if (maxWidth < textWidth) {
                             return split(
                                 splitted.concat(text.substr(0, spaceIndex ? spaceIndex + preserveSpace : i)),
@@ -201,7 +201,7 @@ function c3_axis(d3, params) {
             });
 
             var rotate = params.tickTextRotate;
-            console.log('axis rotate: ', rotate);
+            console.debug('axis tick rotate: ', rotate);
 
             function textAnchorForText(rotate) {
                 if (!rotate) {

@@ -313,7 +313,9 @@ Axis.prototype.getMaxTickWidth = function C3_API_AXIS_getMaxTickWidth(id, withou
         svg.append('g').call(axis).each(function () {
             $$.d3.select(this).selectAll('text').each(function () {
                 var box = this.getBoundingClientRect();
-                if (maxWidth < box.width) { maxWidth = box.width; }
+                if (maxWidth < box.width) { 
+                    maxWidth = box.width; 
+                }
             });
             dummy.remove();
         });

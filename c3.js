@@ -4265,7 +4265,7 @@
         var svgLeft, tooltipLeft, tooltipRight, tooltipTop, chartRight;
         var forArc = $$.hasArcType(),
             mouse = d3.mouse(element);
-      // Determin tooltip position
+        // Determine tooltip position
         if (forArc) {
             tooltipLeft = (($$.width - ($$.isLegendRight ? $$.getLegendWidth() : 0)) / 2) + mouse[0];
             tooltipTop = ($$.height / 2) + mouse[1] + 20;
@@ -4284,7 +4284,7 @@
             }
 
             if (tooltipRight > chartRight) {
-                // 20 is needed for Firefox to keep tooletip width
+                // 20 is needed for Firefox to keep tooltip width
                 tooltipLeft -= tooltipRight - chartRight + 20;
             }
             if (tooltipTop + tHeight > $$.currentHeight) {
@@ -5087,7 +5087,9 @@
             svg.append('g').call(axis).each(function () {
                 $$.d3.select(this).selectAll('text').each(function () {
                     var box = this.getBoundingClientRect();
-                    if (maxWidth < box.width) { maxWidth = box.width; }
+                    if (maxWidth < box.width) { 
+                        maxWidth = box.width; 
+                    }
                 });
                 dummy.remove();
             });
@@ -7599,7 +7601,7 @@
             return params.withoutTransition ? selection : d3.transition(selection);
         }
         function axis(g) {
-            g.each(function () {
+            g.each(function C3_INTERNAL_update_axis() {
                 var g = axis.g = d3.select(this);
 
                 var scale0 = this.__chart__ || scale, 
@@ -7664,7 +7666,7 @@
                             }
                             subtext = text.substr(0, i + 1);
                             textWidth = sizeFor1Char.w * subtext.length;
-                            // if text width gets over tick width, split by space index or crrent index
+                            // if text width gets over tick width, split by space index or current index
                             if (maxWidth < textWidth) {
                                 return split(
                                     splitted.concat(text.substr(0, spaceIndex ? spaceIndex + preserveSpace : i)),
@@ -7714,7 +7716,7 @@
                 });
 
                 var rotate = params.tickTextRotate;
-                console.log('axis rotate: ', rotate);
+                console.debug('axis tick rotate: ', rotate);
 
                 function textAnchorForText(rotate) {
                     if (!rotate) {
