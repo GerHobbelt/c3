@@ -947,13 +947,18 @@ c3_chart_internal_fn.bindResize = function () {
         window.addEventListener('resize', $$.resizeFunction, false);
     } else {
         // fallback to this, if this is a very old browser
-        $$.originalResize = window.onresize;
-        window.onresize = function () {
-            if ($$.originalResize) {
-                $$.originalResize();
-            }
-            $$.resizeFunction();
-        };
+        var wrapper = window.onresize;
+        if (!wrapper) {
+            // create a wrapper that will call all charts
+            wrapper = $$.generateResize();
+        } else if (!wrapper.add || !wrapper.remove) {
+            // there is already a handler registered, make sure we call it too
+            wrapper = $$.generateResize();
+            wrapper.add(window.onresize);
+        }
+        // add this graph to the wrapper, we will be removed if the user calls destroy
+        wrapper.add($$.resizeFunction);
+        window.onresize = wrapper;
     }
 };
 
@@ -966,6 +971,14 @@ c3_chart_internal_fn.generateResize = function () {
     }
     callResizeFunctions.add = function (f) {
         resizeFunctions.push(f);
+    };
+    callResizeFunctions.remove = function (f) {
+        for (var i = 0; i < resizeFunctions.length; i++) {
+            if (resizeFunctions[i] === f) {
+                resizeFunctions.splice(i, 1);
+                break;
+            }
+        }
     };
     return callResizeFunctions;
 };

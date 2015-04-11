@@ -24,7 +24,11 @@ c3_chart_fn.destroy = function () {
     } else if (window.removeEventListener) {
         window.removeEventListener('resize', $$.resizeFunction);
     } else {
-        window.onresize = $$.originalResize;
+        var wrapper = window.onresize;
+        // check if no one else removed our wrapper and remove our resizeFunction from it
+        if (wrapper && wrapper.add && wrapper.remove) {
+            wrapper.remove($$.resizeFunction);
+        }
     }
 
     $$.selectChart.classed('c3', false).html("");
