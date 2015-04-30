@@ -80,9 +80,6 @@ c3_chart_internal_fn.getYDomain = function (targets, axisId, xDomain) {
     yDomainMin = isValue(yMin) ? yMin : isValue(yMax) ? (yDomainMin < yMax ? yDomainMin : yMax - 10) : yDomainMin;
     yDomainMax = isValue(yMax) ? yMax : isValue(yMin) ? (yMin < yDomainMax ? yDomainMax : yMin + 10) : yDomainMax;
 
-    if (yTargets.length === 0) { // use current domain if target of axisId is none
-        return axisId === 'y2' ? $$.y2.domain() : $$.y.domain();
-    }
     if (isNaN(yDomainMin)) { // set minimum to zero when not number
         yDomainMin = 0;
     }
