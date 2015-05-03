@@ -122,6 +122,9 @@ c3_chart_internal_fn.classAreas = function C3_INTERNAL_classAreas(d) {
 c3_chart_internal_fn.classRegion = function C3_INTERNAL_classRegion(d, i) {
     return this.generateClass(CLASS.region, i) + ' ' + (d.class ? d.class : '');
 };
+c3_chart_internal_fn.labelRegion = function C3_INTERNAL_labelRegion(d, i) {
+    return 'label' in d ? d['label'] : '';
+};
 c3_chart_internal_fn.classEvent = function C3_INTERNAL_classEvent(d) {
     return this.generateClass(CLASS.eventRect, d.index);
 };
