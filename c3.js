@@ -5015,8 +5015,8 @@
             w = $$.regionWidth.bind($$),
             h = $$.regionHeight.bind($$);
             
-            var paddedY = $$.regionY($$) + 10; //To allow for text height
-            var regionLabels = $$.mainRegion.selectAll('text');
+        var paddedY = $$.regionY($$) + 10;  // To allow for text height
+        var regionLabels = $$.mainRegion.selectAll('text');
             
         return [
             (withTransition ? regions.transition() : regions)
@@ -5025,7 +5025,7 @@
                 .attr("width", w)
                 .attr("height", h)
                 .style("fill-opacity", function (d) { return isValue(d.opacity) ? d.opacity : 0.1; }),
-                regionLabels
+            regionLabels
                 .attr("x", x)
                 .attr("y", paddedY)
         ];
