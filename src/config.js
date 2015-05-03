@@ -158,6 +158,7 @@ c3_chart_internal_fn.getDefaultConfig = function C3_INTERNAL_getDefaultConfig() 
         point_focus_expand_enabled: true,
         point_focus_expand_r: undefined,
         point_select_r: undefined,
+        point_scatter_opacity: 0.5,
         // line
         line_connectNull: false,
         line_step_type: 'step',

@@ -879,7 +879,7 @@ c3_chart_internal_fn.initialOpacityForCircle = function C3_INTERNAL_initialOpaci
 };
 c3_chart_internal_fn.opacityForCircle = function C3_INTERNAL_opacityForCircle(d) {
     var opacity = this.config.point_show ? 1 : 0;
-    return isValue(d.value) ? (this.isScatterType(d) ? 0.5 : opacity) : 0;
+    return isValue(d.value) ? (this.isScatterType(d) ? this.config.point_scatter_opacity : opacity) : 0;
 };
 c3_chart_internal_fn.opacityForText = function C3_INTERNAL_opacityForText() {
     return this.hasDataLabel() ? 1 : 0;
