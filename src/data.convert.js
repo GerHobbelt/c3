@@ -108,7 +108,11 @@ c3_chart_internal_fn.convertDataToTargets = function C3_INTERNAL_convertDataToTa
         config = $$.config,
         ids = $$.d3.keys(data[0]).filter($$.isNotX, $$),
         xs = $$.d3.keys(data[0]).filter($$.isX, $$),
+        zeroUnderYAxis = true,
+        allZero = true,
         targets;
+
+    $$.allDataIsNegative = true;
 
     // save x for update data by load when custom x and c3.x API
     ids.forEach(function (id) {
@@ -159,8 +163,9 @@ c3_chart_internal_fn.convertDataToTargets = function C3_INTERNAL_convertDataToTa
             id_org: id,
             values: data.map(function (d, i) {
                 var xKey = $$.getXKey(id), 
-                    rawX = d[xKey], 
-                    x = $$.generateTargetX(rawX, id, i);
+                    rawX = d[xKey],
+                    x = $$.generateTargetX(rawX, id, i),
+                    value = d[id] !== null && !isNaN(d[id]) ? +d[id] : null;
                 // use x as categories if custom x and categorized
                 if ($$.isCustomX() && $$.isCategorized() && index === 0 && rawX) {
                     if (i === 0) { 
@@ -172,9 +177,18 @@ c3_chart_internal_fn.convertDataToTargets = function C3_INTERNAL_convertDataToTa
                 if (isUndefined(d[id]) || $$.data.xs[id].length <= i) {
                     x = undefined;
                 }
+
+                if (value !== null && value !== 0) {
+                    allZero = false;
+                }
+
+                if (value > 0) {
+                    zeroUnderYAxis = false;
+                }
+
                 return {
                     x: x, 
-                    value: d[id] !== null && !isNaN(d[id]) ? +d[id] : null, 
+                    value: value, 
                     id: convertedId
                 };
             }).filter(function (v) { 
@@ -204,6 +218,12 @@ c3_chart_internal_fn.convertDataToTargets = function C3_INTERNAL_convertDataToTa
             return v1 - v2;
         });
     });
+
+    if (allZero) {
+        zeroUnderYAxis = false;
+    }
+
+    $$.zeroUnderYAxis = zeroUnderYAxis;
 
     // set target types
     if (config.data_type) {
