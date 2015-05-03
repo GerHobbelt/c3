@@ -159,11 +159,11 @@ c3_chart_internal_fn.updateLegend = function C3_INTERNAL_updateLegend(targetIds,
             box = getTextBox(textElement, id),
             itemWidth = box.width + tileWidth + (isLast && !($$.isLegendRight || $$.isLegendInset) ? 0 : paddingRight) + config.legend_padding,
             itemHeight = box.height + paddingTop,
-            itemLength = $$.isLegendRight || $$.isLegendInset ? itemHeight : itemWidth,
+            itemLength = $$.isLegendRight || ($$.isLegendInset && !$$.isLegendTop) ? itemHeight : itemWidth,
             areaLength = $$.isLegendRight || $$.isLegendInset ? $$.getLegendHeight() : $$.getLegendWidth(),
             margin, maxLength;
 
-        // MEMO: care about condifion of step, totalLength
+        // MEMO: care about condition of step, totalLength
         function updateValues(id, withoutStep) {
             if (!withoutStep) {
                 margin = (areaLength - totalLength - itemLength) / 2;
@@ -173,7 +173,7 @@ c3_chart_internal_fn.updateLegend = function C3_INTERNAL_updateLegend(targetIds,
                     step++;
                 }
             }
-            steps[id] = step;
+            steps[id] = $$.legendStep ? $$.legendStep : step;
             margins[step] = $$.isLegendInset ? 10 : margin;
             offsets[id] = totalLength;
             totalLength += itemLength;
@@ -226,7 +226,7 @@ c3_chart_internal_fn.updateLegend = function C3_INTERNAL_updateLegend(targetIds,
     }
 
     if ($$.isLegendInset) {
-        step = config.legend_inset_step ? config.legend_inset_step : targetIds.length;
+        step = config.legend_inset_step;
         $$.updateLegendStep(step);
     }
 
@@ -238,8 +238,15 @@ c3_chart_internal_fn.updateLegend = function C3_INTERNAL_updateLegend(targetIds,
             return margins[steps[id]] + offsets[id]; 
         };
     } else if ($$.isLegendInset) {
-        xForLegend = function (id) { 
-            return maxWidth * steps[id] + 10; 
+        xForLegend = function (id) {
+          var offset = 0;
+          for (var key in widths) {
+            if (key === id) {
+              break;
+            }
+            offset += widths[key];
+          }
+          return offset * steps[id];
         };
         yForLegend = function (id) { 
             return margins[steps[id]] + offsets[id]; 
@@ -268,7 +275,7 @@ c3_chart_internal_fn.updateLegend = function C3_INTERNAL_updateLegend(targetIds,
         return xForLegend(id, i) - 2; 
     };
     x2ForLegendTile = function (id, i) { 
-        return xForLegend(id, i) - 2 + config.legend_item_tile_width; 
+        return xForLegend(id, i) - 2 + $$.config.legend_item_width; 
     };
     yForLegendTile = function (id, i) { 
         return yForLegend(id, i) + 4; 
@@ -330,9 +337,9 @@ c3_chart_internal_fn.updateLegend = function C3_INTERNAL_updateLegend(targetIds,
         .attr('x', $$.isLegendRight || $$.isLegendInset ? xForLegendRect : -200)
         .attr('y', $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendRect);
     l.append('line')
-        .attr('class', CLASS.legendItemTile)
         .style("pointer-events", "none")
-        .attr('stroke-width', config.legend_item_tile_height);
+        .attr('stroke-width', $$.config.legend_item_height)
+        .attr('class', function(id) { return $$.config.data_classes[id] ? $$.config.data_classes[id] + ' ' + CLASS.legendItemTile : CLASS.legendItemTile; });
 
     // Set background for inset legend
     background = $$.legend.select('.' + CLASS.legendBackground + ' rect');

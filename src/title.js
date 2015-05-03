@@ -4,7 +4,7 @@ c3_chart_internal_fn.initTitle = function C3_INTERNAL_initTitle() {
           .text($$.config.title_text)
           .attr("class", "c3-chart-title")
           .attr("x", $$.config.title_x)
-          .attr("y", $$.config.title_y);
+          .attr("y", $$.getCurrentPaddingTop() + $$.config.title_y);
 };
 
 c3_chart_internal_fn.redrawTitle = function C3_INTERNAL_redrawTitle() {
@@ -12,5 +12,5 @@ c3_chart_internal_fn.redrawTitle = function C3_INTERNAL_redrawTitle() {
     var $$ = this;
     $$.title
           .attr("x", $$.config.title_x)
-          .attr("y", $$.config.title_y || $$.title.node().getBBox().height);
+          .attr("y", $$.getCurrentPaddingTop() + $$.config.title_y);
 };

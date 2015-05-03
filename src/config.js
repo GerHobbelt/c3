@@ -134,6 +134,7 @@ c3_chart_internal_fn.getDefaultConfig = function C3_INTERNAL_getDefaultConfig() 
         axis_y_tick_time_interval: undefined,
         axis_y_padding: {},
         axis_y_default: undefined,
+        axis_y_showLine: true,
         axis_y2_show: false,
         axis_y2_max: undefined,
         axis_y2_min: undefined,

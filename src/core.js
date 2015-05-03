@@ -146,6 +146,8 @@ c3_chart_internal_fn.initParams = function C3_INTERNAL_initParams() {
     $$.legendItemWidth = 0;
     $$.legendItemHeight = 0;
 
+    $$.headerPadding = config.header_show ? 20 : 0;
+
     $$.currentMaxTickWidths = {
         x: 0,
         y: 0,
@@ -833,7 +835,7 @@ c3_chart_internal_fn.getTranslate = function C3_INTERNAL_getTranslate(target) {
         x, y;
     if (target === 'main') {
         x = asHalfPixel($$.margin.left);
-        y = asHalfPixel($$.margin.top);
+        y = asHalfPixel($$.margin.top) + $$.headerPadding;
     } else if (target === 'context') {
         x = asHalfPixel($$.margin2.left);
         y = asHalfPixel($$.margin2.top);
@@ -974,7 +976,10 @@ c3_chart_internal_fn.updateDimension = function C3_INTERNAL_updateDimension(with
             $$.axes.x.call($$.xAxis);
             $$.axes.subx.call($$.subXAxis);
         } else {
-            $$.axes.y.call($$.yAxis);
+            var axis = $$.axes.y.call($$.yAxis);
+            if (!$$.config.axis_y_showLine) {
+                axis.select('path').style('visibility', 'hidden');
+            }
             $$.axes.y2.call($$.y2Axis);
         }
     }

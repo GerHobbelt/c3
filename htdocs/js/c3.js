@@ -151,6 +151,8 @@
         $$.legendItemWidth = 0;
         $$.legendItemHeight = 0;
 
+        $$.headerPadding = config.header_show ? 20 : 0;
+
         $$.currentMaxTickWidths = {
             x: 0,
             y: 0,
@@ -838,7 +840,7 @@
             x, y;
         if (target === 'main') {
             x = asHalfPixel($$.margin.left);
-            y = asHalfPixel($$.margin.top);
+            y = asHalfPixel($$.margin.top) + $$.headerPadding;
         } else if (target === 'context') {
             x = asHalfPixel($$.margin2.left);
             y = asHalfPixel($$.margin2.top);
@@ -979,7 +981,10 @@
                 $$.axes.x.call($$.xAxis);
                 $$.axes.subx.call($$.subXAxis);
             } else {
-                $$.axes.y.call($$.yAxis);
+                var axis = $$.axes.y.call($$.yAxis);
+                if (!$$.config.axis_y_showLine) {
+                    axis.select('path').style('visibility', 'hidden');
+                }
                 $$.axes.y2.call($$.y2Axis);
             }
         }
@@ -1300,6 +1305,7 @@
             axis_y_tick_time_interval: undefined,
             axis_y_padding: {},
             axis_y_default: undefined,
+            axis_y_showLine: true,
             axis_y2_show: false,
             axis_y2_max: undefined,
             axis_y2_min: undefined,
@@ -2987,7 +2993,7 @@
     };
     c3_chart_internal_fn.getCurrentPaddingBottom = function C3_INTERNAL_getCurrentPaddingBottom() {
         var config = this.config;
-        return isValue(config.padding_bottom) ? config.padding_bottom : 0;
+        return (isValue(config.padding_bottom) ? config.padding_bottom : 0) + this.headerPadding;
     };
     c3_chart_internal_fn.getCurrentPaddingLeft = function C3_INTERNAL_getCurrentPaddingLeft(withoutRecompute) {
         var $$ = this, 
@@ -3231,7 +3237,10 @@
         $$.mainLine = $$.main.selectAll('.' + CLASS.lines).selectAll('.' + CLASS.line)
             .data($$.lineData.bind($$));
         $$.mainLine.enter().append('path')
-            .attr('class', $$.classLine.bind($$))
+            .attr('class', function(path) {
+              var extraClasses = $$.config.data_classes[path.id] ? ' ' + $$.config.data_classes[path.id] : '';
+              return $$.classLine(path) + extraClasses;
+            })
             .style("stroke", $$.color);
         $$.mainLine
             .style("opacity", $$.initialOpacity.bind($$))
@@ -3434,7 +3443,10 @@
         $$.mainArea = $$.main.selectAll('.' + CLASS.areas).selectAll('.' + CLASS.area)
             .data($$.lineData.bind($$));
         $$.mainArea.enter().append('path')
-            .attr("class", $$.classArea.bind($$))
+            .attr('class', function(path) {
+                var extraClasses = $$.config.data_classes[path.id] ? ' ' + $$.config.data_classes[path.id] : '';
+                return $$.classArea(path) + extraClasses;
+              })
             .style("fill", $$.color)
             .style("opacity", function () { 
                 $$.orgAreaOpacity = +d3.select(this).style('opacity'); 
@@ -3663,10 +3675,19 @@
             };
         $$.mainBar = $$.main.selectAll('.' + CLASS.bars).selectAll('.' + CLASS.bar)
             .data(barData);
-        $$.mainBar.enter().append('path')
-            .attr("class", classBar)
+
+        var path = $$.mainBar.enter().append('path')
+            .attr("class", function(path) {
+              var extraClasses = $$.config.data_classes[path.id] ? ' ' + $$.config.data_classes[path.id] : '';
+              return classBar(path) + extraClasses;
+            })
             .style("stroke", color)
             .style("fill", color);
+
+        if ($$.config.mask) {
+          path.style("mask", "url(#diagonalMask)");
+        }
+
         $$.mainBar
             .style("opacity", initialOpacity);
         $$.mainBar.exit().transition().duration(durationForExit)
@@ -4387,7 +4408,7 @@
 
             if (tooltipRight > chartRight) {
                 // 20 is needed for Firefox to keep tooltip width
-                tooltipLeft -= tooltipRight - chartRight + 20;
+                tooltipLeft = $$.x(dataToShow[0].x) - tWidth + $$.getCurrentPaddingLeft(true) - 20;
             }
             if (tooltipTop + tHeight > $$.currentHeight) {
                 tooltipTop -= tHeight + 30;
@@ -4584,11 +4605,11 @@
                 box = getTextBox(textElement, id),
                 itemWidth = box.width + tileWidth + (isLast && !($$.isLegendRight || $$.isLegendInset) ? 0 : paddingRight) + config.legend_padding,
                 itemHeight = box.height + paddingTop,
-                itemLength = $$.isLegendRight || $$.isLegendInset ? itemHeight : itemWidth,
+                itemLength = $$.isLegendRight || ($$.isLegendInset && !$$.isLegendTop) ? itemHeight : itemWidth,
                 areaLength = $$.isLegendRight || $$.isLegendInset ? $$.getLegendHeight() : $$.getLegendWidth(),
                 margin, maxLength;
 
-            // MEMO: care about condifion of step, totalLength
+            // MEMO: care about condition of step, totalLength
             function updateValues(id, withoutStep) {
                 if (!withoutStep) {
                     margin = (areaLength - totalLength - itemLength) / 2;
@@ -4598,7 +4619,7 @@
                         step++;
                     }
                 }
-                steps[id] = step;
+                steps[id] = $$.legendStep ? $$.legendStep : step;
                 margins[step] = $$.isLegendInset ? 10 : margin;
                 offsets[id] = totalLength;
                 totalLength += itemLength;
@@ -4651,7 +4672,7 @@
         }
 
         if ($$.isLegendInset) {
-            step = config.legend_inset_step ? config.legend_inset_step : targetIds.length;
+            step = config.legend_inset_step;
             $$.updateLegendStep(step);
         }
 
@@ -4663,8 +4684,15 @@
                 return margins[steps[id]] + offsets[id]; 
             };
         } else if ($$.isLegendInset) {
-            xForLegend = function (id) { 
-                return maxWidth * steps[id] + 10; 
+            xForLegend = function (id) {
+              var offset = 0;
+              for (var key in widths) {
+                if (key === id) {
+                  break;
+                }
+                offset += widths[key];
+              }
+              return offset * steps[id];
             };
             yForLegend = function (id) { 
                 return margins[steps[id]] + offsets[id]; 
@@ -4693,7 +4721,7 @@
             return xForLegend(id, i) - 2; 
         };
         x2ForLegendTile = function (id, i) { 
-            return xForLegend(id, i) - 2 + config.legend_item_tile_width; 
+            return xForLegend(id, i) - 2 + $$.config.legend_item_width; 
         };
         yForLegendTile = function (id, i) { 
             return yForLegend(id, i) + 4; 
@@ -4755,9 +4783,9 @@
             .attr('x', $$.isLegendRight || $$.isLegendInset ? xForLegendRect : -200)
             .attr('y', $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendRect);
         l.append('line')
-            .attr('class', CLASS.legendItemTile)
             .style("pointer-events", "none")
-            .attr('stroke-width', config.legend_item_tile_height);
+            .attr('stroke-width', $$.config.legend_item_height)
+            .attr('class', function(id) { return $$.config.data_classes[id] ? $$.config.data_classes[id] + ' ' + CLASS.legendItemTile : CLASS.legendItemTile; });
 
         // Set background for inset legend
         background = $$.legend.select('.' + CLASS.legendBackground + ' rect');
@@ -4832,7 +4860,7 @@
               .text($$.config.title_text)
               .attr("class", "c3-chart-title")
               .attr("x", $$.config.title_x)
-              .attr("y", $$.config.title_y);
+              .attr("y", $$.getCurrentPaddingTop() + $$.config.title_y);
     };
 
     c3_chart_internal_fn.redrawTitle = function C3_INTERNAL_redrawTitle() {
@@ -4840,7 +4868,7 @@
         var $$ = this;
         $$.title
               .attr("x", $$.config.title_x)
-              .attr("y", $$.config.title_y || $$.title.node().getBBox().height);
+              .attr("y", $$.getCurrentPaddingTop() + $$.config.title_y);
     };
 
     c3_chart_internal_fn.initHeader = function() {

@@ -37,10 +37,19 @@ c3_chart_internal_fn.updateBar = function C3_INTERNAL_updateBar(durationForExit)
         };
     $$.mainBar = $$.main.selectAll('.' + CLASS.bars).selectAll('.' + CLASS.bar)
         .data(barData);
-    $$.mainBar.enter().append('path')
-        .attr("class", classBar)
+
+    var path = $$.mainBar.enter().append('path')
+        .attr("class", function(path) {
+          var extraClasses = $$.config.data_classes[path.id] ? ' ' + $$.config.data_classes[path.id] : '';
+          return classBar(path) + extraClasses;
+        })
         .style("stroke", color)
         .style("fill", color);
+
+    if ($$.config.mask) {
+      path.style("mask", "url(#diagonalMask)");
+    }
+
     $$.mainBar
         .style("opacity", initialOpacity);
     $$.mainBar.exit().transition().duration(durationForExit)

@@ -20,7 +20,7 @@ c3_chart_internal_fn.getCurrentPaddingTop = function C3_INTERNAL_getCurrentPaddi
 };
 c3_chart_internal_fn.getCurrentPaddingBottom = function C3_INTERNAL_getCurrentPaddingBottom() {
     var config = this.config;
-    return isValue(config.padding_bottom) ? config.padding_bottom : 0;
+    return (isValue(config.padding_bottom) ? config.padding_bottom : 0) + this.headerPadding;
 };
 c3_chart_internal_fn.getCurrentPaddingLeft = function C3_INTERNAL_getCurrentPaddingLeft(withoutRecompute) {
     var $$ = this, 

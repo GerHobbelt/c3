@@ -51,7 +51,10 @@ c3_chart_internal_fn.updateLine = function C3_INTERNAL_updateLine(durationForExi
     $$.mainLine = $$.main.selectAll('.' + CLASS.lines).selectAll('.' + CLASS.line)
         .data($$.lineData.bind($$));
     $$.mainLine.enter().append('path')
-        .attr('class', $$.classLine.bind($$))
+        .attr('class', function(path) {
+          var extraClasses = $$.config.data_classes[path.id] ? ' ' + $$.config.data_classes[path.id] : '';
+          return $$.classLine(path) + extraClasses;
+        })
         .style("stroke", $$.color);
     $$.mainLine
         .style("opacity", $$.initialOpacity.bind($$))
@@ -254,7 +257,10 @@ c3_chart_internal_fn.updateArea = function C3_INTERNAL_updateArea(durationForExi
     $$.mainArea = $$.main.selectAll('.' + CLASS.areas).selectAll('.' + CLASS.area)
         .data($$.lineData.bind($$));
     $$.mainArea.enter().append('path')
-        .attr("class", $$.classArea.bind($$))
+        .attr('class', function(path) {
+            var extraClasses = $$.config.data_classes[path.id] ? ' ' + $$.config.data_classes[path.id] : '';
+            return $$.classArea(path) + extraClasses;
+          })
         .style("fill", $$.color)
         .style("opacity", function () { 
             $$.orgAreaOpacity = +d3.select(this).style('opacity'); 
