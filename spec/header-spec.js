@@ -1,4 +1,4 @@
-xdescribe('c3 chart header', function () {
+describe('c3 chart header', function () {
     'use strict';
     var chart, config;
 
