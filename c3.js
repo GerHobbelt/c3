@@ -5760,10 +5760,12 @@
 
         $$.mainRegion = $$.main.select('.' + CLASS.regions).selectAll('.' + CLASS.region)
             .data(config.regions);
-        $$.mainRegion.enter().append('g')
-            .attr('class', $$.classRegion.bind($$))
-          .append('rect')
+        var g = $$.mainRegion.enter().append('g')
+            .attr('class', $$.classRegion.bind($$));
+        g.append('rect')
             .style("fill-opacity", 0);
+        g.append('text')
+            .text($$.labelRegion.bind($$));
         $$.mainRegion.exit().transition().duration(duration)
             .style("opacity", 0)
             .remove();
@@ -5776,6 +5778,10 @@
             y = $$.regionY.bind($$),
             w = $$.regionWidth.bind($$),
             h = $$.regionHeight.bind($$);
+            
+        var paddedY = $$.regionY($$) + 10;  // To allow for text height
+        var regionLabels = $$.mainRegion.selectAll('text');
+            
         return [
             (withTransition ? regions.transition() : regions)
                 .attr("x", x)
@@ -5784,7 +5790,10 @@
                 .attr("height", h)
                 .style("fill-opacity", function (d) { 
                     return isValue(d.opacity) ? d.opacity : 0.1; 
-                })
+                }),
+            regionLabels
+                .attr("x", x)
+                .attr("y", paddedY)
         ];
     };
     c3_chart_internal_fn.regionX = function C3_INTERNAL_regionX(d) {
@@ -6541,7 +6550,10 @@
         return this.classShapes(d) + this.generateClass(CLASS.areas, d.id);
     };
     c3_chart_internal_fn.classRegion = function C3_INTERNAL_classRegion(d, i) {
-        return this.generateClass(CLASS.region, i) + ' ' + (d.class ? d.class : '');
+        return this.generateClass(CLASS.region, i) + ' ' + (d.class != null ? d.class : '');
+    };
+    c3_chart_internal_fn.labelRegion = function C3_INTERNAL_labelRegion(d, i) {
+        return d.label !== undefined ? d.label : '';
     };
     c3_chart_internal_fn.classEvent = function C3_INTERNAL_classEvent(d) {
         return this.generateClass(CLASS.eventRect, d.index);
