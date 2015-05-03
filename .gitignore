@@ -10,3 +10,7 @@ build
 __forks__.bulk_dump
 __forks.info__/
 
+# sublime editor
+*.sublime-project
+*.sublime-workspace
+
