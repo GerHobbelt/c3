@@ -11,6 +11,8 @@ c3_chart_internal_fn.getDefaultConfig = function C3_INTERNAL_getDefaultConfig() 
         margin_right: undefined,
         margin_top: undefined,
         margin_bottom: undefined,
+        resize_auto: true,
+        resize_timeout: 100,
         zoom_enabled: false,
         zoom_extent: undefined,
         zoom_privileged: false,

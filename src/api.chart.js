@@ -16,7 +16,22 @@ c3_chart_fn.destroy = function C3_API_destroy() {
     var $$ = this.internal;
 
     window.clearInterval($$.intervalForObserveInserted);
-    window.onresize = null;
+
+    if ($$.resizeTimeout !== undefined) {
+        window.clearTimeout($$.resizeTimeout);
+    }
+
+    if (window.detachEvent) {
+        window.detachEvent('onresize', $$.resizeFunction);
+    } else if (window.removeEventListener) {
+        window.removeEventListener('resize', $$.resizeFunction);
+    } else {
+        var wrapper = window.onresize;
+        // check if no one else removed our wrapper and remove our resizeFunction from it
+        if (wrapper && wrapper.add && wrapper.remove) {
+            wrapper.remove($$.resizeFunction);
+        }
+    }
 
     $$.selectChart.classed('c3', false).html("");
 

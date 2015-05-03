@@ -369,20 +369,7 @@
         }
 
         // Bind resize event
-        if (window.onresize == null) {
-            window.onresize = $$.generateResize();
-        }
-        if (window.onresize.add) {
-            window.onresize.add(function C3_INTERNAL_execConfigOnResize() {
-                config.onresize.call($$);
-            });
-            window.onresize.add(function C3_INTERNAL_execApiFlush() {
-                $$.api.flush();
-            });
-            window.onresize.add(function C3_INTERNAL_execConfigOnResized() {
-                config.onresized.call($$);
-            });
-        }
+        $$.bindResize();
 
         // export element of the chart
         $$.api.element = $$.selectChart.node();
@@ -884,7 +871,7 @@
     };
     c3_chart_internal_fn.opacityForCircle = function C3_INTERNAL_opacityForCircle(d) {
         var opacity = this.config.point_show ? 1 : 0;
-        return isValue(d.value) ? (this.isScatterType(d) ? 0.5 : opacity) : 0;
+        return isValue(d.value) ? (this.isScatterType(d) ? this.config.point_scatter_opacity : opacity) : 0;
     };
     c3_chart_internal_fn.opacityForText = function C3_INTERNAL_opacityForText() {
         return this.hasDataLabel() ? 1 : 0;
@@ -1037,6 +1024,53 @@
         observer.observe(selection.node(), {attributes: true, childList: true, characterData: true});
     };
 
+    c3_chart_internal_fn.bindResize = function C3_INTERNAL_bindResize() {
+        var $$ = this, config = $$.config;
+
+        $$.resizeFunction = $$.generateResize();
+
+        $$.resizeFunction.add(function C3_INTERNAL_execConfigOnResize() {
+            config.onresize.call($$);
+        });
+        if (config.resize_auto) {
+            $$.resizeFunction.add(function C3_INTERNAL_execResizeAuto() {
+                if (config.resize_timeout) {
+                    if ($$.resizeTimeout !== undefined) {
+                        window.clearTimeout($$.resizeTimeout);
+                    }
+                    $$.resizeTimeout = window.setTimeout(function C3_INTERNAL_execResizeAutoFlush() {
+                        delete $$.resizeTimeout;
+                        $$.api.flush();
+                    }, config.resize_timeout);
+                } else {
+                    $$.api.flush();
+                }
+            });
+        }
+        $$.resizeFunction.add(function C3_INTERNAL_execConfigOnResized() {
+            config.onresized.call($$);
+        });
+
+        if (window.attachEvent) {
+            window.attachEvent('onresize', $$.resizeFunction);
+        } else if (window.addEventListener) {
+            window.addEventListener('resize', $$.resizeFunction, false);
+        } else {
+            // fallback to this, if this is a very old browser
+            var wrapper = window.onresize;
+            if (!wrapper) {
+                // create a wrapper that will call all charts
+                wrapper = $$.generateResize();
+            } else if (!wrapper.add || !wrapper.remove) {
+                // there is already a handler registered, make sure we call it too
+                wrapper = $$.generateResize();
+                wrapper.add(window.onresize);
+            }
+            // add this graph to the wrapper, we will be removed if the user calls destroy
+            wrapper.add($$.resizeFunction);
+            window.onresize = wrapper;
+        }
+    };
 
     c3_chart_internal_fn.generateResize = function C3_INTERNAL_generateResize() {
         console.count('generateResize');
@@ -1048,6 +1082,14 @@
         }
         callResizeFunctions.add = function C3_INTERNAL_addResizeFunction(f) {
             resizeFunctions.push(f);
+        };
+        callResizeFunctions.remove = function C3_INTERNAL_removeResizeFunction(f) {
+            for (var i = 0; i < resizeFunctions.length; i++) {
+                if (resizeFunctions[i] === f) {
+                    resizeFunctions.splice(i, 1);
+                    break;
+                }
+            }
         };
         return callResizeFunctions;
     };
@@ -1098,7 +1140,7 @@
             parsedDate = date;
         } else if (typeof date === 'string') {
             parsedDate = $$.dataTimeFormat($$.config.data_xFormat).parse(date);
-        } else if (typeof date === 'number' || !isNaN(date)) {
+        } else if (typeof date === 'number' && !isNaN(date)) {
             parsedDate = new Date(+date);
         }
         if (!parsedDate || isNaN(+parsedDate)) {
@@ -1135,6 +1177,8 @@
             margin_right: undefined,
             margin_top: undefined,
             margin_bottom: undefined,
+            resize_auto: true,
+            resize_timeout: 100,
             zoom_enabled: false,
             zoom_extent: undefined,
             zoom_privileged: false,
@@ -1282,6 +1326,7 @@
             point_focus_expand_enabled: true,
             point_focus_expand_r: undefined,
             point_select_r: undefined,
+            point_scatter_opacity: 0.5,
             // line
             line_connectNull: false,
             line_step_type: 'step',
@@ -7459,7 +7504,22 @@
         var $$ = this.internal;
 
         window.clearInterval($$.intervalForObserveInserted);
-        window.onresize = null;
+
+        if ($$.resizeTimeout !== undefined) {
+            window.clearTimeout($$.resizeTimeout);
+        }
+
+        if (window.detachEvent) {
+            window.detachEvent('onresize', $$.resizeFunction);
+        } else if (window.removeEventListener) {
+            window.removeEventListener('resize', $$.resizeFunction);
+        } else {
+            var wrapper = window.onresize;
+            // check if no one else removed our wrapper and remove our resizeFunction from it
+            if (wrapper && wrapper.add && wrapper.remove) {
+                wrapper.remove($$.resizeFunction);
+            }
+        }
 
         $$.selectChart.classed('c3', false).html("");
 
