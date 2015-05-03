@@ -1,0 +1,85 @@
+<html>
+<head>
+    <link href="/css/c3.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h3>Cardinal</h3>
+<div id="chart1"></div>
+
+<h3>Basis</h3>
+<div id="chart2"></div>
+
+<h3>Bundle</h3>
+<div id="chart3"></div>
+
+<h3>Monotone</h3>
+<div id="chart4"></div>
+
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="/js/c3.js"></script>
+<script>
+
+    var chart1 = c3.generate({
+        bindto: '#chart1',
+        data: {
+            columns: [
+                ['data2', 130, 100, 140, 200, 150, 50]
+            ],
+            type: 'spline'
+        },
+        line: {
+            spline: {
+                type: 'cardinal'
+            }
+        }
+    });
+
+    var chart2 = c3.generate({
+        bindto: '#chart2',
+        data: {
+            columns: [
+                ['data2', 130, 100, 140, 200, 150, 50]
+            ],
+            type: 'spline'
+        },
+        line: {
+            spline: {
+                type: 'basis'
+            }
+        }
+    });
+
+    var chart3 = c3.generate({
+        bindto: '#chart3',
+        data: {
+            columns: [
+                ['data2', 130, 100, 140, 200, 150, 50]
+            ],
+            type: 'spline'
+        },
+        line: {
+            spline: {
+                type: 'bundle'
+            }
+        }
+    });
+
+    var chart4 = c3.generate({
+        bindto: '#chart4',
+        data: {
+            columns: [
+                ['data2', 130, 100, 140, 200, 150, 50]
+            ],
+            type: 'spline'
+        },
+        line: {
+            spline: {
+                type: 'monotone'
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

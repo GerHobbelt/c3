@@ -20,7 +20,9 @@ c3_chart_internal_fn.hasType = function C3_INTERNAL_hasType(type, targets) {
         });
     } else if (Object.keys(types).length) {
         Object.keys(types).forEach(function (id) {
-            if (types[id] === type) { has = true; }
+            if (types[id] === type) {
+                has = true;
+            }
         });
     } else {
         has = $$.config.data_type === type;
@@ -30,21 +32,30 @@ c3_chart_internal_fn.hasType = function C3_INTERNAL_hasType(type, targets) {
 c3_chart_internal_fn.hasArcType = function C3_INTERNAL_hasArcType(targets) {
     return this.hasType('pie', targets) || this.hasType('donut', targets) || this.hasType('gauge', targets);
 };
-c3_chart_internal_fn.isLineType = function C3_INTERNAL_isLineType(d) {
-    var config = this.config, id = isString(d) ? d : d.id;
-    return !config.data_types[id] || ['line', 'spline', 'area', 'area-spline', 'step', 'area-step'].indexOf(config.data_types[id]) >= 0;
+c3_chart_internal_fn.isLineType = function C3_INTERNAL_isLineType(d, isSub) {
+    var config = this.config,
+        id = isString(d) ? d : d.id;
+    var dataType = (isSub && config.subchart_types ? config.subchart_types[id] : undefined) || config.data_types[id];
+    return !dataType ||
+        ['line', 'spline', 'area', 'area-spline', 'step', 'area-step'].indexOf(dataType) >= 0;
 };
-c3_chart_internal_fn.isStepType = function C3_INTERNAL_isStepType(d) {
-    var id = isString(d) ? d : d.id;
-    return ['step', 'area-step'].indexOf(this.config.data_types[id]) >= 0;
+c3_chart_internal_fn.isStepType = function C3_INTERNAL_isStepType(d, isSub) {
+    var config = this.config,
+        id = isString(d) ? d : d.id;
+    var dataType = (isSub && config.subchart_types ? config.subchart_types[id] : undefined) || config.data_types[id];
+    return ['step', 'area-step'].indexOf(dataType) >= 0;
 };
-c3_chart_internal_fn.isSplineType = function C3_INTERNAL_isSplineType(d) {
-    var id = isString(d) ? d : d.id;
-    return ['spline', 'area-spline'].indexOf(this.config.data_types[id]) >= 0;
+c3_chart_internal_fn.isSplineType = function C3_INTERNAL_isSplineType(d, isSub) {
+    var config = this.config,
+        id = isString(d) ? d : d.id;
+    var dataType = (isSub && config.subchart_types ? config.subchart_types[id] : undefined) || config.data_types[id];
+    return ['spline', 'area-spline'].indexOf(dataType) >= 0;
 };
-c3_chart_internal_fn.isAreaType = function C3_INTERNAL_isAreaType(d) {
-    var id = isString(d) ? d : d.id;
-    return ['area', 'area-spline', 'area-step'].indexOf(this.config.data_types[id]) >= 0;
+c3_chart_internal_fn.isAreaType = function C3_INTERNAL_isAreaType(d, isSub) {
+    var config = this.config,
+        id = isString(d) ? d : d.id;
+    var dataType = (isSub && config.subchart_types ? config.subchart_types[id] : undefined) || config.data_types[id];
+    return ['area', 'area-spline', 'area-step'].indexOf(dataType) >= 0;
 };
 c3_chart_internal_fn.isBarType = function C3_INTERNAL_isBarType(d) {
     var id = isString(d) ? d : d.id;
@@ -69,8 +80,8 @@ c3_chart_internal_fn.isDonutType = function C3_INTERNAL_isDonutType(d) {
 c3_chart_internal_fn.isArcType = function C3_INTERNAL_isArcType(d) {
     return this.isPieType(d) || this.isDonutType(d) || this.isGaugeType(d);
 };
-c3_chart_internal_fn.lineData = function C3_INTERNAL_lineData(d) {
-    return this.isLineType(d) ? [d] : [];
+c3_chart_internal_fn.lineData = function C3_INTERNAL_lineData(d, isSub) {
+    return this.isLineType(d, isSub) ? [d] : [];
 };
 c3_chart_internal_fn.arcData = function C3_INTERNAL_arcData(d) {
     return this.isArcType(d.data) ? [d] : [];
@@ -83,9 +94,9 @@ c3_chart_internal_fn.arcData = function C3_INTERNAL_arcData(d) {
 c3_chart_internal_fn.barData = function C3_INTERNAL_barData(d) {
     return this.isBarType(d) ? d.values : [];
 };
-c3_chart_internal_fn.lineOrScatterData = function C3_INTERNAL_lineOrScatterData(d) {
-    return this.isLineType(d) || this.isScatterType(d) ? d.values : [];
+c3_chart_internal_fn.lineOrScatterData = function C3_INTERNAL_lineOrScatterData(d, isSub) {
+    return this.isLineType(d, isSub) || this.isScatterType(d) ? d.values : [];
 };
-c3_chart_internal_fn.barOrLineData = function C3_INTERNAL_barOrLineData(d) {
-    return this.isBarType(d) || this.isLineType(d) ? d.values : [];
+c3_chart_internal_fn.barOrLineData = function C3_INTERNAL_barOrLineData(d, isSub) {
+    return this.isBarType(d) || this.isLineType(d, isSub) ? d.values : [];
 };

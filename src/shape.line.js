@@ -89,21 +89,21 @@ c3_chart_internal_fn.generateDrawLine = function C3_INTERNAL_generateDrawLine(li
             return d.value != null; 
         }); 
     }
-    return function (d) {
+    return function C3_INTERNAL_execDrawLine(d) {
         var values = config.line_connectNull ? $$.filterRemoveNull(d.values) : d.values,
             x = isSub ? $$.x : $$.subX, 
             y = yScaleGetter.call($$, d.id), 
             x0 = 0, 
             y0 = 0, 
             path;
-        if ($$.isLineType(d)) {
+        if ($$.isLineType(d, isSub)) {
             if (config.data_regions[d.id]) {
                 path = $$.lineWithRegions(values, x, y, config.data_regions[d.id]);
             } else {
-                if ($$.isStepType(d)) { 
+                if ($$.isStepType(d, isSub)) { 
                     values = $$.convertValuesToStep(values); 
                 }
-                path = line.interpolate($$.getInterpolate(d))(values);
+                path = line.interpolate($$.getInterpolate(d, isSub))(values);
             }
         } else {
             if (values[0]) {

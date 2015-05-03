@@ -1,38 +1,39 @@
 {
-  "name": "connect-js-c3",
-  "main": [
-    "c3.css",
-    "c3.js"
-  ],
+    "name": "c3",
+    "main": [
+        "c3.css",
+        "c3.js"
+    ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/mattfurness/c3"
+    "url": "https://github.com/GerHobbelt/c3"
   },
   "version": "0.4.10",
-  "homepage": "https://github.com/mattfurness/c3",
+  "homepage": "https://github.com/masayuki0812/c3",
   "authors": [
+    "Igor Laborie <ilaborie@gmail.com>",
     "Masayuki Tanaka <masayuki0812@mac.com>",
     "Matt Furness",
     "Bradley Boveines"
-  ],
+    ],
   "description": "Fork of c3, a D3-based reusable chart library",
-  "keywords": [
-    "chart",
-    "d3"
-  ],
-  "license": "MIT",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "htdocs",
-    "spec",
-    "src",
-    "package.json",
-    "component.json",
-    "Gruntfile.*"
-  ],
-  "dependencies": {
-    "d3": "<=3.5.0"
-  }
+    "keywords": [
+        "chart",
+        "d3"
+    ],
+    "license": "MIT",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "htdocs",
+        "spec",
+        "src",
+        "package.json",
+        "component.json",
+        "Gruntfile.*"
+    ],
+    "dependencies": {
+        "d3": "~3.5.5"
+    }
 }

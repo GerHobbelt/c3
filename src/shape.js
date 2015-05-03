@@ -3,7 +3,9 @@ c3_chart_internal_fn.getShapeIndices = function C3_INTERNAL_getShapeIndices(type
         indices = {}, i = 0, j, k;
     $$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$)).forEach(function (d) {
         for (j = 0; j < config.data_groups.length; j++) {
-            if (config.data_groups[j].indexOf(d.id) < 0) { continue; }
+            if (config.data_groups[j].indexOf(d.id) < 0) {
+                continue;
+            }
             for (k = 0; k < config.data_groups[j].length; k++) {
                 if (config.data_groups[j][k] in indices) {
                     indices[d.id] = indices[config.data_groups[j][k]];
@@ -11,7 +13,9 @@ c3_chart_internal_fn.getShapeIndices = function C3_INTERNAL_getShapeIndices(type
                 }
             }
         }
-        if (isUndefined(indices[d.id])) { indices[d.id] = i++; }
+        if (isUndefined(indices[d.id])) {
+            indices[d.id] = i++;
+        }
     });
     indices.__max__ = i - 1;
     return indices;
@@ -33,13 +37,17 @@ c3_chart_internal_fn.getShapeY = function C3_INTERNAL_getShapeY(isSub) {
 c3_chart_internal_fn.getShapeOffset = function C3_INTERNAL_getShapeOffset(typeFilter, indices, isSub) {
     var $$ = this,
         targets = $$.orderTargets($$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))),
-        targetIds = targets.map(function (t) { return t.id; });
+        targetIds = targets.map(function (t) {
+            return t.id;
+        });
     return function (d, i) {
         var scale = isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id),
             y0 = scale(0), offset = y0;
         targets.forEach(function (t) {
             var values = $$.isStepType(d) ? $$.convertValuesToStep(t.values) : t.values;
-            if (t.id === d.id || indices[t.id] !== indices[d.id]) { return; }
+            if (t.id === d.id || indices[t.id] !== indices[d.id]) {
+                return;
+            }
             if (targetIds.indexOf(t.id) < targetIds.indexOf(d.id)) {
                 if (values[i].value * d.value >= 0) {
                     offset += scale(values[i].value) - y0;
@@ -65,7 +73,14 @@ c3_chart_internal_fn.isWithinShape = function C3_INTERNAL_isWithinShape(that, d)
 };
 
 
-c3_chart_internal_fn.getInterpolate = function C3_INTERNAL_getInterpolate(d) {
+c3_chart_internal_fn.getInterpolate = function C3_INTERNAL_getInterpolate(d, isSub) {
     var $$ = this;
-    return $$.isSplineType(d) ? "cardinal" : $$.isStepType(d) ? $$.config.line_step_type : "linear";
+    if ($$.isSplineType(d, isSub)) {
+        return (isSub ? $$.config.subchart_line_spline_type : undefined) ||
+            $$.config.line_spline_type;
+    } else if ($$.isStepType(d, isSub)) {
+        return (isSub ? $$.config.subchart_line_step_type : undefined) ||
+            $$.config.line_step_type;
+    }
+    return "linear";
 };
