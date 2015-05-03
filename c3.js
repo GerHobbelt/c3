@@ -3245,7 +3245,7 @@
     };
     c3_chart_internal_fn.getTextRect = function (text, cls) {
         var body = this.d3.select('body'),
-            svg = body.append("svg").classed('c3', true).style('visibility', 'hidden').style('height', 0), rect;
+            svg = body.append('svg').classed('c3', true).style('visibility', 'hidden').style('height', 0), rect;
         svg.selectAll('.dummy')
             .data([text])
           .enter().append('text')
@@ -3253,6 +3253,7 @@
             .text(text)
           .each(function () { rect = this.getBoundingClientRect(); });
         svg.remove();
+        body.classed('c3', false);
         return rect;
     };
     c3_chart_internal_fn.generateXYForText = function (areaIndices, barIndices, lineIndices, forX) {
