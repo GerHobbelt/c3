@@ -3253,7 +3253,6 @@
             .text(text)
           .each(function () { rect = this.getBoundingClientRect(); });
         svg.remove();
-        body.classed('c3', false);
         return rect;
     };
     c3_chart_internal_fn.generateXYForText = function (areaIndices, barIndices, lineIndices, forX) {
