@@ -12,10 +12,12 @@ c3_chart_internal_fn.updateRegion = function (duration) {
 
     $$.mainRegion = $$.main.select('.' + CLASS.regions).selectAll('.' + CLASS.region)
         .data(config.regions);
-    $$.mainRegion.enter().append('g')
-        .attr('class', $$.classRegion.bind($$))
-      .append('rect')
+    var g = $$.mainRegion.enter().append('g')
+        .attr('class', $$.classRegion.bind($$));
+    g.append('rect')
         .style("fill-opacity", 0);
+    g.append('text')
+        .text($$.labelRegion.bind($$));
     $$.mainRegion.exit().transition().duration(duration)
         .style("opacity", 0)
         .remove();
@@ -27,13 +29,20 @@ c3_chart_internal_fn.redrawRegion = function (withTransition) {
         y = $$.regionY.bind($$),
         w = $$.regionWidth.bind($$),
         h = $$.regionHeight.bind($$);
+        
+    var paddedY = $$.regionY($$) + 10;  // To allow for text height
+    var regionLabels = $$.mainRegion.selectAll('text');
+        
     return [
         (withTransition ? regions.transition() : regions)
             .attr("x", x)
             .attr("y", y)
             .attr("width", w)
             .attr("height", h)
-            .style("fill-opacity", function (d) { return isValue(d.opacity) ? d.opacity : 0.1; })
+            .style("fill-opacity", function (d) { return isValue(d.opacity) ? d.opacity : 0.1; }),
+        regionLabels
+            .attr("x", x)
+            .attr("y", paddedY)
     ];
 };
 c3_chart_internal_fn.regionX = function (d) {
