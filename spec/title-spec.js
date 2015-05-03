@@ -1,4 +1,4 @@
-xdescribe('c3 chart title', function () {
+describe('c3 chart title', function () {
     'use strict';
     var chart, config;
     describe('when given a title config option', function () {
