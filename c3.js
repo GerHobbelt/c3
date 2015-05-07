@@ -1101,6 +1101,7 @@
             axis_rotated: false,
             axis_x_show: true,
             axis_x_type: 'indexed',
+            axis_x_scale_type: undefined,
             axis_x_localtime: true,
             axis_x_categories: [],
             axis_x_tick_centered: false,
@@ -1122,6 +1123,7 @@
             axis_x_label: {},
             axis_y_show: true,
             axis_y_type: undefined,
+            axis_y_scale_type: undefined,
             axis_y_max: undefined,
             axis_y_min: undefined,
             axis_y_inverted: false,
@@ -1257,12 +1259,47 @@
         });
     };
 
-    c3_chart_internal_fn.getScale = function (min, max, forTimeseries) {
-        return (forTimeseries ? this.d3.time.scale() : this.d3.scale.linear()).range([min, max]);
+    c3_chart_internal_fn.getScale = function (min, max, scaleType) {
+        // keep compatibility
+        if (typeof scaleType === 'boolean' && scaleType === true) {
+            scaleType = 'timeseries';
+        } else if (typeof scaleType === 'boolean') {
+            scaleType = 'linear';
+        }
+
+        var customScale;
+        // meybe customized scale
+        if (typeof scaleType === 'function') {
+            customScale = scaleType;
+            scaleType = 'custom';
+        } else if (typeof scaleType === 'string' && typeof this.d3.scale[scaleType] === 'function') {
+            customScale = this.d3.scale[scaleType];
+            scaleType = 'custom';
+        }
+
+        var scale;
+        switch (scaleType) {
+            case 'timeseries':
+                scale = this.d3.time.scale();
+                break;
+            case 'custom':
+                scale = customScale();
+                break;
+            default:
+                scale = this.d3.scale.linear();
+                break;
+        }
+        return scale.range([min, max]);
+    };
+    c3_chart_internal_fn.getScaleType = function () {
+        return this.config.axis_x_scale_type;
+    };
+    c3_chart_internal_fn.getScaleTypeY = function () {
+        return this.config.axis_y_scale_type;
     };
     c3_chart_internal_fn.getX = function (min, max, domain, offset) {
         var $$ = this,
-            scale = $$.getScale(min, max, $$.isTimeSeries()),
+            scale = $$.getScale(min, max, $$.isTimeSeries() ? true : $$.getScaleType()),
             _scale = domain ? scale.domain(domain) : scale, key;
         // Define customized scale if categorized axis
         if ($$.isCategorized()) {
@@ -1298,7 +1335,7 @@
         return scale;
     };
     c3_chart_internal_fn.getY = function (min, max, domain) {
-        var scale = this.getScale(min, max, this.isTimeSeriesY());
+        var scale = this.getScale(min, max, this.isTimeSeriesY() ? true : this.getScaleTypeY());
         if (domain) { scale.domain(domain); }
         return scale;
     };
