@@ -6,16 +6,15 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/mattfurness/c3"
+    "url": "https://github.com/getconnect/c3"
   },
   "version": "0.4.10",
-  "homepage": "https://github.com/mattfurness/c3",
+  "homepage": "https://github.com/getconnect/c3",
   "authors": [
     "Masayuki Tanaka <masayuki0812@mac.com>",
-    "Matt Furness",
-    "Bradley Boveines"
+    "Tipi HQ"
   ],
-  "description": "Fork of c3, a D3-based reusable chart library",
+  "description": "A fork of C3, a D3-based reusable chart library, for use with connect-js-viz",
   "keywords": [
     "chart",
     "d3"
