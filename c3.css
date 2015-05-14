@@ -11,7 +11,11 @@
   -moz-user-select: none;
   user-select: none; }
 
-.c3-legend-item-tile, .c3-xgrid-focus, .c3-ygrid, .c3-event-rect, .c3-bars path {
+.c3-legend-item-tile,
+.c3-xgrid-focus,
+.c3-ygrid,
+.c3-event-rect,
+.c3-bars path {
   shape-rendering: crispEdges; }
 
 .c3-chart-arc path {
@@ -70,11 +74,11 @@
 /*-- Region --*/
 .c3-region {
   fill: steelblue;
-  fill-opacity: 0.1; }
+  fill-opacity: .1; }
 
 /*-- Brush --*/
 .c3-brush .extent {
-  fill-opacity: 0.1; }
+  fill-opacity: .1; }
 
 /*-- Select - Drag --*/
 /*-- Legend --*/

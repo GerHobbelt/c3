@@ -29,7 +29,7 @@ c3_chart_internal_fn.getCurrentPaddingLeft = function (withoutRecompute) {
     } else if (!config.axis_y_show || config.axis_y_inner) { // && !config.axis_rotated
         return $$.axis.getYAxisLabelPosition().isOuter ? 30 : 1;
     } else {
-        return ceil10($$.getAxisWidthByAxisId('y', withoutRecompute));
+        return Math.ceil($$.getAxisWidthByAxisId('y', withoutRecompute));
     }
 };
 c3_chart_internal_fn.getCurrentPaddingRight = function () {
@@ -42,7 +42,7 @@ c3_chart_internal_fn.getCurrentPaddingRight = function () {
     } else if (!config.axis_y2_show || config.axis_y2_inner) { // && !config.axis_rotated
         return 2 + legendWidthOnRight + ($$.axis.getY2AxisLabelPosition().isOuter ? 20 : 0);
     } else {
-        return ceil10($$.getAxisWidthByAxisId('y2')) + legendWidthOnRight;
+        return Math.ceil($$.getAxisWidthByAxisId('y2')) + legendWidthOnRight;
     }
 };
 
@@ -89,8 +89,9 @@ c3_chart_internal_fn.getSvgLeft = function (withoutRecompute) {
 
 c3_chart_internal_fn.getAxisWidthByAxisId = function (id, withoutRecompute) {
     var $$ = this, position = $$.axis.getLabelPositionById(id);
-    return $$.axis.getMaxTickWidth(id, withoutRecompute) + (position.isInner ? 20 : 40);
+    return $$.axis.getMaxTickWidth(id, withoutRecompute) + (position.isInner ? 10 : 20);
 };
+
 c3_chart_internal_fn.getHorizontalAxisHeight = function (axisId) {
     var $$ = this, config = $$.config, h = 30;
     if (axisId === 'x' && !config.axis_x_show) { return 8; }

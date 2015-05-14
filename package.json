@@ -1,14 +1,14 @@
 {
-  "name": "c3",
-  "version": "0.4.10",
-  "description": "D3-based reusable chart library",
+  "name": "connect-js-c3",
+  "version": "0.4.11",
+  "description": "A fork of C3, a D3-based reusable chart library",
   "main": "c3.js",
   "scripts": {
     "test": "grunt"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/masayuki0812/c3.git"
+    "url": "https://github.com/getconnect/c3.git"
   },
   "keywords": [
     "d3",
@@ -16,9 +16,8 @@
     "graph"
   ],
   "author": "Masayuki Tanaka",
+  "contributors": ["Tipi HQ"],
   "license": "MIT",
-  "gitHead": "84e03109d9a590f9c8ef687c03d751f666080c6f",
-  "readmeFilename": "README.md",
   "dependencies": {
     "d3": "<=3.5.0"
   },
@@ -30,7 +29,7 @@
     "grunt-contrib-jshint": "~0.10.0",
     "grunt-contrib-uglify": "~0.4.0",
     "grunt-contrib-watch": "^0.6.1",
-    "grunt-sass": "^0.17.0",
+    "grunt-sass": "^1.0.0",
     "load-grunt-tasks": "~0.2.0"
   }
 }
