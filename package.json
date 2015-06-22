@@ -1,6 +1,6 @@
 {
   "name": "connect-js-c3",
-  "version": "0.4.13",
+  "version": "0.4.14",
   "description": "A fork of C3, a D3-based reusable chart library, for use with connect-js-viz",
   "main": "c3.js",
   "scripts": {
