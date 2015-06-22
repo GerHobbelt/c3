@@ -46,6 +46,15 @@ npm install
 bower install
 ```
 
+## Testing
+
+```
+npm install -g grunt-cli
+gem install sass
+
+grunt jasmine
+```
+
 ## Pull requests
 Pull requests are welcome, though please post an issue first to see whether such a change is desirable.
 If you choose to submit a pull request, please do not bump the version number unless asked to, and please include test cases for any new features!
