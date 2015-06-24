@@ -859,8 +859,6 @@ c3_chart_internal_fn.updateSvgSize = function () {
     $$.svg.select('.' + CLASS.zoomRect)
         .attr('width', $$.width)
         .attr('height', $$.height);
-    // MEMO: parent div's height will be bigger than svg when <!DOCTYPE html>
-    $$.selectChart.style('max-height', $$.currentHeight + "px");
 };
 
 
