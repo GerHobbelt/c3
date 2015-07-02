@@ -20,6 +20,8 @@ c3_chart_internal_fn.getDefaultConfig = function C3_INTERNAL_getDefaultConfig() 
         zoom_onzoom: function () {},
         zoom_onzoomstart: function () {},
         zoom_onzoomend: function () {},
+        zoom_x_min: undefined,
+        zoom_x_max: undefined,
         interaction_enabled: true,
         onmouseover: function () {},
         onmouseout: function () {},
@@ -72,6 +74,7 @@ c3_chart_internal_fn.getDefaultConfig = function C3_INTERNAL_getDefaultConfig() 
         subchart_line_step_type: 'step',
         subchart_line_spline_type: 'cardinal',
         subchart_size_height: 60,
+        subchart_axis_x_show: true,
         subchart_onbrush: function () {},
         // color
         color_pattern: [],
@@ -165,6 +168,7 @@ c3_chart_internal_fn.getDefaultConfig = function C3_INTERNAL_getDefaultConfig() 
         // point - point of each data
         point_show: true,
         point_r: 2.5,
+        point_sensitivity: 10,
         point_focus_expand_enabled: true,
         point_focus_expand_r: undefined,
         point_select_r: undefined,
@@ -184,24 +188,27 @@ c3_chart_internal_fn.getDefaultConfig = function C3_INTERNAL_getDefaultConfig() 
         pie_label_show: true,
         pie_label_format: undefined,
         pie_label_threshold: 0.05,
-        pie_expand: true,
+        pie_expand: {},
+        pie_expand_duration: 50,
         // gauge
         gauge_label_show: true,
         gauge_label_formatall: false,
         gauge_label_transition: true,
         gauge_label_format: undefined,
-        gauge_expand: true,
         gauge_min: 0,
         gauge_max: 100,
         gauge_units: undefined,
         gauge_width: undefined,
+        gauge_expand: {},
+        gauge_expand_duration: 50,
         // donut
         donut_label_show: true,
         donut_label_format: undefined,
         donut_label_threshold: 0.05,
         donut_width: undefined,
-        donut_expand: true,
         donut_title: "",
+        donut_expand: {},
+        donut_expand_duration: 50,
         // region - region to change style
         regions: [],
         // tooltip - show when mouseover on each data
@@ -217,6 +224,8 @@ c3_chart_internal_fn.getDefaultConfig = function C3_INTERNAL_getDefaultConfig() 
         tooltip_init_show: false,
         tooltip_init_x: 0,
         tooltip_init_position: {top: '0px', left: '50px'},
+        tooltip_onshow: function () {},
+        tooltip_onhide: function () {},
         // title
         title_text: undefined,
         title_padding: {

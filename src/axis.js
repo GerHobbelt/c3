@@ -50,7 +50,7 @@ Axis.prototype.getXAxis = function C3_API_AXIS_getXAxis(scale, orient, tickForma
         },
         axis = c3_axis($$.d3, axisParams).scale(scale).orient(orient);
 
-    if ($$.isTimeSeries() && tickValues) {
+    if ($$.isTimeSeries() && tickValues && typeof tickValues !== "function") {
         tickValues = tickValues.map(function (v) { 
             return $$.parseDate(v); 
         });

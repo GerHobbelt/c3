@@ -332,7 +332,7 @@ c3_chart_internal_fn.generateEventRectsForMultipleXs = function C3_INTERNAL_gene
             $$.showXGridFocus(selectedData);
 
             // Show cursor as pointer if point is close to mouse position
-            if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < 100) {
+            if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
                 $$.svg.select('.' + CLASS.eventRect).style('cursor', 'pointer');
                 if (!$$.mouseover) {
                     config.data_onmouseover.call($$.api, closest);
@@ -350,13 +350,12 @@ c3_chart_internal_fn.generateEventRectsForMultipleXs = function C3_INTERNAL_gene
 
             mouse = d3.mouse(this);
             closest = $$.findClosestFromTargets(targetsToShow, mouse);
-
             if (!closest) { 
                 return; 
             }
 
             // select if selection enabled
-            if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < 100) {
+            if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
                 $$.main.selectAll('.' + CLASS.shapes + $$.getTargetSelectorSuffix(closest.id)).selectAll('.' + CLASS.shape + '-' + closest.index).each(function () {
                     if (config.data_selection_grouped || $$.isWithinShape(this, closest)) {
                         $$.toggleShape(this, closest, closest.index);

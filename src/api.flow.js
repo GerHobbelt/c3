@@ -237,9 +237,7 @@ c3_chart_internal_fn.generateFlow = function C3_INTERNAL_generateFlow(args) {
         scaleX = (diffDomain(orgDomain) / diffDomain(domain));
         transform = 'translate(' + translateX + ',0) scale(' + scaleX + ',1)';
 
-        // hide tooltip
         $$.hideXGridFocus();
-        $$.hideTooltip();
 
         d3.transition().ease('linear').duration(durationForFlow).each(function () {
             wait.add($$.axes.x.transition().call($$.xAxis));

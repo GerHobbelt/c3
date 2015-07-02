@@ -59,7 +59,7 @@ c3_chart_internal_fn.addName = function C3_INTERNAL_addName(data) {
         name;
     if (data) {
         name = $$.config.data_names[data.id];
-        data.name = name ? name : data.id;
+        data.name = name !== undefined ? name : data.id;
     }
     return data;
 };
@@ -369,7 +369,7 @@ c3_chart_internal_fn.findClosestFromTargets = function C3_INTERNAL_findClosestFr
 };
 c3_chart_internal_fn.findClosest = function C3_INTERNAL_findClosest(values, pos) {
     var $$ = this, 
-        minDist = 100, 
+        minDist = $$.config.point_sensitivity, 
         closest;
 
     // find mouseovering bar
@@ -402,7 +402,7 @@ c3_chart_internal_fn.dist = function C3_INTERNAL_dist(data, pos) {
         yIndex = config.axis_rotated ? 0 : 1,
         y = $$.circleY(data, data.index),
         x = $$.x(data.x);
-    return Math.pow(x - pos[xIndex], 2) + Math.pow(y - pos[yIndex], 2);
+    return Math.sqrt(Math.pow(x - pos[xIndex], 2) + Math.pow(y - pos[yIndex], 2));
 };
 c3_chart_internal_fn.convertValuesToStep = function C3_INTERNAL_convertValuesToStep(values) {
     var converted = [].concat(values), 

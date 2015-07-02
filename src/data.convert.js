@@ -108,11 +108,7 @@ c3_chart_internal_fn.convertDataToTargets = function C3_INTERNAL_convertDataToTa
         config = $$.config,
         ids = $$.d3.keys(data[0]).filter($$.isNotX, $$),
         xs = $$.d3.keys(data[0]).filter($$.isX, $$),
-        zeroUnderYAxis = true,
-        allZero = true,
         targets;
-
-    $$.allDataIsNegative = true;
 
     // save x for update data by load when custom x and c3.x API
     ids.forEach(function (id) {
@@ -178,14 +174,6 @@ c3_chart_internal_fn.convertDataToTargets = function C3_INTERNAL_convertDataToTa
                     x = undefined;
                 }
 
-                if (value !== null && value !== 0) {
-                    allZero = false;
-                }
-
-                if (value > 0) {
-                    zeroUnderYAxis = false;
-                }
-
                 return {
                     x: x, 
                     value: value, 
@@ -219,11 +207,9 @@ c3_chart_internal_fn.convertDataToTargets = function C3_INTERNAL_convertDataToTa
         });
     });
 
-    if (allZero) {
-        zeroUnderYAxis = false;
-    }
-
-    $$.zeroUnderYAxis = zeroUnderYAxis;
+    // cache information about values
+    $$.hasNegativeValue = $$.hasNegativeValueInTargets(targets);
+    $$.hasPositiveValue = $$.hasPositiveValueInTargets(targets);
 
     // set target types
     if (config.data_type) {

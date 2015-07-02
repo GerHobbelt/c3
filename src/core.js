@@ -1,4 +1,4 @@
-var c3 = { version: "0.4.10" };
+var c3 = { version: "0.4.11-rc1" };
 
 var c3_chart_fn,
     c3_chart_internal_fn,
@@ -635,9 +635,6 @@ c3_chart_internal_fn.redraw = function C3_INTERNAL_redraw(options, transitions) 
         $$.subY2.domain($$.getYDomain(targetsToShow, 'y2'));
     }
 
-    // tooltip
-    $$.tooltip.style("display", "none");
-
     // xgrid focus
     $$.updateXgridFocus();
 
@@ -1036,9 +1033,9 @@ c3_chart_internal_fn.bindResize = function C3_INTERNAL_bindResize() {
     if (config.resize_auto) {
         $$.resizeFunction.add(function C3_INTERNAL_execResizeAuto() {
             if (config.resize_timeout) {
-                if ($$.resizeTimeout !== undefined) {
-                    window.clearTimeout($$.resizeTimeout);
-                }
+            if ($$.resizeTimeout !== undefined) {
+                window.clearTimeout($$.resizeTimeout);
+            }
                 $$.resizeTimeout = window.setTimeout(function C3_INTERNAL_execResizeAutoFlush() {
                     delete $$.resizeTimeout;
                     $$.api.flush();

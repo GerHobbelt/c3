@@ -143,6 +143,11 @@ c3_chart_internal_fn.updateLegend = function C3_INTERNAL_updateLegend(targetIds,
     var withTransition, withTransitionForTransform;
     var texts, rects, tiles, background;
 
+    // Skip elements when their name is set to null
+    targetIds = targetIds.filter(function(id) {
+        return !isDefined(config.data_names[id]) || config.data_names[id] !== null;
+    });
+
     options = options || {};
     withTransition = getOption(options, "withTransition", $$.config.transition_duration > 0);
     withTransitionForTransform = getOption(options, "withTransitionForTransform", withTransition);

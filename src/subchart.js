@@ -45,7 +45,8 @@ c3_chart_internal_fn.initSubchart = function C3_INTERNAL_initSubchart() {
     $$.axes.subx = context.append("g")
         .attr("class", CLASS.axisX)
         .attr("transform", $$.getTranslate('subx'))
-        .attr("clip-path", config.axis_rotated ? "" : $$.clipPathForXAxis);
+        .attr("clip-path", config.axis_rotated ? "" : $$.clipPathForXAxis)
+        .style("visibility", config.subchart_axis_x_show ? 'visible' : 'hidden');
 };
 c3_chart_internal_fn.updateTargetsForSubchart = function C3_INTERNAL_updateTargetsForSubchart(targets) {
     var $$ = this, 
