@@ -24,6 +24,9 @@ $ python -m SimpleHTTPServer 8080
 ## Google Group
 For general C3.js-related discussion, please visit our [Google Group at https://groups.google.com/forum/#!forum/c3js](https://groups.google.com/forum/#!forum/c3js).
 
+## Gitter
+[![Join the chat at https://gitter.im/masayuki0812/c3](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/masayuki0812/c3?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ## Using the issue queue
 The [issue queue](https://github.com/masayuki0812/c3/issues) is to be used for reporting defects and problems with C3.js, in addition to feature requests and ideas. It is **not** a catch-all support forum. **For general support enquiries, please use the [Google Group](https://groups.google.com/forum/#!forum/c3js) at https://groups.google.com/forum/#!forum/c3js.** All questions involving the interplay between C3.js and any other library (such as AngularJS) should be posted there first!
 
