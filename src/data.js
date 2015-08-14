@@ -199,10 +199,13 @@ c3_chart_internal_fn.mapTargetsToUniqueXs = function C3_INTERNAL_mapTargetsToUni
             return +v.x; 
         }); 
     }))).values();
-    return $$.isTimeSeries() ? xs.map(function (x) { 
+    xs = $$.isTimeSeries() ? xs.map(function (x) { 
         return new Date(+x); 
     }) : xs.map(function (x) { 
         return +x; 
+    });
+    return xs.sort(function (a, b) { 
+        return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN; 
     });
 };
 c3_chart_internal_fn.addHiddenTargetIds = function C3_INTERNAL_addHiddenTargetIds(targetIds) {

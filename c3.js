@@ -3,7 +3,7 @@
 
     /*global define, module, exports, require */
 
-    var c3 = { version: "0.4.11-rc1" };
+    var c3 = { version: "0.4.11-rc2" };
 
     var c3_chart_fn,
         c3_chart_internal_fn,
@@ -1994,10 +1994,13 @@
                 return +v.x; 
             }); 
         }))).values();
-        return $$.isTimeSeries() ? xs.map(function (x) { 
+        xs = $$.isTimeSeries() ? xs.map(function (x) { 
             return new Date(+x); 
         }) : xs.map(function (x) { 
             return +x; 
+        });
+        return xs.sort(function (a, b) { 
+          return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN; 
         });
     };
     c3_chart_internal_fn.addHiddenTargetIds = function C3_INTERNAL_addHiddenTargetIds(targetIds) {
@@ -3845,15 +3848,17 @@
                 .style("fill-opacity", forFlow ? 0 : this.opacityForText.bind(this))
         ];
     };
-    c3_chart_internal_fn.getTextRect = function C3_INTERNAL_getTextRect(text, cls) {
+    c3_chart_internal_fn.getTextRect = function C3_INTERNAL_getTextRect(text, cls, element) {
         var dummy = this.d3.select('body').append('div').classed('c3', true),
             svg = dummy.append("svg").style('visibility', 'hidden').style('position', 'fixed').style('top', 0).style('left', 0),
+            font = this.d3.select(element).style('font'),
             rect,
             count = 0;
         svg.selectAll('.dummy')
             .data([text])
           .enter().append('text')
             .classed(cls ? cls : "", true)
+            .style('font', font)
             .text(text)
           .each(function () {
             count++; 
@@ -4597,7 +4602,7 @@
 
         function getTextBox(textElement, id) {
             if (!$$.legendItemTextBox[id]) {
-                $$.legendItemTextBox[id] = $$.getTextRect(textElement.textContent, CLASS.legendItem);
+                $$.legendItemTextBox[id] = $$.getTextRect(textElement.textContent, CLASS.legendItem, textElement);
             }
             return $$.legendItemTextBox[id];
         }
@@ -4884,9 +4889,9 @@
               .attr("y", $$.getCurrentPaddingTop() + $$.config.title_y)
         */
         if (position.indexOf('right') >= 0) {
-            x = $$.currentWidth - $$.title.node().getBBox().width - config.title_padding.right;
+            x = $$.currentWidth - $$.getTextRect($$.title.node().textContent, $$.CLASS.title, $$.title.node()).width - config.title_padding.right;
         } else if (position.indexOf('center') >= 0) {
-            x = ($$.currentWidth - $$.title.node().getBBox().width) / 2;
+            x = ($$.currentWidth - $$.getTextRect($$.title.node().textContent, $$.CLASS.title, $$.title.node()).width) / 2;
         } else { // left
             x = config.title_padding.left;
         }
@@ -4894,7 +4899,7 @@
     };
     c3_chart_internal_fn.yForTitle = function () {
         var $$ = this;
-        return /* $$.getCurrentPaddingTop() + */ $$.config.title_padding.top + $$.title.node().getBBox().height;
+        return /* $$.getCurrentPaddingTop() + */ $$.getTextRect($$.title.node().textContent, $$.CLASS.title, $$.title.node()).height;
     };
     c3_chart_internal_fn.getTitlePadding = function() {
         var $$ = this;
@@ -6179,9 +6184,10 @@
     c3_chart_internal_fn.initSubchart = function C3_INTERNAL_initSubchart() {
         var $$ = this, 
             config = $$.config,
-            context = $$.context = $$.svg.append("g").attr("transform", $$.getTranslate('context'));
+            context = $$.context = $$.svg.append("g").attr("transform", $$.getTranslate('context')),
+            visibility = config.subchart_show ? 'visible' : 'hidden';
 
-        context.style('visibility', config.subchart_show ? 'visible' : 'hidden');
+        context.style('visibility', visibility);
 
         // Define g for chart area
         context.append('g')
@@ -6208,7 +6214,7 @@
             .attr("class", CLASS.axisX)
             .attr("transform", $$.getTranslate('subx'))
             .attr("clip-path", config.axis_rotated ? "" : $$.clipPathForXAxis)
-            .style("visibility", config.subchart_axis_x_show ? 'visible' : 'hidden');
+            .style("visibility", config.subchart_axis_x_show ? visibility : 'hidden');
     };
     c3_chart_internal_fn.updateTargetsForSubchart = function C3_INTERNAL_updateTargetsForSubchart(targets) {
         var $$ = this, 
