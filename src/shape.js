@@ -49,7 +49,17 @@ c3_chart_internal_fn.getShapeOffset = function C3_INTERNAL_getShapeOffset(typeFi
                 return;
             }
             if (targetIds.indexOf(t.id) < targetIds.indexOf(d.id)) {
-                if (values[i].value * d.value >= 0) {
+                // check if the x values line up
+                if (typeof values[i] === 'undefined' || values[i].x !== d.x) {
+                    // if not, try to find the value that does line up
+                    i = -1;
+                    values.forEach(function (v, j) {
+                        if (v.x === d.x) {
+                            i = j;
+                        }
+                    });
+                }
+                if (i in values && values[i].value * d.value >= 0) {
                     offset += scale(values[i].value) - y0;
                 }
             }
@@ -74,7 +84,9 @@ c3_chart_internal_fn.isWithinShape = function C3_INTERNAL_isWithinShape(that, d)
 
 
 c3_chart_internal_fn.getInterpolate = function C3_INTERNAL_getInterpolate(d, isSub) {
-    var $$ = this;
+    var $$ = this,
+        interpolation = $$.isInterpolationType($$.config.spline_interpolation_type) ? $$.config.spline_interpolation_type : 'cardinal';
+
     if ($$.isSplineType(d, isSub)) {
         return (isSub ? $$.config.subchart_line_spline_type : undefined) ||
             $$.config.line_spline_type;

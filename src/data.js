@@ -169,7 +169,7 @@ c3_chart_internal_fn.mapToIds = function C3_INTERNAL_mapToIds(targets) {
 };
 c3_chart_internal_fn.mapToTargetIds = function C3_INTERNAL_mapToTargetIds(ids) {
     var $$ = this;
-    return ids ? (isString(ids) ? [ids] : ids) : $$.mapToIds($$.data.targets);
+    return ids ? [].concat(ids) : $$.mapToIds($$.data.targets);
 };
 c3_chart_internal_fn.hasTarget = function C3_INTERNAL_hasTarget(targets, id) {
     var ids = this.mapToIds(targets), i;
