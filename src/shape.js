@@ -85,10 +85,10 @@ c3_chart_internal_fn.isWithinShape = function C3_INTERNAL_isWithinShape(that, d)
 
 c3_chart_internal_fn.getInterpolate = function C3_INTERNAL_getInterpolate(d, isSub) {
     var $$ = this,
-        interpolation = $$.isInterpolationType($$.config.spline_interpolation_type) ? $$.config.spline_interpolation_type : 'cardinal';
+        interpolation = $$.isInterpolationType($$.config.spline_interpolation_type) ? $$.config.spline_interpolation_type : undefined;
 
     if ($$.isSplineType(d, isSub)) {
-        return (isSub ? $$.config.subchart_line_spline_type : undefined) ||
+        return (isSub ? $$.config.subchart_line_spline_type : interpolation) ||
             $$.config.line_spline_type;
     } else if ($$.isStepType(d, isSub)) {
         return (isSub ? $$.config.subchart_line_step_type : undefined) ||
