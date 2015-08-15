@@ -110,19 +110,19 @@ Axis.prototype.getId = function C3_API_AXIS_getId(id) {
 Axis.prototype.getXAxisTickFormat = function C3_API_AXIS_getXAxisTickFormat() {
     var $$ = this.owner, 
         config = $$.config,
-        format = $$.isTimeSeries() ? $$.defaultAxisTimeFormat : $$.isCategorized() ? $$.categoryName : function (v) { 
+        format = $$.isTimeSeries() ? $$.defaultAxisTimeFormat : $$.isCategorized() ? $$.categoryName : function C3_AXIS_defaultXAxisTickFormatter(v) { 
             return v < 0 ? v.toFixed(0) : v; 
         };
     if (config.axis_x_tick_format) {
         if (isFunction(config.axis_x_tick_format)) {
             format = config.axis_x_tick_format;
         } else if ($$.isTimeSeries()) {
-            format = function (date) {
+            format = function C3_AXIS_defaultXAxisTickDateFormatter(date) {
                 return date ? $$.axisTimeFormat(config.axis_x_tick_format)(date) : "";
             };
         }
     }
-    return isFunction(format) ? function (v) { 
+    return isFunction(format) ? function C3_AXIS_XAxisTickFormatterWrapper(v) { 
         return format.call($$, v); 
     } : format;
 };
@@ -185,13 +185,13 @@ Axis.prototype.getLabelPosition = function C3_API_AXIS_getLabelPosition(axisId, 
         isBottom: position.indexOf('bottom') >= 0
     };
 };
-Axis.prototype.getAxisLabelRotateOption = function (axisId) {
-    var option = this.getAxisLabelOptionByAxisId(axisId),
+Axis.prototype.getLabelRotateOption = function C3_API_AXIS_getLabelRotateOption(axisId) {
+    var option = this.getLabelOptionByAxisId(axisId),
         rotate = (option && typeof option === 'object' && !isUndefined(option.rotate)) ? option.rotate : false;
     return rotate;
 };
-Axis.prototype.isAxisLabelRotate = function (axisId) {
-    var rotate = this.getAxisLabelRotateOption(axisId);
+Axis.prototype.isAxisLabelRotate = function C3_API_AXIS_isAxisLabelRotate(axisId) {
+    var rotate = this.getLabelRotateOption(axisId);
     return (!rotate && this.owner.config.axis_rotated) || (rotate && !this.owner.config.axis_rotated);
 };
 Axis.prototype.getXAxisLabelPosition = function C3_API_AXIS_getXAxisLabelPosition() {
@@ -254,17 +254,18 @@ Axis.prototype.dxForXAxisLabel = function C3_API_AXIS_dxForXAxisLabel() {
 };
 Axis.prototype.dxForYAxisLabel = function C3_API_AXIS_dxForYAxisLabel() {
     var position = this.getYAxisLabelPosition();
-    if (this.getAxisLabelRotateOption("y")) {
+    if (this.getLabelRotateOption("y")) {
         return position.isInner ? "0.2em" : "-1em";
     } else {
         return this.dxForAxisLabel(this.owner.config.axis_rotated, this.getYAxisLabelPosition());
     }
 };
 Axis.prototype.dxForY2AxisLabel = function C3_API_AXIS_dxForY2AxisLabel() {
+    var $$ = this.owner; 
     var position = this.getY2AxisLabelPosition();
-    var box = this.getTextRect(this.getAxisLabelText("y2"), CLASS.axisY2Label);
+    var box = $$.getTextRect(this.getLabelText("y2"), CLASS.axisY2Label);
     var labelWidth = box.width;
-    if (this.getAxisLabelRotateOption("y2")) {
+    if (this.getLabelRotateOption("y2")) {
         return position.isInner ? "-1em" : (labelWidth * 0.6 + 15) + "px";
     } else {
         return this.dxForAxisLabel(this.owner.config.axis_rotated, this.getY2AxisLabelPosition());
@@ -285,7 +286,7 @@ Axis.prototype.dyForYAxisLabel = function C3_API_AXIS_dyForYAxisLabel() {
         position = this.getYAxisLabelPosition();
     if ($$.config.axis_rotated) {
         return position.isInner ? "-0.5em" : "3em";
-    } else if (this.getAxisLabelRotateOption("y")) {
+    } else if (this.getLabelRotateOption("y")) {
         return "0.45em";
     } else {
         return position.isInner ? "1.2em" : -10 - ($$.config.axis_y_inner ? 0 : (this.getMaxTickWidth('y') + 10));
@@ -296,7 +297,7 @@ Axis.prototype.dyForY2AxisLabel = function C3_API_AXIS_dyForY2AxisLabel() {
         position = this.getY2AxisLabelPosition();
     if ($$.config.axis_rotated) {
         return position.isInner ? "1.2em" : "-2.2em";
-    } else if (this.getAxisLabelRotateOption("y2")) {
+    } else if (this.getLabelRotateOption("y2")) {
         return "1.2em";
     } else {
         return position.isInner ? "-0.5em" : 15 + ($$.config.axis_y2_inner ? 0 : (this.getMaxTickWidth('y2') + 15));
@@ -337,8 +338,8 @@ Axis.prototype.getMaxTickWidth = function C3_API_AXIS_getMaxTickWidth(id, withou
         }
         dummy = $$.d3.select('body').append('div').classed('c3', true);
         svg = dummy.append("svg").style('visibility', 'hidden').style('position', 'fixed').style('top', 0).style('left', 0),
-        svg.append('g').call(axis).each(function () {
-            $$.d3.select(this).selectAll('text').each(function () {
+        svg.append('g').call(axis).each(function C3_AXIS_findMaxTickWidthForWholeAxis() {
+            $$.d3.select(this).selectAll('text').each(function C3_AXIS_findMaxTickWidthForEachLabel() {
                 var box = this.getBoundingClientRect();
                 if (maxWidth < box.width) { 
                     maxWidth = box.width; 
@@ -412,7 +413,11 @@ Axis.prototype.generateTickValues = function C3_API_AXIS_generateTickValues(valu
             tickValues.push(end);
         }
     }
-    if (!forTimeSeries) { tickValues = tickValues.sort(function (a, b) { return a - b; }); }
+    if (!forTimeSeries) { 
+        tickValues = tickValues.sort(function (a, b) { 
+            return a - b; 
+        }); 
+    }
     return tickValues;
 };
 Axis.prototype.generateTransitions = function C3_API_AXIS_generateTransitions(duration) {
