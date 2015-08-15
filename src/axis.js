@@ -96,7 +96,6 @@ Axis.prototype.getYAxis = function C3_API_AXIS_getYAxis(scale, orient, tickForma
             withoutTransition: withoutTransition,
         },
         axis = c3_axis(d3, axisParams).scale(scale).orient(orient).tickFormat(tickFormat);
-        console.log('y axis rotate: ', axisParams.tickTextRotate, withOuterTick, withoutTransition, withoutRotateTickText, isY2Axis);
     if ($$.isTimeSeriesY()) {
         axis.ticks(d3.time[!isY2Axis ? config.axis_y_tick_time_value : config.axis_y2_tick_time_value], !isY2Axis ? config.axis_y_tick_time_interval : config.axis_y2_tick_time_interval);
     } else {

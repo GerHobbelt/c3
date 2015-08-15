@@ -956,7 +956,7 @@
         var $$ = this,
             brush = $$.svg.select(".c3-brush .background");
         $$.svg.attr('width', $$.currentWidth).attr('height', $$.currentHeight);
-        $$.svg.selectAll(['#' + $$.clipId, '#' + $$.clipIdForGrid]).select('rect')
+        $$.svg.selectAll(['#' + $$.clipIdForGrid,'#' + $$.clipId].join(',')).select('rect')
             .attr('width', $$.width)
             .attr('height', $$.height);
         $$.svg.select('#' + $$.clipIdForXAxis).select('rect')
@@ -5078,7 +5078,7 @@
                 withoutTransition: withoutTransition,
             },
             axis = c3_axis(d3, axisParams).scale(scale).orient(orient).tickFormat(tickFormat);
-            console.log('y axis rotate: ', axisParams.tickTextRotate, withOuterTick, withoutTransition, withoutRotateTickText, isY2Axis);
+            //console.log('y axis rotate: ', axisParams.tickTextRotate, withOuterTick, withoutTransition, withoutRotateTickText, isY2Axis);
         if ($$.isTimeSeriesY()) {
             axis.ticks(d3.time[!isY2Axis ? config.axis_y_tick_time_value : config.axis_y2_tick_time_value], !isY2Axis ? config.axis_y_tick_time_interval : config.axis_y2_tick_time_interval);
         } else {
@@ -6754,7 +6754,7 @@
     c3_chart_internal_fn.classRegion = function C3_INTERNAL_classRegion(d, i) {
         return this.generateClass(CLASS.region, i) + ' ' + (d.class != null ? d.class : '');
     };
-    c3_chart_internal_fn.labelRegion = function C3_INTERNAL_labelRegion(d, i) {
+    c3_chart_internal_fn.labelRegion = function C3_INTERNAL_labelRegion(d /*, i */) {
         return d.label !== undefined ? d.label : '';
     };
     c3_chart_internal_fn.classEvent = function C3_INTERNAL_classEvent(d) {
@@ -8024,7 +8024,6 @@
                 });
 
                 var rotate = params.tickTextRotate;
-                console.debug('axis tick rotate: ', rotate);
 
                 function textAnchorForText(rotate) {
                     if (!rotate) {

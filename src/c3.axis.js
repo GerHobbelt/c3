@@ -201,7 +201,6 @@ function c3_axis(d3, params) {
             });
 
             var rotate = params.tickTextRotate;
-            console.debug('axis tick rotate: ', rotate);
 
             function textAnchorForText(rotate) {
                 if (!rotate) {
