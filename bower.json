@@ -13,7 +13,8 @@
     "Igor Laborie <ilaborie@gmail.com>",
     "Masayuki Tanaka <masayuki0812@mac.com>",
     "Matt Furness",
-    "Bradley Boveines"
+    "Bradley Boveines",
+    "dsuket"
   ],
   "description": "Fork of c3, a D3-based reusable chart library",
   "keywords": [

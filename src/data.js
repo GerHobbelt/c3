@@ -279,6 +279,8 @@ c3_chart_internal_fn.orderTargets = function C3_INTERNAL_orderTargets(targets) {
                 t2Sum = t2.values.reduce(reducer, 0);
             return orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum;
         });
+    } else if (config.data_order === "reverse") {
+        targets.reverse();
     } else if (isFunction(config.data_order)) {
         targets.sort(config.data_order);
     } // TODO: accept name array for order

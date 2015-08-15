@@ -152,6 +152,7 @@
         $$.y2Orient = config.axis_rotated ? (config.axis_y2_inner ? "bottom" : "top") : (config.axis_y2_inner ? "left" : "right");
         $$.subXOrient = config.axis_rotated ? "left" : "bottom";
 
+        $$.isLegendTopRight = config.legend_position === 'top-right';
         $$.isLegendRight = config.legend_position === 'right';
         $$.isLegendInset = config.legend_position === 'inset';
         $$.isLegendTop = config.legend_inset_anchor === 'top-left' || config.legend_inset_anchor === 'top-right';
@@ -411,7 +412,8 @@
             config = $$.config;
         var legendHeight = $$.legend ? $$.getLegendHeight() : 0,
             legendWidth = $$.legend ? $$.getLegendWidth() : 0,
-            legendHeightForBottom = $$.isLegendRight || $$.isLegendInset ? 0 : legendHeight,
+            legendHeightForTop = $$.isLegendTopRight ? legendHeight + 20 : 0,
+            legendHeightForBottom = $$.isLegendRight || $$.isLegendInset || $$.isLegendTopRight ? 0 : legendHeight,
             hasArc = $$.hasArcType(),
             xAxisHeight = config.axis_rotated || hasArc ? 0 : $$.getHorizontalAxisHeight('x'),
             subchartHeight = config.subchart_show && !hasArc ? (config.subchart_size_height + xAxisHeight) : 0;
@@ -421,12 +423,12 @@
 
         // for main
         $$.margin = config.axis_rotated ? {
-            top: config.margin_top ? config.margin.top : $$.getHorizontalAxisHeight('y2') + $$.getCurrentPaddingTop(),
+            top: config.margin_top ? config.margin.top : $$.getHorizontalAxisHeight('y2') + $$.getCurrentPaddingTop() + legendHeightForTop,
             right: hasArc ? 0 : config.margin_right ? config.margin_right : $$.getCurrentPaddingRight(),
             bottom: config.margin_bottom ? config.margin_bottom : $$.getHorizontalAxisHeight('y') + legendHeightForBottom + $$.getCurrentPaddingBottom(),
             left: subchartHeight + (hasArc ? 0 : config.margin_left ? config.margin_left : $$.getCurrentPaddingLeft())
         } : {
-            top: 4 + (config.margin_top ? config.margin.top : $$.getCurrentPaddingTop()), // for top tick text
+            top: 4 + (config.margin_top ? config.margin.top : $$.getCurrentPaddingTop() + legendHeightForTop), // for top tick text
             right: hasArc ? 0 : config.margin_right ? config.margin_right : $$.getCurrentPaddingRight(),
             bottom: config.margin_bottom ? config.margin_bottom : xAxisHeight + subchartHeight + legendHeightForBottom + $$.getCurrentPaddingBottom(),
             left: hasArc ? 0 : config.margin_left ? config.margin_left : $$.getCurrentPaddingLeft()
@@ -676,7 +678,7 @@
 
         // text
         if ($$.hasDataLabel()) {
-            $$.updateText(durationForExit);
+            $$.updateText(durationForExit, barIndices);
         }
 
         // title
@@ -733,7 +735,7 @@
 
         if ((duration || flow) && $$.isTabVisible()) { // Only use transition if tab visible. See #938.
             // transition should be derived from one transition
-            d3.transition().duration(duration).each(function () {
+            main.transition().duration(duration).each(function () {
                 var transitionsToWait = [];
 
                 // redraw and gather transitions
@@ -1347,6 +1349,7 @@
             point_show: true,
             point_r: 2.5,
             point_sensitivity: 10,
+            point_animation: false,
             point_focus_expand_enabled: true,
             point_focus_expand_r: undefined,
             point_select_r: undefined,
@@ -1362,6 +1365,7 @@
             bar_zerobased: true,
             // area
             area_zerobased: true,
+            line_zerobased: false,
             // pie
             pie_label_show: true,
             pie_label_format: undefined,
@@ -1385,6 +1389,7 @@
             donut_label_threshold: 0.05,
             donut_width: undefined,
             donut_title: "",
+            donut_subtitle: "",
             donut_expand: {},
             donut_expand_duration: 50,
             // spline
@@ -1393,6 +1398,10 @@
             regions: [],
             // tooltip - show when mouseover on each data
             tooltip_show: true,
+            tooltip_animation_show: false,
+            tooltip_animation_delay: 0,
+            tooltip_animation_duration: 350,
+            tooltip_animation_ease: "linear",
             tooltip_grouped: true,
             tooltip_format_title: undefined,
             tooltip_format_name: undefined,
@@ -1641,7 +1650,9 @@
             domain, domainLength, padding, padding_top, padding_bottom,
             center = axisId === 'y2' ? config.axis_y2_center : config.axis_y_center,
             yDomainAbs, lengths, diff, ratio, isAllPositive, isAllNegative,
-            isZeroBased = ($$.hasType('bar', yTargets) && config.bar_zerobased) || ($$.hasType('area', yTargets) && config.area_zerobased),
+            isZeroBased = ($$.hasType('bar', yTargets) && config.bar_zerobased) ||
+              ($$.hasType('area', yTargets) && config.area_zerobased) ||
+              ($$.hasType('line', yTargets) && config.line_zerobased),
             isInverted = axisId === 'y2' ? config.axis_y2_inverted : config.axis_y_inverted,
             showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated,
             showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;
@@ -2085,6 +2096,8 @@
                     t2Sum = t2.values.reduce(reducer, 0);
                 return orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum;
             });
+        } else if (config.data_order === "reverse") {
+            targets.reverse();
         } else if (isFunction(config.data_order)) {
             targets.sort(config.data_order);
         } // TODO: accept name array for order
@@ -3616,24 +3629,35 @@
         if (reset) { 
             $$.unexpandCircles(); 
         }
-        $$.getCircles(i, id)
-            .classed(CLASS.EXPANDED, true)
-            .attr('r', r);
+        var circles = $$.getCircles(i, id)
+            .classed(CLASS.EXPANDED, true);
+        if ($$.config.point_animation) {
+            circles = circles.transition()
+                .duration($$.config.transition_duration)
+                .ease('cubic-in-out');
+        }
+        circles.attr('r', r);
     };
     c3_chart_internal_fn.unexpandCircles = function C3_INTERNAL_unexpandCircles(i) {
         var $$ = this,
             r = $$.pointR.bind($$);
-        $$.getCircles(i)
+        var circles = $$.getCircles(i)
             .filter(function () { 
                 return $$.d3.select(this).classed(CLASS.EXPANDED); 
             })
-            .classed(CLASS.EXPANDED, false)
-            .attr('r', r);
+            .classed(CLASS.EXPANDED, false);
+
+        if ($$.config.point_animation) {
+            circles = circles.transition()
+                .duration($$.config.transition_duration)
+                .ease('cubic-in-out');
+        }
+        circles.attr('r', r);
     };
     c3_chart_internal_fn.pointR = function C3_INTERNAL_pointR(d) {
         var $$ = this, 
             config = $$.config;
-        return $$.isStepType(d) ? 0 : (isFunction(config.point_r) ? config.point_r(d) : config.point_r);
+        return config.point_show && !$$.isStepType(d) ? (isFunction(config.point_r) ? config.point_r(d) : config.point_r) : 0;
     };
     c3_chart_internal_fn.pointExpandedR = function C3_INTERNAL_pointExpandedR(d) {
         var $$ = this, 
@@ -3835,40 +3859,99 @@
         mainTextEnter.append('g')
             .attr('class', classTexts);
     };
-    c3_chart_internal_fn.updateText = function C3_INTERNAL_updateText(durationForExit) {
+    c3_chart_internal_fn.getLabelColor = function (d) {
+        if (this.config.data_labels && this.config.data_labels.color) {
+            return this.config.data_labels.color;
+        }
+        if (this.config.axis_rotated &&
+            ((d.anchor === 'start' && d.value < 0) || (d.anchor === 'end' && d.value > 0))) {
+            return 'white';
+        }
+        return this.color(d);
+    };
+    c3_chart_internal_fn.updateText = function C3_INTERNAL_updateText(durationForExit, barIndices) {
         var $$ = this, 
         config = $$.config,
             barOrLineData = $$.barOrLineData.bind($$),
+            threshold = (config.data_labels && config.data_labels.threshold) || 0,
+            drawText = $$.generateDrawBarText(barIndices, threshold),
             classText = $$.classText.bind($$);
+
         $$.mainText = $$.main.selectAll('.' + CLASS.texts).selectAll('.' + CLASS.text)
             .data(barOrLineData);
         $$.mainText.enter().append('text')
             .attr("class", classText)
-            .attr('text-anchor', function (d) { 
-                return config.axis_rotated ? (d.value < 0 ? 'end' : 'start') : 'middle'; 
+            .attr('text-anchor', function (d) {
+                var anchor = (config.data_labels && config.data_labels.anchor) || 'auto';
+                if (anchor === 'auto') {
+                    if (config.axis_rotated) {
+                        anchor = d.value < 0 ? 'end' : 'start';
+                    } else {
+                        anchor = 'middle';
+                    }
+                }
+                d.anchor = anchor;
+                return anchor;
             })
             .style("stroke", 'none')
             .style("fill", function (d) { 
-                return $$.color(d); 
+                return $$.getLabelColor(d); 
             })
             .style("fill-opacity", 0);
         $$.mainText
-            .text(function (d, i, j) { 
-                return $$.dataLabelFormat(d.id)(d.value, d.id, i, j); 
-            });
+            .text(drawText);
+            // old:
+            //.text(function (d, i, j) { 
+            //    return $$.dataLabelFormat(d.id)(d.value, d.id, i, j); 
+            //});
         $$.mainText.exit()
             .transition().duration(durationForExit)
             .style('fill-opacity', 0)
             .remove();
     };
+    c3_chart_internal_fn.generateDrawBarText = function (barIndices, threshold) {
+        var $$ = this,
+            getPoints = $$.generateGetBarPoints(barIndices, false);
+
+        return function (d, i) {
+            // 4 points that make a bar
+            var points = getPoints(d, i);
+            var width = Math.abs(points[0][1] - points[1][1]);
+            var text = '';
+            if (width > threshold) {
+                text = $$.dataLabelFormat($$.getAxisId(d.id))(d.value, d.id, i);
+            }
+            return text;
+        };
+    };
+
+    //c3_chart_internal_fn.addTransitionForText = function (transitions, xForText, yForText, forFlow)
     c3_chart_internal_fn.redrawText = function C3_INTERNAL_redrawText(xForText, yForText, forFlow, withTransition) {
         console.count('redrawText');
+        var $$ = this,
+            config = $$.config,
+            opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
+
         return [
             (withTransition ? this.mainText.transition() : this.mainText)
                 .attr('x', xForText)
                 .attr('y', yForText)
-                .style("fill", this.color)
-                .style("fill-opacity", forFlow ? 0 : this.opacityForText.bind(this))
+                .attr('dx', function (d) {
+                    if (config.axis_rotated) {
+                        var anchor = (config.data_labels && config.data_labels.anchor) || 'auto';
+                        if (anchor === 'start' && d.value < 0) {
+                            return '1em';
+                        }
+                        if (anchor === 'end' && d.value > 0) {
+                            return '-1em';
+                        }
+                    }
+                    return 0;
+                })
+                .style("fill", function (d) { 
+                    return $$.getLabelColor(d); 
+                })
+                .style("fill-opacity", opacityForText)
         ];
     };
     c3_chart_internal_fn.getTextRect = function C3_INTERNAL_getTextRect(text, cls, element) {
@@ -4456,7 +4539,19 @@
         if (dataToShow.length === 0 || !config.tooltip_show) {
             return;
         }
-        $$.tooltip.html(config.tooltip_contents.call($$, selectedData, $$.axis.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color)).style("display", "block");
+        var tooltip = $$.tooltip.html(config.tooltip_contents.call($$, selectedData, $$.axis.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color));
+        if ($$.config.tooltip_animation_show) {
+            tooltip = tooltip
+                        .style("opacity", 0)
+                        .style("display", "block")
+                        .transition()
+                        .delay($$.config.tooltip_animation_delay)
+                        .duration($$.config.tooltip_animation_duration)
+                        .ease($$.config.tooltip_animation_ease)
+                        .style("opacity", 1);
+        } else {
+            tooltip.style("display", "block");
+        }
 
         // Get tooltip dimensions
         tWidth = $$.tooltip.property('offsetWidth');
@@ -4499,10 +4594,10 @@
             };
 
         $$.margin3 = {
-            top: $$.isLegendRight ? 0 : $$.isLegendInset ? insetLegendPosition.top : $$.currentHeight - legendHeight,
+            top: ($$.isLegendRight || $$.isLegendTopRight) ? 20 : $$.isLegendInset ? insetLegendPosition.top : $$.currentHeight - legendHeight,
             right: NaN,
             bottom: 0,
-            left: $$.isLegendRight ? $$.currentWidth - legendWidth : $$.isLegendInset ? insetLegendPosition.left : 0
+            left: ($$.isLegendRight || $$.isLegendTopRight) ? $$.currentWidth - legendWidth : $$.isLegendInset ? insetLegendPosition.left : 0
         };
     };
     c3_chart_internal_fn.transformLegend = function C3_INTERNAL_transformLegend(withTransition) {
@@ -4518,9 +4613,15 @@
     c3_chart_internal_fn.updateLegendItemHeight = function C3_INTERNAL_updateLegendItemHeight(h) {
         this.legendItemHeight = h;
     };
+    c3_chart_internal_fn.getLegendCount = function () {
+        return this.d3.keys(this.data.xs).length;
+    };
     c3_chart_internal_fn.getLegendWidth = function C3_INTERNAL_getLegendWidth() {
         var $$ = this;
-        return $$.config.legend_show ? $$.isLegendRight || $$.isLegendInset ? $$.legendItemWidth * ($$.legendStep + 1) : $$.currentWidth : 0;
+        // window.console.log('$$.legendItemWidth', $$.legendItemWidth);
+        return $$.config.legend_show ?
+            $$.isLegendTopRight ? $$.currentWidth :
+            $$.isLegendRight || $$.isLegendInset ? $$.legendItemWidth * ($$.legendStep + 1) : $$.currentWidth : 0;
     };
     c3_chart_internal_fn.getLegendHeight = function C3_INTERNAL_getLegendHeight() {
         var $$ = this, h = 0;
@@ -4992,21 +5093,21 @@
             main = $$.main;
         $$.axes.x = main.append("g")
             .attr("class", CLASS.axis + ' ' + CLASS.axisX)
-            .attr("clip-path", $$.clipPathForXAxis)
+            //.attr("clip-path", $$.clipPathForXAxis)
             .attr("transform", $$.getTranslate('x'))
             .style("visibility", config.axis_x_show ? 'visible' : 'hidden');
         $$.axes.x.append("text")
             .attr("class", CLASS.axisXLabel)
-            .attr("transform", config.axis_rotated ? "rotate(-90)" : "")
+            .attr("transform", this.isAxisLabelRotate("x") ? "rotate(-90)" : "")
             .style("text-anchor", this.textAnchorForXAxisLabel.bind(this));
         $$.axes.y = main.append("g")
             .attr("class", CLASS.axis + ' ' + CLASS.axisY)
-            .attr("clip-path", config.axis_y_inner ? "" : $$.clipPathForYAxis)
+            //.attr("clip-path", config.axis_y_inner ? "" : $$.clipPathForYAxis)
             .attr("transform", $$.getTranslate('y'))
             .style("visibility", config.axis_y_show ? 'visible' : 'hidden');
         $$.axes.y.append("text")
             .attr("class", CLASS.axisYLabel)
-            .attr("transform", config.axis_rotated ? "" : "rotate(-90)")
+            .attr("transform", this.isAxisLabelRotate("y") ? "" : "rotate(-90)")
             .style("text-anchor", this.textAnchorForYAxisLabel.bind(this));
 
         $$.axes.y2 = main.append("g")
@@ -5016,7 +5117,7 @@
             .style("visibility", config.axis_y2_show ? 'visible' : 'hidden');
         $$.axes.y2.append("text")
             .attr("class", CLASS.axisY2Label)
-            .attr("transform", config.axis_rotated ? "" : "rotate(-90)")
+            .attr("transform", this.isAxisLabelRotate("y2") ? "" : "rotate(-90)")
             .style("text-anchor", this.textAnchorForY2AxisLabel.bind(this));
     };
     Axis.prototype.getXAxis = function C3_API_AXIS_getXAxis(scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, withoutRotateTickText) {
@@ -5078,7 +5179,6 @@
                 withoutTransition: withoutTransition,
             },
             axis = c3_axis(d3, axisParams).scale(scale).orient(orient).tickFormat(tickFormat);
-            //console.log('y axis rotate: ', axisParams.tickTextRotate, withOuterTick, withoutTransition, withoutRotateTickText, isY2Axis);
         if ($$.isTimeSeriesY()) {
             axis.ticks(d3.time[!isY2Axis ? config.axis_y_tick_time_value : config.axis_y2_tick_time_value], !isY2Axis ? config.axis_y_tick_time_interval : config.axis_y2_tick_time_interval);
         } else {
@@ -5168,6 +5268,15 @@
             isBottom: position.indexOf('bottom') >= 0
         };
     };
+    Axis.prototype.getAxisLabelRotateOption = function (axisId) {
+        var option = this.getAxisLabelOptionByAxisId(axisId),
+            rotate = (option && typeof option === 'object' && !isUndefined(option.rotate)) ? option.rotate : false;
+        return rotate;
+    };
+    Axis.prototype.isAxisLabelRotate = function (axisId) {
+        var rotate = this.getAxisLabelRotateOption(axisId);
+        return (!rotate && this.owner.config.axis_rotated) || (rotate && !this.owner.config.axis_rotated);
+    };
     Axis.prototype.getXAxisLabelPosition = function C3_API_AXIS_getXAxisLabelPosition() {
         return this.getLabelPosition('x', this.owner.config.axis_rotated ? 'inner-top' : 'inner-right');
     };
@@ -5208,6 +5317,9 @@
         if (forHorizontal) {
             return position.isLeft ? 'start' : position.isCenter ? 'middle' : 'end';
         } else {
+            if (position.isInner && position.isTop) {
+                return 'start';
+            }
             return position.isBottom ? 'start' : position.isMiddle ? 'middle' : 'end';
         }
     };
@@ -5224,10 +5336,22 @@
         return this.dxForAxisLabel(!this.owner.config.axis_rotated, this.getXAxisLabelPosition());
     };
     Axis.prototype.dxForYAxisLabel = function C3_API_AXIS_dxForYAxisLabel() {
-        return this.dxForAxisLabel(this.owner.config.axis_rotated, this.getYAxisLabelPosition());
+        var position = this.getYAxisLabelPosition();
+        if (this.getAxisLabelRotateOption("y")) {
+            return position.isInner ? "0.2em" : "-1em";
+        } else {
+            return this.dxForAxisLabel(this.owner.config.axis_rotated, this.getYAxisLabelPosition());
+        }
     };
     Axis.prototype.dxForY2AxisLabel = function C3_API_AXIS_dxForY2AxisLabel() {
-        return this.dxForAxisLabel(this.owner.config.axis_rotated, this.getY2AxisLabelPosition());
+        var position = this.getY2AxisLabelPosition();
+        var box = this.getTextRect(this.getAxisLabelText("y2"), CLASS.axisY2Label);
+        var labelWidth = box.width;
+        if (this.getAxisLabelRotateOption("y2")) {
+            return position.isInner ? "-1em" : (labelWidth * 0.6 + 15) + "px";
+        } else {
+            return this.dxForAxisLabel(this.owner.config.axis_rotated, this.getY2AxisLabelPosition());
+        }
     };
     Axis.prototype.dyForXAxisLabel = function C3_API_AXIS_dyForXAxisLabel() {
         var $$ = this.owner, 
@@ -5244,6 +5368,8 @@
             position = this.getYAxisLabelPosition();
         if ($$.config.axis_rotated) {
             return position.isInner ? "-0.5em" : "3em";
+        } else if (this.getAxisLabelRotateOption("y")) {
+            return "0.45em";
         } else {
             return position.isInner ? "1.2em" : -10 - ($$.config.axis_y_inner ? 0 : (this.getMaxTickWidth('y') + 10));
         }
@@ -5253,6 +5379,8 @@
             position = this.getY2AxisLabelPosition();
         if ($$.config.axis_rotated) {
             return position.isInner ? "1.2em" : "-2.2em";
+        } else if (this.getAxisLabelRotateOption("y2")) {
+            return "1.2em";
         } else {
             return position.isInner ? "-0.5em" : 15 + ($$.config.axis_y2_inner ? 0 : (this.getMaxTickWidth('y2') + 15));
         }
@@ -5736,10 +5864,24 @@
         $$.arcs = $$.main.select('.' + CLASS.chart).append("g")
             .attr("class", CLASS.chartArcs)
             .attr("transform", $$.getTranslate('arc'));
-        $$.arcs.append('text')
-            .attr('class', CLASS.chartArcsTitle)
-            .style("text-anchor", "middle")
-            .text($$.getArcTitle());
+        if ($$.config.donut_subtitle) {
+            $$.arcs.append('text')
+                .attr('class', CLASS.chartArcsSubTitle)
+                .attr("transform", "translate(0,-10)")
+                .style("text-anchor", "middle")
+                .text($$.config.donut_subtitle);
+        }
+        if ($$.config.donut_title) {
+            var title = $$.arcs.append('text')
+                .attr('class', CLASS.chartArcsTitle)
+                .style("text-anchor", "middle")
+                .text($$.getArcTitle());
+            if ($$.config.donut_subtitle) {
+                title.attr("transform", "translate(0,20)");
+            } else {
+                title.attr("transform", "translate(0,5)");
+            }
+        }
     };
 
     c3_chart_internal_fn.redrawArc = function C3_INTERNAL_redrawArc(duration, durationForExit, withTransform) {
@@ -5844,7 +5986,7 @@
                 //                    };
                 //                }
                 if (isNaN(this._current.startAngle)) {
-                    this._current.startAngle = 0;
+                    this._current.startAngle = Math.PI * 2;
                 }
                 if (isNaN(this._current.endAngle)) {
                     this._current.endAngle = this._current.startAngle;
@@ -6641,6 +6783,7 @@
         chartArc: 'c3-chart-arc',
         chartArcs: 'c3-chart-arcs',
         chartArcsTitle: 'c3-chart-arcs-title',
+        chartArcsSubTitle: 'c3-chart-arcs-subtitle',
         chartArcsBackground: 'c3-chart-arcs-background',
         chartArcsGaugeUnit: 'c3-chart-arcs-gauge-unit',
         chartArcsGaugeMax: 'c3-chart-arcs-gauge-max',
@@ -6754,7 +6897,7 @@
     c3_chart_internal_fn.classRegion = function C3_INTERNAL_classRegion(d, i) {
         return this.generateClass(CLASS.region, i) + ' ' + (d.class != null ? d.class : '');
     };
-    c3_chart_internal_fn.labelRegion = function C3_INTERNAL_labelRegion(d /*, i */) {
+    c3_chart_internal_fn.labelRegion = function C3_INTERNAL_labelRegion(d) {
         return d.label !== undefined ? d.label : '';
     };
     c3_chart_internal_fn.classEvent = function C3_INTERNAL_classEvent(d) {

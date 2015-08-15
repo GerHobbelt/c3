@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <link href="/css/c3.css" rel="stylesheet" type="text/css">
+
+    <style>
+      .button {
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div>
+      <div class="order">
+        Order:
+        <div class="button">
+          <input type="radio" name="order" value="" id="order_none" checked="checked"/>
+          <label for="order_none">None(Default: by defined)</label>
+        </div>
+        <div class="button">
+          <input type="radio" name="order" value="asc" id="order_asc"/>
+          <label for="order_asc">ASC(by total)</label>
+        </div>
+        <div class="button">
+          <input type="radio" name="order" value="desc" id="order_desc"/>
+          <label for="order_desc">DESC(by total)</label>
+        </div>
+        <div class="button">
+          <input type="radio" name="order" value="reverse" id="order_reverse"/>
+          <label for="order_reverse">Reverse(by defined)</label>
+        </div>
+      </div>
+      <div class="chartType">
+      </div>
+    </div>
+
+    <div id="chart"></div>
+
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="/js/c3.min.js"></script>
+    <script>
+      function showChart(order) {
+        var chart = c3.generate({
+          data: {
+            columns: [
+              ['data1', 30, 20, 100, 40, 60, 50],
+              ['data3', 200, 230, 90, 240, 230, 220],
+              ['data2', 300, 100, 120, 100, 150, 150]
+            ],
+            type: 'bar',
+            groups: [['data1', 'data2', 'data3']],
+            order: order
+          }
+        });
+      }
+
+      d3.selectAll(".button input").on("change", function(){
+        showChart(this.value);
+      });
+      showChart();
+    </script>
+  </body>
+</html>

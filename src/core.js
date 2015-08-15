@@ -147,6 +147,7 @@ c3_chart_internal_fn.initParams = function C3_INTERNAL_initParams() {
     $$.y2Orient = config.axis_rotated ? (config.axis_y2_inner ? "bottom" : "top") : (config.axis_y2_inner ? "left" : "right");
     $$.subXOrient = config.axis_rotated ? "left" : "bottom";
 
+    $$.isLegendTopRight = config.legend_position === 'top-right';
     $$.isLegendRight = config.legend_position === 'right';
     $$.isLegendInset = config.legend_position === 'inset';
     $$.isLegendTop = config.legend_inset_anchor === 'top-left' || config.legend_inset_anchor === 'top-right';
@@ -406,7 +407,8 @@ c3_chart_internal_fn.updateSizes = function C3_INTERNAL_updateSizes() {
         config = $$.config;
     var legendHeight = $$.legend ? $$.getLegendHeight() : 0,
         legendWidth = $$.legend ? $$.getLegendWidth() : 0,
-        legendHeightForBottom = $$.isLegendRight || $$.isLegendInset ? 0 : legendHeight,
+        legendHeightForTop = $$.isLegendTopRight ? legendHeight + 20 : 0,
+        legendHeightForBottom = $$.isLegendRight || $$.isLegendInset || $$.isLegendTopRight ? 0 : legendHeight,
         hasArc = $$.hasArcType(),
         xAxisHeight = config.axis_rotated || hasArc ? 0 : $$.getHorizontalAxisHeight('x'),
         subchartHeight = config.subchart_show && !hasArc ? (config.subchart_size_height + xAxisHeight) : 0;
@@ -416,12 +418,12 @@ c3_chart_internal_fn.updateSizes = function C3_INTERNAL_updateSizes() {
 
     // for main
     $$.margin = config.axis_rotated ? {
-        top: config.margin_top ? config.margin.top : $$.getHorizontalAxisHeight('y2') + $$.getCurrentPaddingTop(),
+        top: config.margin_top ? config.margin.top : $$.getHorizontalAxisHeight('y2') + $$.getCurrentPaddingTop() + legendHeightForTop,
         right: hasArc ? 0 : config.margin_right ? config.margin_right : $$.getCurrentPaddingRight(),
         bottom: config.margin_bottom ? config.margin_bottom : $$.getHorizontalAxisHeight('y') + legendHeightForBottom + $$.getCurrentPaddingBottom(),
         left: subchartHeight + (hasArc ? 0 : config.margin_left ? config.margin_left : $$.getCurrentPaddingLeft())
     } : {
-        top: 4 + (config.margin_top ? config.margin.top : $$.getCurrentPaddingTop()), // for top tick text
+        top: 4 + (config.margin_top ? config.margin.top : $$.getCurrentPaddingTop() + legendHeightForTop), // for top tick text
         right: hasArc ? 0 : config.margin_right ? config.margin_right : $$.getCurrentPaddingRight(),
         bottom: config.margin_bottom ? config.margin_bottom : xAxisHeight + subchartHeight + legendHeightForBottom + $$.getCurrentPaddingBottom(),
         left: hasArc ? 0 : config.margin_left ? config.margin_left : $$.getCurrentPaddingLeft()
@@ -671,7 +673,7 @@ c3_chart_internal_fn.redraw = function C3_INTERNAL_redraw(options, transitions) 
 
     // text
     if ($$.hasDataLabel()) {
-        $$.updateText(durationForExit);
+        $$.updateText(durationForExit, barIndices);
     }
 
     // title
@@ -728,7 +730,7 @@ c3_chart_internal_fn.redraw = function C3_INTERNAL_redraw(options, transitions) 
 
     if ((duration || flow) && $$.isTabVisible()) { // Only use transition if tab visible. See #938.
         // transition should be derived from one transition
-        d3.transition().duration(duration).each(function () {
+        main.transition().duration(duration).each(function () {
             var transitionsToWait = [];
 
             // redraw and gather transitions

@@ -22,40 +22,99 @@ c3_chart_internal_fn.updateTargetsForText = function C3_INTERNAL_updateTargetsFo
     mainTextEnter.append('g')
         .attr('class', classTexts);
 };
-c3_chart_internal_fn.updateText = function C3_INTERNAL_updateText(durationForExit) {
+c3_chart_internal_fn.getLabelColor = function (d) {
+    if (this.config.data_labels && this.config.data_labels.color) {
+        return this.config.data_labels.color;
+    }
+    if (this.config.axis_rotated &&
+        ((d.anchor === 'start' && d.value < 0) || (d.anchor === 'end' && d.value > 0))) {
+        return 'white';
+    }
+    return this.color(d);
+};
+c3_chart_internal_fn.updateText = function C3_INTERNAL_updateText(durationForExit, barIndices) {
     var $$ = this, 
     config = $$.config,
         barOrLineData = $$.barOrLineData.bind($$),
+        threshold = (config.data_labels && config.data_labels.threshold) || 0,
+        drawText = $$.generateDrawBarText(barIndices, threshold),
         classText = $$.classText.bind($$);
+
     $$.mainText = $$.main.selectAll('.' + CLASS.texts).selectAll('.' + CLASS.text)
         .data(barOrLineData);
     $$.mainText.enter().append('text')
         .attr("class", classText)
-        .attr('text-anchor', function (d) { 
-            return config.axis_rotated ? (d.value < 0 ? 'end' : 'start') : 'middle'; 
+        .attr('text-anchor', function (d) {
+            var anchor = (config.data_labels && config.data_labels.anchor) || 'auto';
+            if (anchor === 'auto') {
+                if (config.axis_rotated) {
+                    anchor = d.value < 0 ? 'end' : 'start';
+                } else {
+                    anchor = 'middle';
+                }
+            }
+            d.anchor = anchor;
+            return anchor;
         })
         .style("stroke", 'none')
         .style("fill", function (d) { 
-            return $$.color(d); 
+            return $$.getLabelColor(d); 
         })
         .style("fill-opacity", 0);
     $$.mainText
-        .text(function (d, i, j) { 
-            return $$.dataLabelFormat(d.id)(d.value, d.id, i, j); 
-        });
+        .text(drawText);
+        // old:
+        //.text(function (d, i, j) { 
+        //    return $$.dataLabelFormat(d.id)(d.value, d.id, i, j); 
+        //});
     $$.mainText.exit()
         .transition().duration(durationForExit)
         .style('fill-opacity', 0)
         .remove();
 };
+c3_chart_internal_fn.generateDrawBarText = function (barIndices, threshold) {
+    var $$ = this,
+        getPoints = $$.generateGetBarPoints(barIndices, false);
+
+    return function (d, i) {
+        // 4 points that make a bar
+        var points = getPoints(d, i);
+        var width = Math.abs(points[0][1] - points[1][1]);
+        var text = '';
+        if (width > threshold) {
+            text = $$.dataLabelFormat($$.getAxisId(d.id))(d.value, d.id, i);
+        }
+        return text;
+    };
+};
+
+//c3_chart_internal_fn.addTransitionForText = function (transitions, xForText, yForText, forFlow)
 c3_chart_internal_fn.redrawText = function C3_INTERNAL_redrawText(xForText, yForText, forFlow, withTransition) {
     console.count('redrawText');
+    var $$ = this,
+        config = $$.config,
+        opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
+
     return [
         (withTransition ? this.mainText.transition() : this.mainText)
             .attr('x', xForText)
             .attr('y', yForText)
-            .style("fill", this.color)
-            .style("fill-opacity", forFlow ? 0 : this.opacityForText.bind(this))
+            .attr('dx', function (d) {
+                if (config.axis_rotated) {
+                    var anchor = (config.data_labels && config.data_labels.anchor) || 'auto';
+                    if (anchor === 'start' && d.value < 0) {
+                        return '1em';
+                    }
+                    if (anchor === 'end' && d.value > 0) {
+                        return '-1em';
+                    }
+                }
+                return 0;
+            })
+            .style("fill", function (d) { 
+                return $$.getLabelColor(d); 
+            })
+            .style("fill-opacity", opacityForText)
     ];
 };
 c3_chart_internal_fn.getTextRect = function C3_INTERNAL_getTextRect(text, cls, element) {

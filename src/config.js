@@ -169,6 +169,7 @@ c3_chart_internal_fn.getDefaultConfig = function C3_INTERNAL_getDefaultConfig() 
         point_show: true,
         point_r: 2.5,
         point_sensitivity: 10,
+        point_animation: false,
         point_focus_expand_enabled: true,
         point_focus_expand_r: undefined,
         point_select_r: undefined,
@@ -184,6 +185,7 @@ c3_chart_internal_fn.getDefaultConfig = function C3_INTERNAL_getDefaultConfig() 
         bar_zerobased: true,
         // area
         area_zerobased: true,
+        line_zerobased: false,
         // pie
         pie_label_show: true,
         pie_label_format: undefined,
@@ -207,6 +209,7 @@ c3_chart_internal_fn.getDefaultConfig = function C3_INTERNAL_getDefaultConfig() 
         donut_label_threshold: 0.05,
         donut_width: undefined,
         donut_title: "",
+        donut_subtitle: "",
         donut_expand: {},
         donut_expand_duration: 50,
         // spline
@@ -215,6 +218,10 @@ c3_chart_internal_fn.getDefaultConfig = function C3_INTERNAL_getDefaultConfig() 
         regions: [],
         // tooltip - show when mouseover on each data
         tooltip_show: true,
+        tooltip_animation_show: false,
+        tooltip_animation_delay: 0,
+        tooltip_animation_duration: 350,
+        tooltip_animation_ease: "linear",
         tooltip_grouped: true,
         tooltip_format_title: undefined,
         tooltip_format_name: undefined,

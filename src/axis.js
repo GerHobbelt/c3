@@ -10,21 +10,21 @@ Axis.prototype.init = function C3_API_AXIS_init() {
         main = $$.main;
     $$.axes.x = main.append("g")
         .attr("class", CLASS.axis + ' ' + CLASS.axisX)
-        .attr("clip-path", $$.clipPathForXAxis)
+        //.attr("clip-path", $$.clipPathForXAxis)
         .attr("transform", $$.getTranslate('x'))
         .style("visibility", config.axis_x_show ? 'visible' : 'hidden');
     $$.axes.x.append("text")
         .attr("class", CLASS.axisXLabel)
-        .attr("transform", config.axis_rotated ? "rotate(-90)" : "")
+        .attr("transform", this.isAxisLabelRotate("x") ? "rotate(-90)" : "")
         .style("text-anchor", this.textAnchorForXAxisLabel.bind(this));
     $$.axes.y = main.append("g")
         .attr("class", CLASS.axis + ' ' + CLASS.axisY)
-        .attr("clip-path", config.axis_y_inner ? "" : $$.clipPathForYAxis)
+        //.attr("clip-path", config.axis_y_inner ? "" : $$.clipPathForYAxis)
         .attr("transform", $$.getTranslate('y'))
         .style("visibility", config.axis_y_show ? 'visible' : 'hidden');
     $$.axes.y.append("text")
         .attr("class", CLASS.axisYLabel)
-        .attr("transform", config.axis_rotated ? "" : "rotate(-90)")
+        .attr("transform", this.isAxisLabelRotate("y") ? "" : "rotate(-90)")
         .style("text-anchor", this.textAnchorForYAxisLabel.bind(this));
 
     $$.axes.y2 = main.append("g")
@@ -34,7 +34,7 @@ Axis.prototype.init = function C3_API_AXIS_init() {
         .style("visibility", config.axis_y2_show ? 'visible' : 'hidden');
     $$.axes.y2.append("text")
         .attr("class", CLASS.axisY2Label)
-        .attr("transform", config.axis_rotated ? "" : "rotate(-90)")
+        .attr("transform", this.isAxisLabelRotate("y2") ? "" : "rotate(-90)")
         .style("text-anchor", this.textAnchorForY2AxisLabel.bind(this));
 };
 Axis.prototype.getXAxis = function C3_API_AXIS_getXAxis(scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, withoutRotateTickText) {
@@ -185,6 +185,15 @@ Axis.prototype.getLabelPosition = function C3_API_AXIS_getLabelPosition(axisId, 
         isBottom: position.indexOf('bottom') >= 0
     };
 };
+Axis.prototype.getAxisLabelRotateOption = function (axisId) {
+    var option = this.getAxisLabelOptionByAxisId(axisId),
+        rotate = (option && typeof option === 'object' && !isUndefined(option.rotate)) ? option.rotate : false;
+    return rotate;
+};
+Axis.prototype.isAxisLabelRotate = function (axisId) {
+    var rotate = this.getAxisLabelRotateOption(axisId);
+    return (!rotate && this.owner.config.axis_rotated) || (rotate && !this.owner.config.axis_rotated);
+};
 Axis.prototype.getXAxisLabelPosition = function C3_API_AXIS_getXAxisLabelPosition() {
     return this.getLabelPosition('x', this.owner.config.axis_rotated ? 'inner-top' : 'inner-right');
 };
@@ -225,6 +234,9 @@ Axis.prototype.textAnchorForAxisLabel = function C3_API_AXIS_textAnchorForAxisLa
     if (forHorizontal) {
         return position.isLeft ? 'start' : position.isCenter ? 'middle' : 'end';
     } else {
+        if (position.isInner && position.isTop) {
+            return 'start';
+        }
         return position.isBottom ? 'start' : position.isMiddle ? 'middle' : 'end';
     }
 };
@@ -241,10 +253,22 @@ Axis.prototype.dxForXAxisLabel = function C3_API_AXIS_dxForXAxisLabel() {
     return this.dxForAxisLabel(!this.owner.config.axis_rotated, this.getXAxisLabelPosition());
 };
 Axis.prototype.dxForYAxisLabel = function C3_API_AXIS_dxForYAxisLabel() {
-    return this.dxForAxisLabel(this.owner.config.axis_rotated, this.getYAxisLabelPosition());
+    var position = this.getYAxisLabelPosition();
+    if (this.getAxisLabelRotateOption("y")) {
+        return position.isInner ? "0.2em" : "-1em";
+    } else {
+        return this.dxForAxisLabel(this.owner.config.axis_rotated, this.getYAxisLabelPosition());
+    }
 };
 Axis.prototype.dxForY2AxisLabel = function C3_API_AXIS_dxForY2AxisLabel() {
-    return this.dxForAxisLabel(this.owner.config.axis_rotated, this.getY2AxisLabelPosition());
+    var position = this.getY2AxisLabelPosition();
+    var box = this.getTextRect(this.getAxisLabelText("y2"), CLASS.axisY2Label);
+    var labelWidth = box.width;
+    if (this.getAxisLabelRotateOption("y2")) {
+        return position.isInner ? "-1em" : (labelWidth * 0.6 + 15) + "px";
+    } else {
+        return this.dxForAxisLabel(this.owner.config.axis_rotated, this.getY2AxisLabelPosition());
+    }
 };
 Axis.prototype.dyForXAxisLabel = function C3_API_AXIS_dyForXAxisLabel() {
     var $$ = this.owner, 
@@ -261,6 +285,8 @@ Axis.prototype.dyForYAxisLabel = function C3_API_AXIS_dyForYAxisLabel() {
         position = this.getYAxisLabelPosition();
     if ($$.config.axis_rotated) {
         return position.isInner ? "-0.5em" : "3em";
+    } else if (this.getAxisLabelRotateOption("y")) {
+        return "0.45em";
     } else {
         return position.isInner ? "1.2em" : -10 - ($$.config.axis_y_inner ? 0 : (this.getMaxTickWidth('y') + 10));
     }
@@ -270,6 +296,8 @@ Axis.prototype.dyForY2AxisLabel = function C3_API_AXIS_dyForY2AxisLabel() {
         position = this.getY2AxisLabelPosition();
     if ($$.config.axis_rotated) {
         return position.isInner ? "1.2em" : "-2.2em";
+    } else if (this.getAxisLabelRotateOption("y2")) {
+        return "1.2em";
     } else {
         return position.isInner ? "-0.5em" : 15 + ($$.config.axis_y2_inner ? 0 : (this.getMaxTickWidth('y2') + 15));
     }

@@ -283,10 +283,24 @@ c3_chart_internal_fn.initArc = function C3_INTERNAL_initArc() {
     $$.arcs = $$.main.select('.' + CLASS.chart).append("g")
         .attr("class", CLASS.chartArcs)
         .attr("transform", $$.getTranslate('arc'));
-    $$.arcs.append('text')
-        .attr('class', CLASS.chartArcsTitle)
-        .style("text-anchor", "middle")
-        .text($$.getArcTitle());
+    if ($$.config.donut_subtitle) {
+        $$.arcs.append('text')
+            .attr('class', CLASS.chartArcsSubTitle)
+            .attr("transform", "translate(0,-10)")
+            .style("text-anchor", "middle")
+            .text($$.config.donut_subtitle);
+    }
+    if ($$.config.donut_title) {
+        var title = $$.arcs.append('text')
+            .attr('class', CLASS.chartArcsTitle)
+            .style("text-anchor", "middle")
+            .text($$.getArcTitle());
+        if ($$.config.donut_subtitle) {
+            title.attr("transform", "translate(0,20)");
+        } else {
+            title.attr("transform", "translate(0,5)");
+        }
+    }
 };
 
 c3_chart_internal_fn.redrawArc = function C3_INTERNAL_redrawArc(duration, durationForExit, withTransform) {
@@ -391,7 +405,7 @@ c3_chart_internal_fn.redrawArc = function C3_INTERNAL_redrawArc(duration, durati
             //                    };
             //                }
             if (isNaN(this._current.startAngle)) {
-                this._current.startAngle = 0;
+                this._current.startAngle = Math.PI * 2;
             }
             if (isNaN(this._current.endAngle)) {
                 this._current.endAngle = this._current.startAngle;

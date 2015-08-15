@@ -409,24 +409,35 @@ c3_chart_internal_fn.expandCircles = function C3_INTERNAL_expandCircles(i, id, r
     if (reset) { 
         $$.unexpandCircles(); 
     }
-    $$.getCircles(i, id)
-        .classed(CLASS.EXPANDED, true)
-        .attr('r', r);
+    var circles = $$.getCircles(i, id)
+        .classed(CLASS.EXPANDED, true);
+    if ($$.config.point_animation) {
+        circles = circles.transition()
+            .duration($$.config.transition_duration)
+            .ease('cubic-in-out');
+    }
+    circles.attr('r', r);
 };
 c3_chart_internal_fn.unexpandCircles = function C3_INTERNAL_unexpandCircles(i) {
     var $$ = this,
         r = $$.pointR.bind($$);
-    $$.getCircles(i)
+    var circles = $$.getCircles(i)
         .filter(function () { 
             return $$.d3.select(this).classed(CLASS.EXPANDED); 
         })
-        .classed(CLASS.EXPANDED, false)
-        .attr('r', r);
+        .classed(CLASS.EXPANDED, false);
+
+    if ($$.config.point_animation) {
+        circles = circles.transition()
+            .duration($$.config.transition_duration)
+            .ease('cubic-in-out');
+    }
+    circles.attr('r', r);
 };
 c3_chart_internal_fn.pointR = function C3_INTERNAL_pointR(d) {
     var $$ = this, 
         config = $$.config;
-    return $$.isStepType(d) ? 0 : (isFunction(config.point_r) ? config.point_r(d) : config.point_r);
+    return config.point_show && !$$.isStepType(d) ? (isFunction(config.point_r) ? config.point_r(d) : config.point_r) : 0;
 };
 c3_chart_internal_fn.pointExpandedR = function C3_INTERNAL_pointExpandedR(d) {
     var $$ = this, 

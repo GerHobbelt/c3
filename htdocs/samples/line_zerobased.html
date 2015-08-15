@@ -1,0 +1,51 @@
+<html>
+  <head>
+    <link href="/css/c3.css" rel="stylesheet" type="text/css">
+    <style>
+      .button {
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="chart"></div>
+
+    <div class="control">
+      Zero Based:
+      <div class="button">
+        <input type="radio" name="zerobased" value="true" id="zerobased_on"/>
+        <label for="zerobased_on">ON</label>
+      </div>
+      <div class="button">
+        <input type="radio" name="zerobased" value="false" id="zerobased_off" checked="checked"/>
+        <label for="zerobased_off">OFF(default)</label>
+      </div>
+    </div>
+
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="/js/c3.js"></script>
+    <script>
+      var chart;
+      function showChart(zerobased) {
+        chart = c3.generate({
+          data: {
+            columns: [
+              ['data1', 1030, 1200, 1100, 1400, 1150, 1250],
+              ['data2', 2130, 2100, 2140, 2200, 2150, 1850]
+            ],
+            type: 'line'
+          },
+          line: {
+            zerobased: zerobased
+          }
+        });
+      }
+
+      d3.selectAll(".button input").on("change", function(){
+        showChart(this.value === 'true');
+      });
+      showChart();
+
+    </script>
+  </body>
+</html>
