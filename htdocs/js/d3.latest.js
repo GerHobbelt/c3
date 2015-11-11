@@ -1,5 +1,5 @@
 !function(){
-  var d3 = {version: "3.5.5"}; // semver
+  var d3 = {version: "3.5.8"}; // semver
 var d3_arraySlice = [].slice,
     d3_array = function(list) { return d3_arraySlice.call(list); }; // conversion for NodeLists
 var d3_document = this.document;
@@ -485,7 +485,10 @@ d3.nest = function() {
         values;
 
     while (++i < n) {
-      if ((values = valuesByKey.get(keyValue = key(object = array[i])))) {
+      object = array[i];
+      keyValue = key(object);
+      values = valuesByKey.get(keyValue);
+      if (values) {
         values.push(object);
       } else {
         valuesByKey.set(keyValue, [object]);
@@ -861,18 +864,15 @@ var d3_nsPrefix = {
 d3.ns = {
   prefix: d3_nsPrefix,
   qualify: function(name) {
-    var i = name.indexOf(":"),
+    var i = name.indexOf(":"), 
         prefix = name;
-    if (i >= 0) {
-      prefix = name.slice(0, i);
-      name = name.slice(i + 1);
+    if (i >= 0 && (prefix = name.slice(0, i)) !== "xmlns") {
+        name = name.slice(i + 1);
     }
-    return d3_nsPrefix.hasOwnProperty(prefix)
-        ? {
-            space: d3_nsPrefix[prefix],
-            local: name
-          }
-        : name;
+    return d3_nsPrefix.hasOwnProperty(prefix) ? {
+        space: d3_nsPrefix[prefix], 
+        local: name
+    } : name;
   }
 };
 
@@ -1209,12 +1209,14 @@ d3_selectionPrototype.data = function(value, key) {
           keyValue;
 
       for (i = -1; ++i < n;) {
-        if (nodeByKeyValue.has(keyValue = key.call(node = group[i], node.__data__, i))) {
-          exitNodes[i] = node; // duplicate selection key
-        } else {
-          nodeByKeyValue.set(keyValue, node);
+        if (node = group[i]) {
+          if (nodeByKeyValue.has(keyValue = key.call(node, node.__data__, i))) {
+            exitNodes[i] = node; // duplicate selection key
+          } else {
+            nodeByKeyValue.set(keyValue, node);
+          }
+          keyValues[i] = keyValue;
         }
-        keyValues[i] = keyValue;
       }
 
       for (i = -1; ++i < m;) {
@@ -1228,7 +1230,7 @@ d3_selectionPrototype.data = function(value, key) {
       }
 
       for (i = -1; ++i < n;) {
-        if (nodeByKeyValue.get(keyValues[i]) !== true) {
+        if (i in keyValues && nodeByKeyValue.get(keyValues[i]) !== true) {
           exitNodes[i] = group[i];
         }
       }
@@ -1465,7 +1467,7 @@ d3.selectAll = function(nodes) {
     group = d3_array(d3_selectAll(nodes, d3_document));
     group.parentNode = d3_document.documentElement;
   } else {
-    group = nodes;
+    group = d3_array(nodes);
     group.parentNode = null;
   }
   return d3_selection([group]);
@@ -1603,15 +1605,18 @@ function d3_event_dragSuppress(node) {
   };
 }
 
-d3.mouse = function(container) {
-  return d3_mousePoint(container, d3_eventSource());
+d3.mouse = function(container, identifier) {
+  var event = d3_eventSource();
+  if (arguments.length < 2) identifier = event.pointerId; // ok if undefined
+  return d3_mousePoint(container, event, identifier);
 };
 
 // https://bugs.webkit.org/show_bug.cgi?id=44083
 var d3_mouse_bug44083 = (typeof this !== "undefined" && this.navigator && /WebKit/.test(this.navigator.userAgent)) ? -1 : 0;
 
-function d3_mousePoint(container, e) {
+function d3_mousePoint(container, e, id) {
   if (e.changedTouches) e = e.changedTouches[0];
+  if (e.pointerId !== id) return;
   var svg = container.ownerSVGElement || container;
   if (svg.createSVGPoint) {
     var point = svg.createSVGPoint();
@@ -1652,12 +1657,21 @@ d3.touch = function(container, touches, identifier) {
 d3.behavior.drag = function() {
   var event = d3_eventDispatch(drag, "drag", "dragstart", "dragend"),
       origin = null,
+      ptrdown = dragstart(d3_behavior_dragPointerId, d3.mouse, d3_window, "pointermove", "pointerup"),
       mousedown = dragstart(d3_noop, d3.mouse, d3_window, "mousemove", "mouseup"),
       touchstart = dragstart(d3_behavior_dragTouchId, d3.touch, d3_identity, "touchmove", "touchend");
 
   function drag() {
-    this.on("mousedown.drag", mousedown)
-        .on("touchstart.drag", touchstart);
+    if (navigator.pointerEnabled) {
+      if (this.style("touch-action") === "auto") {
+          // disable intrisic behaviors to get events
+          this.style("touch-action", "none");
+      }
+      this.on("pointerdown.drag", ptrdown);
+    } else {
+      this.on("mousedown.drag", mousedown)
+          .on("touchstart.drag", touchstart);
+    }
   }
 
   function dragstart(id, position, subject, move, end) {
@@ -1746,6 +1760,10 @@ function d3_behavior_dragTouchId() {
   return d3.event.changedTouches[0].identifier;
 }
 
+function d3_behavior_dragPointerId() {
+  return d3.event.pointerId;
+}
+
 d3.touches = function(container, touches) {
   if (arguments.length < 2) touches = d3_eventSource().touches;
   return touches ? d3_array(touches).map(function(touch) {
@@ -1807,24 +1825,36 @@ var ρ = Math.SQRT2,
 // p1 = [ux1, uy1, w1]
 d3.interpolateZoom = function(p0, p1) {
   var ux0 = p0[0], uy0 = p0[1], w0 = p0[2],
-      ux1 = p1[0], uy1 = p1[1], w1 = p1[2];
-
-  var dx = ux1 - ux0,
+      ux1 = p1[0], uy1 = p1[1], w1 = p1[2],
+      dx = ux1 - ux0,
       dy = uy1 - uy0,
       d2 = dx * dx + dy * dy,
-      d1 = Math.sqrt(d2),
-      b0 = (w1 * w1 - w0 * w0 + ρ4 * d2) / (2 * w0 * ρ2 * d1),
-      b1 = (w1 * w1 - w0 * w0 - ρ4 * d2) / (2 * w1 * ρ2 * d1),
-      r0 = Math.log(Math.sqrt(b0 * b0 + 1) - b0),
-      r1 = Math.log(Math.sqrt(b1 * b1 + 1) - b1),
-      dr = r1 - r0,
-      S = (dr || Math.log(w1 / w0)) / ρ;
+      i,
+      S;
 
-  function interpolate(t) {
-    var s = t * S;
-    if (dr) {
-      // General case.
-      var coshr0 = d3_cosh(r0),
+  // Special case for u0 ≅ u1.
+  if (d2 < ε2) {
+    S = Math.log(w1 / w0) / ρ;
+    i = function(t) {
+      return [
+        ux0 + t * dx,
+        uy0 + t * dy,
+        w0 * Math.exp(ρ * t * S)
+      ];
+    }
+  }
+
+  // General case.
+  else {
+    var d1 = Math.sqrt(d2),
+        b0 = (w1 * w1 - w0 * w0 + ρ4 * d2) / (2 * w0 * ρ2 * d1),
+        b1 = (w1 * w1 - w0 * w0 - ρ4 * d2) / (2 * w1 * ρ2 * d1),
+        r0 = Math.log(Math.sqrt(b0 * b0 + 1) - b0),
+        r1 = Math.log(Math.sqrt(b1 * b1 + 1) - b1);
+    S = (r1 - r0) / ρ;
+    i = function(t) {
+      var s = t * S,
+          coshr0 = d3_cosh(r0),
           u = w0 / (ρ2 * d1) * (coshr0 * d3_tanh(ρ * s + r0) - d3_sinh(r0));
       return [
         ux0 + u * dx,
@@ -1832,17 +1862,11 @@ d3.interpolateZoom = function(p0, p1) {
         w0 * coshr0 / d3_cosh(ρ * s + r0)
       ];
     }
-    // Special case for u0 ~= u1.
-    return [
-      ux0 + t * dx,
-      uy0 + t * dy,
-      w0 * Math.exp(ρ * s)
-    ];
   }
 
-  interpolate.duration = S * 1000;
+  i.duration = S * 1000;
 
-  return interpolate;
+  return i;
 };
 
 d3.behavior.zoom = function() {
@@ -1930,7 +1954,8 @@ d3.behavior.zoom = function() {
 
   zoom.scale = function(_) {
     if (!arguments.length) return view.k;
-    view = {x: view.x, y: view.y, k: +_}; // copy-on-write
+    view = {x: view.x, y: view.y, k: null}; // copy-on-write
+    scaleTo(+_);
     rescale();
     return zoom;
   };
@@ -2019,8 +2044,7 @@ d3.behavior.zoom = function() {
   }
 
   function zoomended(dispatch) {
-    if (!--zooming) dispatch({type: "zoomend"});
-    center0 = null;
+    if (!--zooming) dispatch({type: "zoomend"}), center0 = null;
   }
 
   function mousedowned() {
@@ -2121,9 +2145,11 @@ d3.behavior.zoom = function() {
 
       for (var i = 0, n = touches.length; i < n; ++i, l1 = null) {
         p1 = touches[i];
-        if ((l1 = locations0[p1.identifier])) {
+        l1 = locations0[p1.identifier];
+        if (l1) {
           if (l0) break;
-          p0 = p1, l0 = l1;
+          p0 = p1;
+          l0 = l1;
         }
       }
 
@@ -2165,7 +2191,7 @@ d3.behavior.zoom = function() {
   function mousewheeled() {
     var dispatch = event.of(this, arguments);
     if (mousewheelTimer) clearTimeout(mousewheelTimer);
-    else translate0 = location(center0 = center || d3.mouse(this)), d3_selection_interrupt.call(this), zoomstarted(dispatch);
+    else d3_selection_interrupt.call(this), translate0 = location(center0 = center || d3.mouse(this)), zoomstarted(dispatch);
     mousewheelTimer = setTimeout(function() { mousewheelTimer = null; zoomended(dispatch); }, 50);
     d3_eventPreventDefault();
     scaleTo(Math.pow(2, d3_behavior_zoomDelta() * 0.002) * view.k);
@@ -2401,7 +2427,8 @@ function d3_rgb_parse(format, rgb, hsl) {
       color;
 
   /* Handle hsl, rgb. */
-  m1 = /([a-z]+)\((.*)\)/i.exec(format);
+  format = format.toLowerCase();
+  m1 = /([a-z]+)\((.*)\)/.exec(format);
   if (m1) {
     m2 = m1[2].split(",");
     switch (m1[1]) {
@@ -2423,7 +2450,8 @@ function d3_rgb_parse(format, rgb, hsl) {
   }
 
   /* Named colors. */
-  if ((color = d3_rgb_names.get(format.toLowerCase()))) {
+  color = d3_rgb_names.get(format);
+  if (color) {
     return rgb(color.r, color.g, color.b);
   }
 
@@ -2956,17 +2984,20 @@ var d3_timer_queueHead,
     d3_timer_queueTail,
     d3_timer_interval, // is an interval (0) or frame (1) active?
     d3_timer_timeout, // is a timeout active?
-    d3_timer_active, // active timer object
     d3_timer_frame = this[d3_vendorSymbol(this, "requestAnimationFrame")] || function(callback) { setTimeout(callback, 17); };
 
 // The timer will continue to fire until callback returns true.
-d3.timer = function(callback, delay, then) {
+d3.timer = function() {
+  d3_timer.apply(this, arguments);
+};
+
+function d3_timer(callback, delay, then) {
   var n = arguments.length;
   if (n < 2) delay = 0;
   if (n < 3) then = Date.now();
 
   // Add the callback to the tail of the queue.
-  var time = then + delay, timer = {c: callback, t: time, f: false, n: null};
+  var time = then + delay, timer = {c: callback, t: time, n: null};
   if (d3_timer_queueTail) d3_timer_queueTail.n = timer;
   else d3_timer_queueHead = timer;
   d3_timer_queueTail = timer;
@@ -2977,7 +3008,9 @@ d3.timer = function(callback, delay, then) {
     d3_timer_interval = 1;
     d3_timer_frame(d3_timer_step);
   }
-};
+
+  return timer;
+}
 
 function d3_timer_step() {
   var now = d3_timer_mark(),
@@ -3000,11 +3033,11 @@ d3.timer.flush = function() {
 };
 
 function d3_timer_mark() {
-  var now = Date.now();
-  d3_timer_active = d3_timer_queueHead;
-  while (d3_timer_active) {
-    if (now >= d3_timer_active.t) d3_timer_active.f = d3_timer_active.c(now - d3_timer_active.t);
-    d3_timer_active = d3_timer_active.n;
+  var now = Date.now(),
+      timer = d3_timer_queueHead;
+  while (timer) {
+    if (now >= timer.t && timer.c(now - timer.t)) timer.c = null;
+    timer = timer.n;
   }
   return now;
 }
@@ -3016,11 +3049,11 @@ function d3_timer_sweep() {
       t1 = d3_timer_queueHead,
       time = Infinity;
   while (t1) {
-    if (t1.f) {
-      t1 = t0 ? t0.n = t1.n : d3_timer_queueHead = t1.n;
-    } else {
+    if (t1.c) {
       if (t1.t < time) time = t1.t;
       t1 = (t0 = t1).n;
+    } else {
+      t1 = t0 ? t0.n = t1.n : d3_timer_queueHead = t1.n;
     }
   }
   d3_timer_queueTail = t0;
@@ -3045,7 +3078,7 @@ var d3_formatPrefixes = ["y","z","a","f","p","n","µ","m","","k","M","G","T","P"
 
 d3.formatPrefix = function(value, precision) {
   var i = 0;
-  if (value) {
+  if (value = +value) {
     if (value < 0) value *= -1;
     if (precision) value = d3.round(value, d3_format_precision(value, precision));
     i = 1 + Math.floor(1e-12 + Math.log(value) / Math.LN10);
@@ -3410,8 +3443,11 @@ function d3_locale_timeFormat(locale) {
       while (++i < n) {
         if (template.charCodeAt(i) === 37) {
           string.push(template.slice(j, i));
-          if ((p = d3_time_formatPads[c = template.charAt(++i)]) != null) c = template.charAt(++i);
-          if ((f = d3_time_formats[c])) c = f(date, p == null ? (c === "e" ? " " : "0") : p);
+          c = template.charAt(++i);
+          p = d3_time_formatPads[c];
+          if (p != null) c = template.charAt(++i);
+          f = d3_time_formats[c];
+          if (f) c = f(date, p == null ? (c === "e" ? " " : "0") : p);
           string.push(c);
           j = i + 1;
         }
@@ -3435,7 +3471,8 @@ function d3_locale_timeFormat(locale) {
 
       // Set year, month, date.
       if ("j" in d) date.setFullYear(d.y, 0, d.j);
-      else if ("w" in d && ("W" in d || "U" in d)) {
+      else if ("W" in d || "U" in d) {
+        if (!("w" in d)) d.w = "W" in d ? 1 : 0;
         date.setFullYear(d.y, 0, 1);
         date.setFullYear(d.y, 0, "W" in d
             ? (d.w + 6) % 7 + d.W * 7 - (date.getDay() + 5) % 7
@@ -4544,7 +4581,10 @@ function d3_geo_clip(pointVisible, clipLine, interpolate, clipStart) {
         if (n > 0) {
           if (!polygonStarted) listener.polygonStart(), polygonStarted = true;
           listener.lineStart();
-          while (++i < n) listener.point((coord = segment[i])[0], coord[1]);
+          while (++i < n) {
+            coord = segment[i];
+            listener.point(coord[0], coord[1]);
+          }
           listener.lineEnd();
         }
         return;
@@ -7600,7 +7640,8 @@ d3.geom.quadtree = function(points, x1, y1, x2, y2) {
       compat;
 
   // For backwards-compatibility.
-  if ((compat = arguments.length)) {
+  compat = arguments.length;
+  if (compat) {
     x = d3_geom_quadtreeCompatX;
     y = d3_geom_quadtreeCompatY;
     if (compat === 3) {
@@ -7799,7 +7840,8 @@ function d3_geom_quadtreeFind(root, x, y, x0, y0, x3, y3) {
     if (x1 > x3 || y1 > y3 || x2 < x0 || y2 < y0) return;
 
     // visit this point
-    if ((point = node.point)) {
+    point = node.point;
+    if (point) {
       var point,
           dx = x - node.x,
           dy = y - node.y,
@@ -7821,7 +7863,8 @@ function d3_geom_quadtreeFind(root, x, y, x0, y0, x3, y3) {
 
     // visit closest cell first
     for (var i = below << 1 | right, j = i + 4; i < j; ++i) {
-      if ((node = children[i & 3])) { 
+      node = children[i & 3];
+      if (node) { 
         switch (i & 3) {
         case 0: find(node, x1, y1, xm, ym); break;
         case 1: find(node, xm, y1, x2, ym); break;
@@ -7951,7 +7994,7 @@ function d3_interpolate(a, b) {
 d3.interpolators = [
   function(a, b) {
     var t = typeof b;
-    return (t === "string" ? (d3_rgb_names.has(b) || /^(#|rgb\(|hsl\()/.test(b) ? d3_interpolateRgb : d3_interpolateString)
+    return (t === "string" ? (d3_rgb_names.has(b.toLowerCase()) || /^(#|rgb\(|hsl\()/i.test(b) ? d3_interpolateRgb : d3_interpolateString)
         : b instanceof d3_color ? d3_interpolateRgb
         : Array.isArray(b) ? d3_interpolateArray
         : t === "object" && isNaN(b) ? d3_interpolateObject
@@ -8219,53 +8262,56 @@ var d3_transformIdentity = {a: 1, b: 0, c: 0, d: 1, e: 0, f: 0};
 
 d3.interpolateTransform = d3_interpolateTransform;
 
-function d3_interpolateTransform(a, b) {
-  var s = [], // string constants and placeholders
-      q = [], // number interpolators
-      n,
-      A = d3.transform(a),
-      B = d3.transform(b),
-      ta = A.translate,
-      tb = B.translate,
-      ra = A.rotate,
-      rb = B.rotate,
-      wa = A.skew,
-      wb = B.skew,
-      ka = A.scale,
-      kb = B.scale;
+function d3_interpolateTransformPop(s) {
+  return s.length ? s.pop() + "," : "";
+}
 
-  if (ta[0] != tb[0] || ta[1] != tb[1]) {
-    s.push("translate(", null, ",", null, ")");
-    q.push({i: 1, x: d3_interpolateNumber(ta[0], tb[0])}, {i: 3, x: d3_interpolateNumber(ta[1], tb[1])});
+function d3_interpolateTranslate(ta, tb, s, q) {
+  if (ta[0] !== tb[0] || ta[1] !== tb[1]) {
+    var i = s.push("translate(", null, ",", null, ")");
+    q.push({i: i - 4, x: d3_interpolateNumber(ta[0], tb[0])}, {i: i - 2, x: d3_interpolateNumber(ta[1], tb[1])});
   } else if (tb[0] || tb[1]) {
     s.push("translate(" + tb + ")");
-  } else {
-    s.push("");
   }
+}
 
-  if (ra != rb) {
+function d3_interpolateRotate(ra, rb, s, q) {
+  if (ra !== rb) {
     if (ra - rb > 180) rb += 360; else if (rb - ra > 180) ra += 360; // shortest path
-    q.push({i: s.push(s.pop() + "rotate(", null, ")") - 2, x: d3_interpolateNumber(ra, rb)});
+    q.push({i: s.push(d3_interpolateTransformPop(s) + "rotate(", null, ")") - 2, x: d3_interpolateNumber(ra, rb)});
   } else if (rb) {
-    s.push(s.pop() + "rotate(" + rb + ")");
+    s.push(d3_interpolateTransformPop(s) + "rotate(" + rb + ")");
   }
+}
 
-  if (wa != wb) {
-    q.push({i: s.push(s.pop() + "skewX(", null, ")") - 2, x: d3_interpolateNumber(wa, wb)});
+function d3_interpolateSkew(wa, wb, s, q) {
+  if (wa !== wb) {
+    q.push({i: s.push(d3_interpolateTransformPop(s) + "skewX(", null, ")") - 2, x: d3_interpolateNumber(wa, wb)});
   } else if (wb) {
-    s.push(s.pop() + "skewX(" + wb + ")");
+    s.push(d3_interpolateTransformPop(s) + "skewX(" + wb + ")");
   }
+}
 
-  if (ka[0] != kb[0] || ka[1] != kb[1]) {
-    n = s.push(s.pop() + "scale(", null, ",", null, ")");
-    q.push({i: n - 4, x: d3_interpolateNumber(ka[0], kb[0])}, {i: n - 2, x: d3_interpolateNumber(ka[1], kb[1])});
-  } else if (kb[0] != 1 || kb[1] != 1) {
-    s.push(s.pop() + "scale(" + kb + ")");
+function d3_interpolateScale(ka, kb, s, q) {
+  if (ka[0] !== kb[0] || ka[1] !== kb[1]) {
+    var i = s.push(d3_interpolateTransformPop(s) + "scale(", null, ",", null, ")");
+    q.push({i: i - 4, x: d3_interpolateNumber(ka[0], kb[0])}, {i: i - 2, x: d3_interpolateNumber(ka[1], kb[1])});
+  } else if (kb[0] !== 1 || kb[1] !== 1) {
+    s.push(d3_interpolateTransformPop(s) + "scale(" + kb + ")");
   }
+}
 
-  n = q.length;
+function d3_interpolateTransform(a, b) {
+  var s = [], // string constants and placeholders
+      q = []; // number interpolators
+  a = d3.transform(a), b = d3.transform(b);
+  d3_interpolateTranslate(a.translate, b.translate, s, q);
+  d3_interpolateRotate(a.rotate, b.rotate, s, q);
+  d3_interpolateSkew(a.skew, b.skew, s, q);
+  d3_interpolateScale(a.scale, b.scale, s, q);
+  a = b = null; // gc
   return function(t) {
-    var i = -1, o;
+    var i = -1, n = q.length, o;
     while (++i < n) s[(o = q[i]).i] = o.x(t);
     return s.join("");
   };
@@ -8498,6 +8544,7 @@ d3.layout.chord = function() {
 d3.layout.force = function() {
   var force = {},
       event = d3.dispatch("start", "tick", "end"),
+      timer,
       size = [1, 1],
       drag,
       alpha,
@@ -8596,6 +8643,9 @@ d3.layout.force = function() {
   force.tick = function() {
     // simulated annealing, basically
     if ((alpha *= 0.99) < 0.005) {
+      if (timer) {
+        timer.c = null; timer.t = NaN; timer = null;
+      }
       event.end({type: "end", alpha: alpha = 0});
       return true;
     }
@@ -8624,7 +8674,7 @@ d3.layout.force = function() {
         l = alpha * strengths[i] * ((l = Math.sqrt(l)) - distances[i]) / l;
         x *= l;
         y *= l;
-        t.x -= x * (k = s.weight / (t.weight + s.weight));
+        t.x -= x * (k = (s.weight + t.weight ? s.weight / (s.weight + t.weight) : 0.5));
         t.y -= y * k;
         s.x += x * (k = 1 - k);
         s.y += y * k;
@@ -8780,11 +8830,17 @@ d3.layout.force = function() {
 
     x = +x;
     if (alpha) { // if we're already running
-      if (x > 0) alpha = x; // we might keep it hot
-      else alpha = 0; // or, next tick will dispatch "end"
+      if (x > 0) { // we might keep it hot
+        alpha = x;
+      } else { // or we might stop
+        if (timer) {
+          timer.c = null; timer.t = NaN; timer = null;
+        }
+        event.start({type: "end", alpha: alpha = 0});
+      }
     } else if (x > 0) { // otherwise, fire it up!
       event.start({type: "start", alpha: alpha = x});
-      d3.timer(force.tick);
+      timer = d3_timer(force.tick);
     }
 
     return force;
@@ -9177,7 +9233,8 @@ d3.layout.pie = function() {
         da = (typeof endAngle === "function" ? endAngle.apply(this, arguments) : endAngle) - a,
         p = Math.min(Math.abs(da) / n, +(typeof padAngle === "function" ? padAngle.apply(this, arguments) : padAngle)),
         pa = p * (da < 0 ? -1 : 1),
-        k = (da - n * pa) / d3.sum(values),
+        sum = d3.sum(values),
+        k = sum ? (da - n * pa) / sum : 0,
         index = d3.range(n),
         arcs = [],
         v;
@@ -10265,10 +10322,9 @@ d3.layout.treemap = function() {
   function treemap(d) {
     var nodes = stickies || hierarchy(d),
         root = nodes[0];
-    root.x = 0;
-    root.y = 0;
-    root.dx = size[0];
-    root.dy = size[1];
+    root.x = root.y = 0;
+    if (root.value) root.dx = size[0], root.dy = size[1];
+    else root.dx = root.dy = 0;
     if (stickies) hierarchy.revalue(root);
     scale([root], root.dx * root.dy / root.value);
     (stickies ? stickify : squarify)(root);
@@ -11195,22 +11251,27 @@ d3.svg.arc = function() {
     }
 
     // Compute the rounded corners.
-    if ((rc = Math.min(Math.abs(r1 - r0) / 2, +cornerRadius.apply(this, arguments))) > 1e-3) {
+    if (da > ε && (rc = Math.min(Math.abs(r1 - r0) / 2, +cornerRadius.apply(this, arguments))) > 1e-3) {
       cr = r0 < r1 ^ cw ? 0 : 1;
+      var rc1 = rc,
+          rc0 = rc;
 
       // Compute the angle of the sector formed by the two sides of the arc.
-      var oc = x3 == null ? [x2, y2] : x1 == null ? [x0, y0] : d3_geom_polygonIntersect([x0, y0], [x3, y3], [x1, y1], [x2, y2]),
-          ax = x0 - oc[0],
-          ay = y0 - oc[1],
-          bx = x1 - oc[0],
-          by = y1 - oc[1],
-          kc = 1 / Math.sin(Math.acos((ax * bx + ay * by) / (Math.sqrt(ax * ax + ay * ay) * Math.sqrt(bx * bx + by * by))) / 2),
-          lc = Math.sqrt(oc[0] * oc[0] + oc[1] * oc[1]);
+      if (da < π) {
+        var oc = x3 == null ? [x2, y2] : x1 == null ? [x0, y0] : d3_geom_polygonIntersect([x0, y0], [x3, y3], [x1, y1], [x2, y2]),
+            ax = x0 - oc[0],
+            ay = y0 - oc[1],
+            bx = x1 - oc[0],
+            by = y1 - oc[1],
+            kc = 1 / Math.sin(Math.acos((ax * bx + ay * by) / (Math.sqrt(ax * ax + ay * ay) * Math.sqrt(bx * bx + by * by))) / 2),
+            lc = Math.sqrt(oc[0] * oc[0] + oc[1] * oc[1]);
+        rc0 = Math.min(rc, (r0 - lc) / (kc - 1));
+        rc1 = Math.min(rc, (r1 - lc) / (kc + 1));
+      }
 
       // Compute the outer corners.
       if (x1 != null) {
-        var rc1 = Math.min(rc, (r1 - lc) / (kc + 1)),
-            t30 = d3_svg_arcCornerTangents(x3 == null ? [x2, y2] : [x3, y3], [x0, y0], r1, rc1, cw),
+        var t30 = d3_svg_arcCornerTangents(x3 == null ? [x2, y2] : [x3, y3], [x0, y0], r1, rc1, cw),
             t12 = d3_svg_arcCornerTangents([x1, y1], [x2, y2], r1, rc1, cw);
 
         // Detect whether the outer edge is fully circular.
@@ -11231,8 +11292,7 @@ d3.svg.arc = function() {
 
       // Compute the inner corners.
       if (x3 != null) {
-        var rc0 = Math.min(rc, (r0 - lc) / (kc - 1)),
-            t03 = d3_svg_arcCornerTangents([x0, y0], [x3, y3], r0, -rc0, cw),
+        var t03 = d3_svg_arcCornerTangents([x0, y0], [x3, y3], r0, -rc0, cw),
             t21 = d3_svg_arcCornerTangents([x2, y2], x1 == null ? [x0, y0] : [x1, y1], r0, -rc0, cw);
 
         // Detect whether the inner edge is fully circular.
@@ -11367,7 +11427,7 @@ function d3_svg_arcCornerTangents(p0, p1, r1, rc, cw) {
       d2 = dx * dx + dy * dy,
       r = r1 - rc,
       D = x1 * y2 - x2 * y1,
-      d = (dy < 0 ? -1 : 1) * Math.sqrt(r * r * d2 - D * D),
+      d = (dy < 0 ? -1 : 1) * Math.sqrt(Math.max(0, r * r * d2 - D * D)),
       cx0 = (D * dy - dx * d) / d2,
       cy0 = (-D * dx - dy * d) / d2,
       cx1 = (D * dy + dx * d) / d2,
@@ -11393,7 +11453,7 @@ function d3_svg_line(projection) {
       defined = d3_true,
       interpolate = d3_svg_lineLinear,
       interpolateKey = interpolate.key,
-      tension = 0.7;
+      tension = 2 / 3;
 
   function line(data) {
     var segments = [],
@@ -11474,6 +11534,8 @@ var d3_svg_lineInterpolators = d3.map({
   "cardinal": d3_svg_lineCardinal,
   "cardinal-open": d3_svg_lineCardinalOpen,
   "cardinal-closed": d3_svg_lineCardinalClosed,
+  "cubic": d3_svg_lineMonotone,
+  "hermite": d3_svg_lineHermiteMonotone,
   "monotone": d3_svg_lineMonotone
 });
 
@@ -11484,11 +11546,11 @@ d3_svg_lineInterpolators.forEach(function(key, value) {
 
 // Linear interpolation; generates "L" commands.
 function d3_svg_lineLinear(points) {
-  return points.join("L");
+  return points.length > 1 ? points.join("L") : points + "Z";
 }
 
 function d3_svg_lineLinearClosed(points) {
-  return d3_svg_lineLinear(points) + "Z";
+  return points.join("L") + "Z";
 }
 
 // Step interpolation; generates "H" and "V" commands.
@@ -11533,7 +11595,7 @@ function d3_svg_lineCardinalOpen(points, tension) {
 // Closed cardinal spline interpolation; generates "C" commands.
 function d3_svg_lineCardinalClosed(points, tension) {
   return points.length < 3
-      ? d3_svg_lineLinear(points)
+      ? d3_svg_lineLinearClosed(points)
       : points[0] + d3_svg_lineHermite((points.push(points[0]), points),
         d3_svg_lineCardinalTangents([points[points.length - 2]]
         .concat(points, [points[1]]), tension));
@@ -11774,83 +11836,88 @@ function d3_svg_lineBasisBezier(path, x, y) {
       ",", d3_svg_lineDot4(d3_svg_lineBasisBezier3, y));
 }
 
-// Computes the slope from points p0 to p1.
-function d3_svg_lineSlope(p0, p1) {
-  return (p1[1] - p0[1]) / (p1[0] - p0[0]);
-}
-
-// Compute three-point differences for the given points.
-// http://en.wikipedia.org/wiki/Cubic_Hermite_spline#Finite_difference
-function d3_svg_lineFiniteDifferences(points) {
-  var i = 0,
-      j = points.length - 1,
-      m = [],
-      p0 = points[0],
-      p1 = points[1],
-      d = m[0] = d3_svg_lineSlope(p0, p1);
-  while (++i < j) {
-    m[i] = (d + (d = d3_svg_lineSlope(p0 = p1, p1 = points[i + 1]))) / 2;
-  }
-  m[i] = d;
-  return m;
-}
-
 // Interpolates the given points using Fritsch-Carlson Monotone cubic Hermite
 // interpolation. Returns an array of tangent vectors. For details, see
 // http://en.wikipedia.org/wiki/Monotone_cubic_interpolation
 function d3_svg_lineMonotoneTangents(points) {
-  var tangents = [],
-      d,
-      a,
-      b,
-      s,
-      m = d3_svg_lineFiniteDifferences(points),
-      i = -1,
-      j = points.length - 1;
+  var k,
+      n = points.length,
+      m = new Array(n),
+      delta = new Array(n - 1),
+      alpha_k,
+      beta_k,
+      beta_km1,
+      tau_k,
+      dx,
+      tangents = new Array(n);
 
-  // The first two steps are done by computing finite-differences:
   // 1. Compute the slopes of the secant lines between successive points.
+  for (k = 0; k <= n - 2; ++k) {
+    delta[k] = (points[k + 1][1] - points[k][1]) / (points[k + 1][0] - points[k][0]);
+  }
+
   // 2. Initialize the tangents at every point as the average of the secants.
+  // If delta_{k - 1} and delta_k have different sign, set m_k = 0.
+  for (k = 1; k <= n - 2; ++k) {
+    m[k] = (delta[k] < 0) !== (delta[k - 1] < 0) ? 0 : (delta[k - 1] + delta[k]) / 2;
+  }
 
-  // Then, for each segment…
-  while (++i < j) {
-    d = d3_svg_lineSlope(points[i], points[i + 1]);
+  // For the endpoints, use one-sided differences.
+  m[0] = delta[0];
+  m[n - 1] = delta[n - 2];
 
-    // 3. If two successive yk = y{k + 1} are equal (i.e., d is zero), then set
-    // mk = m{k + 1} = 0 as the spline connecting these points must be flat to
-    // preserve monotonicity. Ignore step 4 and 5 for those k.
+  for (k = 0; k <= n - 2; ++k) {
 
-    if (abs(d) < ε) {
-      m[i] = m[i + 1] = 0;
-    } else {
-      if (d * m[i] < 0) {
-        m[i] = 0;
-      }
-      if (d * m[i + 1] < 0) {
-        m[i + 1] = 0;
-      }
-      // 4. Let ak = mk / dk and bk = m{k + 1} / dk.
-      a = m[i] / d;
-      b = m[i + 1] / d;
+    // 3. If delta_k = 0, then set m_k = m_{k + 1} = 0, as the spline connecting
+    // these points must be flat to preserve monotonicity. Ignore step 4 and 5
+    // for those k.
+    if (abs(delta[k]) < ε) {
+      m[k] = m[k + 1] = 0;
+      continue;
+    }
 
-      // 5. Prevent overshoot and ensure monotonicity by restricting the
-      // magnitude of vector <ak, bk> to a circle of radius 3.
-      s = a * a + b * b;
-      if (s > 9) {
-        s = d * 3 / Math.sqrt(s);
-        m[i] = s * a;
-        m[i + 1] = s * b;
-      }
+    // 4. Let alpha_k = m_k / delta_k and beta_k = m_{k+1} / delta_k.
+    alpha_k = m[k] / delta[k];
+    // beta_k = m[k + 1] / delta[k];
+    beta_km1 = m[k] / delta[k - 1];
+
+    // If alpha_k or beta_{k-1} are computed to be less than zero, then the
+    // input data points are not strictly monotone, and (x_k, y_k) is a local
+    // extremum. In such cases, piecewise monotone curves can still be generated
+    // by choosing m_k = 0, although global strict monotonicity is not possible.
+    if (alpha_k < 0 || beta_km1 < 0) {
+      m[k] = 0;
     }
   }
 
-  // Compute the normalized tangent vector from the slopes. Note that if x is
-  // not monotonic, it's possible that the slope will be infinite, so we protect
-  // against NaN by setting the coordinate to zero.
-  i = -1; while (++i <= j) {
-    s = (points[Math.min(j, i + 1)][0] - points[Math.max(0, i - 1)][0]) / (6 * (1 + m[i] * m[i]));
-    tangents.push([s || 0, m[i] * s || 0]);
+  for (k = 0; k <= n - 2; ++k) {
+
+    // 4. Let alpha_k = m_k / delta_k and beta_k = m_{k+1} / delta_k.
+    alpha_k = m[k] / delta[k];
+    beta_k = m[k + 1] / delta[k];
+    // beta_km1 = m[k] / delta[k - 1];
+
+    // 5. To prevent prevent overshoot and ensure monotonicity… restrict the
+    // magnitude of vector (alpha_k, beta_k) to a circle of radius 3.
+    if (alpha_k * alpha_k + beta_k * beta_k > 9) {
+      tau_k = 3 / Math.sqrt(alpha_k * alpha_k + beta_k * beta_k);
+      m[k] = tau_k * alpha_k * delta[k];
+      m[k + 1] = tau_k * beta_k * delta[k];
+    }
   }
+
+  // You can express cubic Hermite interpolation in terms of cubic Bézier curves
+  // with respect to the four values p_0, p_0 + m_0 / 3, p_1 - m_1 / 3, p_1.
+  for (k = 1; k <= n - 2; ++k) {
+    dx = Math.min(points[k][0] - points[k - 1][0], points[k + 1][0] - points[k][0]) / 3;
+    tangents[k] = [dx, m[k] * dx];
+  }
+
+  dx = (points[1][0] - points[0][0]) / 3;
+  tangents[0] = [dx, m[0] * dx];
+
+  dx = (points[n - 1][0] - points[n - 2][0]) / 3;
+  tangents[n - 1] = [dx, m[n - 1] * dx];
 
   return tangents;
 }
@@ -11859,6 +11926,12 @@ function d3_svg_lineMonotone(points) {
   return points.length < 3
       ? d3_svg_lineLinear(points)
       : points[0] + d3_svg_lineCubicPolynomialSpline(points, d3_svg_lineMonotoneTangents(points));
+}
+
+function d3_svg_lineHermiteMonotone(points) {
+  return points.length < 3
+      ? d3_svg_lineLinear(points)
+      : points[0] + d3_svg_lineHermite(points, d3_svg_lineMonotoneTangents(points));
 }
 
 d3.svg.line.radial = function() {
@@ -12269,7 +12342,7 @@ d3_selectionPrototype.transition = function(name) {
   for (var j = -1, m = this.length; ++j < m;) {
     subgroups.push(subgroup = []);
     for (var group = this[j], i = -1, n = group.length; ++i < n;) {
-      if ((node = group[i])) d3_transitionNode(node, i, ns, id, transition);
+      if ((node = group[i])) d3_transitionNode(node, i, j, ns, id, transition);
       subgroup.push(node);
     }
   }
@@ -12289,9 +12362,13 @@ var d3_selection_interrupt = d3_selection_interruptNS(d3_transitionNamespace());
 
 function d3_selection_interruptNS(ns) {
   return function() {
-    var lock, active;
-    if ((lock = this[ns]) && (active = lock[lock.active])) {
-      if (--lock.count) delete lock[lock.active];
+    var lock,
+        activeId,
+        active;
+    if ((lock = this[ns]) && (active = lock[activeId = lock.active])) {
+      active.timer.c = null;
+      active.timer.t = NaN;
+      if (--lock.count) delete lock[activeId];
       else delete this[ns];
       lock.active += 0.5;
       active.event && active.event.interrupt.call(this, this.__data__, active.index);
@@ -12343,7 +12420,7 @@ d3_transitionPrototype.select = function(selector) {
     for (var group = this[j], i = -1, n = group.length; ++i < n;) {
       if ((node = group[i]) && (subnode = selector.call(node, node.__data__, i, j))) {
         if ("__data__" in node) subnode.__data__ = node.__data__;
-        d3_transitionNode(subnode, i, ns, id, node[ns][id]);
+        d3_transitionNode(subnode, i, j, ns, id, node[ns][id]);
         subgroup.push(subnode);
       } else {
         subgroup.push(null);
@@ -12373,7 +12450,7 @@ d3_transitionPrototype.selectAll = function(selector) {
         subnodes = selector.call(node, node.__data__, i, j);
         subgroups.push(subgroup = []);
         for (var k = -1, o = subnodes.length; ++k < o;) {
-          if ((subnode = subnodes[k])) d3_transitionNode(subnode, k, ns, id, transition);
+          if ((subnode = subnodes[k])) d3_transitionNode(subnode, k, i, ns, id, transition);
           subgroup.push(subnode);
         }
       }
@@ -12500,7 +12577,7 @@ d3_transitionPrototype.style = function(name, value, priority) {
             tween = node.__transition__[this.id].tween.get("style." + name);
         return tween
             ? tween.$
-            : d3_window.getComputedStyle(node, null).getPropertyValue(name);
+            : d3_window(node).getComputedStyle(node, null).getPropertyValue(name);
       }
     }
 
@@ -12569,8 +12646,14 @@ function d3_transition_text(b) {
 d3_transitionPrototype.remove = function() {
   var ns = this.namespace;
   return this.each("end.transition", function() {
+    var lock = this[ns];
     var p;
-    if (this[ns].count < 2 && (p = this.parentNode)) p.removeChild(this);
+    if (lock.count > 1) {
+        for (var n in lock) {
+            if (n.match(/^\d+$/) && parseInt(n) > lock.active) return;
+        }
+    }
+    if (p = this.parentNode) p.removeChild(this);
   });
 };
 
@@ -12637,7 +12720,7 @@ d3_transitionPrototype.transition = function() {
     for (group = this[j], i = 0, n = group.length; i < n; i++) {
       if ((node = group[i])) {
         transition = node[ns][id0];
-        d3_transitionNode(node, i, ns, id1, {time: transition.time, ease: transition.ease, delay: transition.delay + transition.duration, duration: transition.duration});
+        d3_transitionNode(node, i, j, ns, id1, {time: transition.time, ease: transition.ease, delay: transition.delay + transition.duration, duration: transition.duration});
       }
       subgroup.push(node);
     }
@@ -12650,90 +12733,109 @@ function d3_transitionNamespace(name) {
   return name == null ? "__transition__" : "__transition_" + name + "__";
 }
 
-function d3_transitionNode(node, i, ns, id, inherit) {
+function d3_transitionNode(node, i, j, ns, id, inherit) {
   var lock = node[ns] || (node[ns] = {active: 0, count: 0}),
-      transition = lock[id];
+      transition = lock[id],
+      time,
+      timer,
+      duration,
+      ease,
+      tweens;
+
+  function schedule(elapsed) {
+    var delay = transition.delay;
+    timer.t = delay + time;
+    if (delay <= elapsed) return start(elapsed - delay);
+    timer.c = start;
+  }
+
+  function start(elapsed) {
+    // Interrupt the active transition, if any.
+    var activeId = lock.active,
+        active = lock[activeId];
+    if (active) {
+      active.timer.c = null;
+      active.timer.t = NaN;
+      --lock.count;
+      delete lock[activeId];
+      active.event && active.event.interrupt.call(node, node.__data__, active.nodeIndex, active.groupIndex);
+    }
+
+    // Cancel any pre-empted transitions. No interrupt event is dispatched
+    // because the cancelled transitions never started.
+    for (var cancelId in lock) {
+      if (+cancelId < id) {
+        var cancel = lock[cancelId];
+        cancel.timer.c = null;
+        cancel.timer.t = NaN;
+        --lock.count;
+        delete lock[cancelId];
+      }
+    }
+
+    // Start the transition.
+    lock.active = id;
+    transition.event && transition.event.start.call(node, node.__data__, i, j);
+
+    // Initialize the tweens.
+    tweens = [];
+    transition.tween.forEach(function(key, value) {
+      if ((value = value.call(node, node.__data__, i, j))) {
+        tweens.push(value);
+      }
+    });
+
+    // Defer capture to allow tween initialization to set ease & duration.
+    ease = transition.ease;
+    duration = transition.duration;
+
+    // Defer tween invocation to end of current frame; see mbostock/d3#1576.
+    // Note that this transition may be canceled before then!
+    timer.c = tick;
+    d3_timer(function() {
+      if (timer.c && tick(elapsed || 1)) {
+        timer.c = null;
+        timer.t = NaN;
+      }
+      return 1;
+    }, 0, time);
+  }
+
+  function tick(elapsed) {
+    var t = elapsed / duration,
+        e = ease(t),
+        n = tweens.length;
+
+    while (n > 0) {
+      tweens[--n].call(node, e);
+    }
+
+    if (t >= 1) {
+      transition.event && transition.event.end.call(node, node.__data__, i, j);
+      if (--lock.count) delete lock[id];
+      else delete node[ns];
+      return 1;
+    }
+  }
 
   if (!transition) {
-    var time = inherit.time;
+    time = inherit.time;
+    timer = d3_timer(schedule, 0, time);
 
     transition = lock[id] = {
       tween: new d3_Map(),
       time: time,
+      timer: timer,
       delay: inherit.delay,
       duration: inherit.duration,
       ease: inherit.ease,
-      index: i
+      groupIndex: j,
+      nodeIndex: i
     };
 
     inherit = null; // allow gc
 
     ++lock.count;
-
-    d3.timer(function(elapsed) {
-      var delay = transition.delay,
-          duration,
-          ease,
-          timer = d3_timer_active,
-          tweened = [];
-
-      timer.t = delay + time;
-      if (delay <= elapsed) return start(elapsed - delay);
-      timer.c = start;
-
-      function start(elapsed) {
-        if (lock.active > id) return stop();
-
-        var active = lock[lock.active];
-        if (active) {
-          --lock.count;
-          delete lock[lock.active];
-          active.event && active.event.interrupt.call(node, node.__data__, active.index);
-        }
-
-        lock.active = id;
-
-        transition.event && transition.event.start.call(node, node.__data__, i);
-
-        transition.tween.forEach(function(key, value) {
-          if ((value = value.call(node, node.__data__, i))) {
-            tweened.push(value);
-          }
-        });
-
-        // Deferred capture to allow tweens to initialize ease & duration.
-        ease = transition.ease;
-        duration = transition.duration;
-
-        d3.timer(function() { // defer to end of current frame
-          timer.c = tick(elapsed || 1) ? d3_true : tick;
-          return 1;
-        }, 0, time);
-      }
-
-      function tick(elapsed) {
-        if (lock.active !== id) return 1;
-
-        var t = elapsed / duration,
-            e = ease(t),
-            n = tweened.length;
-
-        while (n > 0) {
-          tweened[--n].call(node, e);
-        }
-
-        if (t >= 1) {
-          transition.event && transition.event.end.call(node, node.__data__, i);
-          return stop();
-        }
-      }
-
-      function stop() {
-        if (--lock.count) delete lock[id];
-        else delete node[ns];
-        return 1;
-      }
-    }, 0, time);
   }
 }
 
@@ -12829,7 +12931,7 @@ d3.svg.axis = function() {
 
   axis.ticks = function() {
     if (!arguments.length) return tickArguments_;
-    tickArguments_ = arguments;
+    tickArguments_ = d3_array(arguments);
     return axis;
   };
 
@@ -13575,7 +13677,7 @@ d3.xml = d3_xhrType(function(request) {
   return request.responseXML;
 });
 
-  if (typeof define === "function" && define.amd) define(d3);
+  if (typeof define === "function" && define.amd) define(this.d3 = d3);
   else if (typeof module === "object" && module.exports) module.exports = d3;
-  this.d3 = d3;
+  else this.d3 = d3;
 }();
