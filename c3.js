@@ -3,7 +3,7 @@
 
     /*global define, module, exports, require */
 
-    var c3 = { version: "0.4.11-rc4" };
+    var c3 = { version: "0.4.11-rc4-lilee-1" };
 
     var c3_chart_fn,
         c3_chart_internal_fn,
@@ -3755,9 +3755,47 @@
     };
     c3_chart_internal_fn.getBarW = function C3_INTERNAL_getBarW(axis, barTargetsNum) {
         var $$ = this, 
-            config = $$.config,
-            w = typeof config.bar_width === 'number' ? config.bar_width : barTargetsNum ? (axis.tickInterval() * config.bar_width_ratio) / barTargetsNum : 0;
-        return config.bar_width_max && w > config.bar_width_max ? config.bar_width_max : w;
+        var config = $$.config, w = 0;
+        if (typeof config.bar_width === 'number') {
+            w = config.bar_width;
+        } else if (barTargetsNum) {
+            var tickInterval = axis.tickInterval();
+            if (config.axis_x_type === 'timeseries') {
+                var time, timePerPx, min;
+                $$.data.targets.forEach(function (target) {
+                    var data = $$.data.xs[target.id];
+                    // find each pixel represent how long time
+                    var diff = data[data.length - 1].getTime() - data[0].getTime();
+                    if (!time || diff > time) {
+                        time = diff;
+                    }
+
+                    // find minimal time diff between ticks
+                    data.forEach(function (v, i) {
+                        if (data[i + 1]) {
+                            var diff = data[i + 1].getTime() - v.getTime();
+                            if (!min || min > diff) {
+                                min = diff;
+                            }
+                        }
+                    });
+                });
+                timePerPx = time / ($$.xMax - $$.xMin);
+                tickInterval = Math.floor(min / timePerPx / 2);
+            }
+
+            w = (tickInterval * config.bar_width_ratio) / barTargetsNum;
+        }
+
+        if (config.bar_width_max && w > config.bar_width_max) {
+            return config.bar_width_max;
+        }
+
+        if (w < 1) {
+            return 1;
+        }
+
+        return  w;
     };
     c3_chart_internal_fn.getBars = function C3_INTERNAL_getBars(i, id) {
         var $$ = this;
