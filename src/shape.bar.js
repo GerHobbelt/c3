@@ -67,7 +67,7 @@ c3_chart_internal_fn.redrawBar = function C3_INTERNAL_redrawBar(drawBar, withTra
 };
 c3_chart_internal_fn.getBarW = function C3_INTERNAL_getBarW(axis, barTargetsNum) {
     var $$ = this, 
-    var config = $$.config, w = 0;
+        config = $$.config, w = 0;
     if (typeof config.bar_width === 'number') {
         w = config.bar_width;
     } else if (barTargetsNum) {
