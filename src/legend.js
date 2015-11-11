@@ -397,7 +397,9 @@ c3_chart_internal_fn.updateLegend = function C3_INTERNAL_updateLegend(targetIds,
     tiles = $$.legend.selectAll('line.' + CLASS.legendItemTile)
             .data(targetIds);
         (withTransition ? tiles.transition() : tiles)
-            .style('stroke', $$.color)
+            .style('stroke', $$.levelColor ? function(id) {
+                return $$.levelColor($$.cache[id].values[0].value);
+            } : $$.color)
             .attr('x1', x1ForLegendTile)
             .attr('y1', yForLegendTile)
             .attr('x2', x2ForLegendTile)

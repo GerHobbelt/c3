@@ -210,11 +210,13 @@ c3_chart_internal_fn.mapTargetsToUniqueXs = function C3_INTERNAL_mapTargetsToUni
 };
 c3_chart_internal_fn.addHiddenTargetIds = function C3_INTERNAL_addHiddenTargetIds(targetIds) {
     this.hiddenTargetIds = this.hiddenTargetIds.concat(targetIds);
+    this.visibleTargetCount -= targetIds.length;
 };
 c3_chart_internal_fn.removeHiddenTargetIds = function C3_INTERNAL_removeHiddenTargetIds(targetIds) {
     this.hiddenTargetIds = this.hiddenTargetIds.filter(function (id) { 
         return targetIds.indexOf(id) < 0; 
     });
+    this.visibleTargetCount += targetIds.length;
 };
 c3_chart_internal_fn.addHiddenLegendIds = function C3_INTERNAL_addHiddenLegendIds(targetIds) {
     this.hiddenLegendIds = this.hiddenLegendIds.concat(targetIds);

@@ -137,6 +137,7 @@ c3_chart_internal_fn.initParams = function C3_INTERNAL_initParams() {
         ["%Y/%-m/%-d", function () { return true; }]
     ]);
 
+    $$.visibleTargetCount = config.data_hide === true ? 0 : (config.data_columns ? (config.data_columns.length - (config.data_hide ? config.data_hide.length : 0)) : 0);
     $$.hiddenTargetIds = [];
     $$.hiddenLegendIds = [];
     $$.focusedTargetIds = [];
@@ -245,7 +246,7 @@ c3_chart_internal_fn.initWithData = function C3_INTERNAL_initWithData(data) {
     }
 
     // when gauge, hide legend // TODO: fix
-    if ($$.hasType('gauge')) {
+    if ($$.hasType('gauge') && $$.config.data_columns.length <= 1) {
         config.legend_show = false;
     }
 

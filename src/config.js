@@ -204,6 +204,7 @@ c3_chart_internal_fn.getDefaultConfig = function C3_INTERNAL_getDefaultConfig() 
         gauge_max: 100,
         gauge_units: undefined,
         gauge_width: undefined,
+        gauge_arcs_minWidth: 5,
         gauge_expand: {},
         gauge_expand_duration: 50,
         // donut
