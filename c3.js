@@ -289,6 +289,10 @@
                 return config.onmouseout.call($$); 
             });
 
+        if ($$.config.svg_classname) {
+            $$.svg.attr('class', $$.config.svg_classname);
+        }
+
         // Define defs
         defs = $$.svg.append("defs");
         $$.clipChart = $$.appendClip(defs, $$.clipId);
@@ -1181,6 +1185,7 @@
     c3_chart_internal_fn.getDefaultConfig = function C3_INTERNAL_getDefaultConfig() {
         var config = {
             bindto: '#chart',
+            svg_classname: undefined,
             size_width: undefined,
             size_height: undefined,
             padding_left: undefined,
@@ -3289,7 +3294,7 @@
     c3_chart_internal_fn.redrawLine = function C3_INTERNAL_redrawLine(drawLine, withTransition) {
         console.count('redrawLine');
         return [
-            (withTransition ? this.mainLine.transition() : this.mainLine)
+            (withTransition ? this.mainLine.transition(Math.random().toString()) : this.mainLine)
                 .attr("d", drawLine)
                 .style("stroke", this.color)
                 .style("opacity", 1)
@@ -3495,7 +3500,7 @@
     c3_chart_internal_fn.redrawArea = function C3_INTERNAL_redrawArea(drawArea, withTransition) {
         console.count('redrawArea');
         return [
-            (withTransition ? this.mainArea.transition() : this.mainArea)
+            (withTransition ? this.mainArea.transition(Math.random().toString()) : this.mainArea)
                 .attr("d", drawArea)
                 .style("fill", this.color)
                 .style("opacity", this.orgAreaOpacity)
@@ -3591,12 +3596,12 @@
         console.count('redrawCircle');
         var selectedCircles = this.main.selectAll('.' + CLASS.selectedCircle);
         return [
-            (withTransition ? this.mainCircle.transition() : this.mainCircle)
+            (withTransition ? this.mainCircle.transition(Math.random().toString()) : this.mainCircle)
                 .style('opacity', this.opacityForCircle.bind(this))
                 .style("fill", this.color)
                 .attr("cx", cx)
                 .attr("cy", cy),
-            (withTransition ? selectedCircles.transition() : selectedCircles)
+            (withTransition ? selectedCircles.transition(Math.random().toString()) : selectedCircles)
                 .attr("cx", cx)
                 .attr("cy", cy)
         ];
@@ -3742,7 +3747,7 @@
     c3_chart_internal_fn.redrawBar = function C3_INTERNAL_redrawBar(drawBar, withTransition) {
         console.count('redrawBar');
         return [
-            (withTransition ? this.mainBar.transition() : this.mainBar)
+            (withTransition ? this.mainBar.transition(Math.random().toString()) : this.mainBar)
                 .attr('d', drawBar)
                 .style("fill", this.color)
                 .style("opacity", 1)
@@ -5639,9 +5644,12 @@
             config = $$.config,
             found = false, 
             index = 0,
-            gMin = config.gauge_min, 
-            gMax = config.gauge_max, 
-            gTic, gValue;
+            gMin, gMax, gTic, gValue;
+
+        if (!config) {
+            return null;
+        }
+
         $$.pie($$.filterTargetsToShow($$.data.targets)).forEach(function (t) {
             if (! found && t.data.id === d.data.id) {
                 found = true;
@@ -5657,6 +5665,8 @@
             d.endAngle = d.startAngle;
         }
         if ($$.isGaugeType(d.data)) {
+            gMin = config.gauge_min;
+            gMax = config.gauge_max;
             gTic = (Math.PI) / (gMax - gMin);
             gValue = d.value < gMin ? 0 : d.value < gMax ? d.value - gMin : (gMax - gMin);
             d.startAngle = -1 * (Math.PI / 2);
@@ -6476,7 +6486,7 @@
     };
     c3_chart_internal_fn.redrawBarForSubchart = function C3_INTERNAL_redrawBarForSubchart(drawBarOnSub, withTransition, duration) {
         console.count('redrawBarForSubchart');
-        (withTransition ? this.contextBar.transition().duration(duration) : this.contextBar)
+        (withTransition ? this.contextBar.transition(Math.random().toString()).duration(duration) : this.contextBar)
             .attr('d', drawBarOnSub)
             .style('opacity', 1);
     };
@@ -6495,7 +6505,7 @@
     };
     c3_chart_internal_fn.redrawLineForSubchart = function C3_INTERNAL_redrawLineForSubchart(drawLineOnSub, withTransition, duration) {
         console.count('redrawLineForSubchart');
-        (withTransition ? this.contextLine.transition().duration(duration) : this.contextLine)
+        (withTransition ? this.contextLine.transition(Math.random().toString()).duration(duration) : this.contextLine)
             .attr("d", drawLineOnSub)
             .style('opacity', 1);
     };
@@ -6519,7 +6529,7 @@
     };
     c3_chart_internal_fn.redrawAreaForSubchart = function C3_INTERNAL_redrawAreaForSubchart(drawAreaOnSub, withTransition, duration) {
         console.count('redrawAreaForSubchart');
-        (withTransition ? this.contextArea.transition().duration(duration) : this.contextArea)
+        (withTransition ? this.contextArea.transition(Math.random().toString()).duration(duration) : this.contextArea)
             .attr("d", drawAreaOnSub)
             .style("fill", this.color)
             .style("opacity", this.orgAreaOpacity);

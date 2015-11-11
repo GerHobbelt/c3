@@ -69,7 +69,7 @@ c3_chart_internal_fn.updateLine = function C3_INTERNAL_updateLine(durationForExi
 c3_chart_internal_fn.redrawLine = function C3_INTERNAL_redrawLine(drawLine, withTransition) {
     console.count('redrawLine');
     return [
-        (withTransition ? this.mainLine.transition() : this.mainLine)
+        (withTransition ? this.mainLine.transition(Math.random().toString()) : this.mainLine)
             .attr("d", drawLine)
             .style("stroke", this.color)
             .style("opacity", 1)
@@ -275,7 +275,7 @@ c3_chart_internal_fn.updateArea = function C3_INTERNAL_updateArea(durationForExi
 c3_chart_internal_fn.redrawArea = function C3_INTERNAL_redrawArea(drawArea, withTransition) {
     console.count('redrawArea');
     return [
-        (withTransition ? this.mainArea.transition() : this.mainArea)
+        (withTransition ? this.mainArea.transition(Math.random().toString()) : this.mainArea)
             .attr("d", drawArea)
             .style("fill", this.color)
             .style("opacity", this.orgAreaOpacity)
@@ -371,12 +371,12 @@ c3_chart_internal_fn.redrawCircle = function C3_INTERNAL_redrawCircle(cx, cy, wi
     console.count('redrawCircle');
     var selectedCircles = this.main.selectAll('.' + CLASS.selectedCircle);
     return [
-        (withTransition ? this.mainCircle.transition() : this.mainCircle)
+        (withTransition ? this.mainCircle.transition(Math.random().toString()) : this.mainCircle)
             .style('opacity', this.opacityForCircle.bind(this))
             .style("fill", this.color)
             .attr("cx", cx)
             .attr("cy", cy),
-        (withTransition ? selectedCircles.transition() : selectedCircles)
+        (withTransition ? selectedCircles.transition(Math.random().toString()) : selectedCircles)
             .attr("cx", cx)
             .attr("cy", cy)
     ];

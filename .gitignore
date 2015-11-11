@@ -6,6 +6,9 @@ build
 .idea/
 .sass-cache
 
+# coverage report
+/coverage
+
 # github analytics scripts
 __forks__.bulk_dump
 __forks.info__/

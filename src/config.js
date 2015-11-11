@@ -1,6 +1,7 @@
 c3_chart_internal_fn.getDefaultConfig = function C3_INTERNAL_getDefaultConfig() {
     var config = {
         bindto: '#chart',
+        svg_classname: undefined,
         size_width: undefined,
         size_height: undefined,
         padding_left: undefined,

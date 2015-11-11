@@ -1,5 +1,5 @@
 // Karma configuration
-// Generated on Fri Aug 29 2014 16:22:12 GMT-0700 (PDT)
+// Generated on Wed Sep 30 2015 22:01:48 GMT+0900 (KST)
 
 module.exports = function(config) {
   config.set({
@@ -15,9 +15,11 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'src/**/*.js',
-      'extensions/**/*.js',
-      'spec/**/*-spec.js'
+      'node_modules/d3/d3.min.js',
+      'c3.js',
+      'c3.css',
+      'spec/*-helper.js',
+      'spec/*-spec.js'
     ],
 
 
@@ -29,13 +31,19 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
+      'c3.js': ['coverage']
     },
 
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
+    reporters: ['spec', 'coverage'],
+
+
+    coverageReporter: {
+      reporters: [{type: 'lcov'}]
+    },
 
 
     // web server port
@@ -57,11 +65,13 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome'],
+    browsers: ['PhantomJS'],
 
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
+    singleRun: true,
+
+    browserNoActivityTimeout: 60000,
   });
 };

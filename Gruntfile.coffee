@@ -1,5 +1,5 @@
 module.exports = (grunt) ->
-    require('load-grunt-tasks') grunt, pattern: ['grunt-contrib-*', 'grunt-sass']
+    require('load-grunt-tasks') grunt, pattern: ['grunt-contrib-*', 'grunt-sass', 'grunt-karma']
 
     grunt.initConfig
         watch:
@@ -97,6 +97,10 @@ module.exports = (grunt) ->
               styles: 'c3.css'
               vendor: 'htdocs/js/d3.latest.js'
 
+        karma:
+          unit:
+            configFile: 'karma.conf.js'
+
         uglify:
           c3:
             files:
@@ -114,11 +118,6 @@ module.exports = (grunt) ->
             files:
               'c3.css': 'src/scss/main.scss'
 
-        karma:
-          unit:
-            configFile: 'karma.conf.js'
-            background: true
-
         copy:
           web:
             files: [
@@ -128,13 +127,11 @@ module.exports = (grunt) ->
               {expand: true, cwd: 'extensions/js/', src: ['**'], dest: 'htdocs/js/extensions/'},
             ]
 
-    grunt.loadNpmTasks 'grunt-karma'
 
-# dependencies:
-    grunt.registerTask 'build', ['concat', 'jshint', 'jasmine', 'sass', 'cssmin', 'uglify', 'karma']
-    grunt.registerTask 'test', ['concat', 'jshint', 'jasmine']
+    grunt.registerTask 'lint', ['jshint']
+    grunt.registerTask 'test', ['karma']
+    grunt.registerTask 'build', ['concat', 'sass']
+    grunt.registerTask 'minify', ['cssmin', 'uglify']
+    grunt.registerTask 'default', ['lint', 'build', 'test', 'minify']
     grunt.registerTask 'update_web', ['build', 'copy:web']
     grunt.registerTask 'quickbuild', ['concat', 'copy:web', 'sass', 'cssmin', 'uglify']
-
-# main / default:
-    grunt.registerTask 'default', ['update_web']
