@@ -263,7 +263,7 @@ Axis.prototype.dxForYAxisLabel = function C3_API_AXIS_dxForYAxisLabel() {
 Axis.prototype.dxForY2AxisLabel = function C3_API_AXIS_dxForY2AxisLabel() {
     var $$ = this.owner; 
     var position = this.getY2AxisLabelPosition();
-    var box = $$.getTextRect(this.getLabelText("y2"), CLASS.axisY2Label);
+    var box = $$.getTextRect(this.getLabelText("y2"), CLASS.axisY2Label, $$.axes.y2.node());
     var labelWidth = box.width;
     if (this.getLabelRotateOption("y2")) {
         return position.isInner ? "-1em" : (labelWidth * 0.6 + 15) + "px";
@@ -278,7 +278,7 @@ Axis.prototype.dyForXAxisLabel = function C3_API_AXIS_dyForXAxisLabel() {
     if (config.axis_rotated) {
         return position.isInner ? "1.2em" : -25 - this.getMaxTickWidth('x');
     } else {
-        return position.isInner ? "-0.5em" : config.axis_x_height ? config.axis_x_height - 10 : "3em";
+        return position.isInner ? "-0.5em" : config.axis_x_height ? (config.axis_x_height - 10) + "px" : "3em";
     }
 };
 Axis.prototype.dyForYAxisLabel = function C3_API_AXIS_dyForYAxisLabel() {
@@ -289,7 +289,7 @@ Axis.prototype.dyForYAxisLabel = function C3_API_AXIS_dyForYAxisLabel() {
     } else if (this.getLabelRotateOption("y")) {
         return "0.45em";
     } else {
-        return position.isInner ? "1.2em" : -10 - ($$.config.axis_y_inner ? 0 : (this.getMaxTickWidth('y') + 10));
+        return position.isInner ? "1.2em" : (-10 - ($$.config.axis_y_inner ? 0 : (this.getMaxTickWidth('y') + 10))) + "px";
     }
 };
 Axis.prototype.dyForY2AxisLabel = function C3_API_AXIS_dyForY2AxisLabel() {
@@ -300,7 +300,7 @@ Axis.prototype.dyForY2AxisLabel = function C3_API_AXIS_dyForY2AxisLabel() {
     } else if (this.getLabelRotateOption("y2")) {
         return "1.2em";
     } else {
-        return position.isInner ? "-0.5em" : 15 + ($$.config.axis_y2_inner ? 0 : (this.getMaxTickWidth('y2') + 15));
+        return position.isInner ? "-0.5em" : (15 + ($$.config.axis_y2_inner ? 0 : (this.getMaxTickWidth('y2') + 15))) + "px";
     }
 };
 Axis.prototype.textAnchorForXAxisLabel = function C3_API_AXIS_textAnchorForXAxisLabel() {
