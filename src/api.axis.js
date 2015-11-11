@@ -1,5 +1,5 @@
-c3_chart_fn.axis = function () {};
-c3_chart_fn.axis.labels = function (labels) {
+c3_chart_fn.axis = function C3_API_Axis() {};
+c3_chart_fn.axis.labels = function C3_API_Axis_Labels(labels) {
     var $$ = this.internal;
     if (arguments.length) {
         Object.keys(labels).forEach(function (axisId) {
@@ -9,7 +9,7 @@ c3_chart_fn.axis.labels = function (labels) {
     }
     // TODO: return some values?
 };
-c3_chart_fn.axis.max = function (max) {
+c3_chart_fn.axis.max = function C3_API_Axis_Max(max) {
     var $$ = this.internal, config = $$.config;
     if (arguments.length) {
         if (typeof max === 'object') {
@@ -28,7 +28,7 @@ c3_chart_fn.axis.max = function (max) {
         };
     }
 };
-c3_chart_fn.axis.min = function (min) {
+c3_chart_fn.axis.min = function C3_API_Axis_Min(min) {
     var $$ = this.internal, config = $$.config;
     if (arguments.length) {
         if (typeof min === 'object') {
@@ -47,7 +47,7 @@ c3_chart_fn.axis.min = function (min) {
         };
     }
 };
-c3_chart_fn.axis.range = function (range) {
+c3_chart_fn.axis.range = function C3_API_Axis_Range(range) {
     if (arguments.length) {
         if (isDefined(range.max)) { this.axis.max(range.max); }
         if (isDefined(range.min)) { this.axis.min(range.min); }

@@ -22,7 +22,7 @@ c3_chart_internal_fn.updateTargetsForText = function C3_INTERNAL_updateTargetsFo
     mainTextEnter.append('g')
         .attr('class', classTexts);
 };
-c3_chart_internal_fn.getLabelColor = function (d) {
+c3_chart_internal_fn.getLabelColor = function C3_INTERNAL_getLabelColor(d) {
     if (this.config.data_labels && this.config.data_labels.color) {
         return this.config.data_labels.color;
     }
@@ -72,7 +72,7 @@ c3_chart_internal_fn.updateText = function C3_INTERNAL_updateText(durationForExi
         .style('fill-opacity', 0)
         .remove();
 };
-c3_chart_internal_fn.generateDrawBarText = function (barIndices, threshold) {
+c3_chart_internal_fn.generateDrawBarText = function C3_INTERNAL_generateDrawBarText(barIndices, threshold) {
     var $$ = this,
         getPoints = $$.generateGetBarPoints(barIndices, false);
 
@@ -88,7 +88,7 @@ c3_chart_internal_fn.generateDrawBarText = function (barIndices, threshold) {
     };
 };
 
-//c3_chart_internal_fn.addTransitionForText = function (transitions, xForText, yForText, forFlow)
+//c3_chart_internal_fn.addTransitionForText = function C3_INTERNAL_addTransitionForText(transitions, xForText, yForText, forFlow)
 c3_chart_internal_fn.redrawText = function C3_INTERNAL_redrawText(xForText, yForText, forFlow, withTransition) {
     console.count('redrawText');
     var $$ = this,

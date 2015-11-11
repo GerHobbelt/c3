@@ -8,7 +8,7 @@ c3_chart_fn.regions = function C3_API_regions(regions) {
     $$.redrawWithoutRescale();
     return config.regions;
 };
-c3_chart_fn.regions.add = function (regions) {
+c3_chart_fn.regions.add = function C3_API_regions_add(regions) {
     var $$ = this.internal, 
         config = $$.config;
     if (!regions) { 
@@ -18,7 +18,7 @@ c3_chart_fn.regions.add = function (regions) {
     $$.redrawWithoutRescale();
     return config.regions;
 };
-c3_chart_fn.regions.remove = function (options) {
+c3_chart_fn.regions.remove = function C3_API_regions_remove(options) {
     var $$ = this.internal, 
         config = $$.config,
         duration, classes, regions;
