@@ -55,9 +55,9 @@ c3_chart_internal_fn.regionX = function C3_INTERNAL_regionX(d) {
         xPos, 
         yScale = d.axis === 'y' ? $$.y : $$.y2;
     if (d.axis === 'y' || d.axis === 'y2') {
-        xPos = config.axis_rotated ? (d.start ? yScale(d.start) : 0) : 0;
+        xPos = config.axis_rotated ? (d.start != null ? yScale(d.start) : 0) : 0;
     } else {
-        xPos = config.axis_rotated ? 0 : (d.start ? $$.x($$.isTimeSeries() ? $$.parseDate(d.start).valueOf() : d.start) : 0);
+        xPos = config.axis_rotated ? 0 : (d.start != null ? $$.x($$.isTimeSeries() ? $$.parseDate(d.start).valueOf() : d.start) : 0);
     }
     return xPos;
 };
@@ -67,9 +67,9 @@ c3_chart_internal_fn.regionY = function C3_INTERNAL_regionY(d) {
         yPos, 
         yScale = d.axis === 'y' ? $$.y : $$.y2;
     if (d.axis === 'y' || d.axis === 'y2') {
-        yPos = config.axis_rotated ? 0 : (d.end ? yScale(d.end) : 0);
+        yPos = config.axis_rotated ? 0 : (d.end != null ? yScale(d.end) : 0);
     } else {
-        yPos = config.axis_rotated ? (d.start ? $$.x($$.isTimeSeries() ? $$.parseDate(d.start).valueOf() : d.start) : 0) : 0;
+        yPos = config.axis_rotated ? (d.start != null ? $$.x($$.isTimeSeries() ? $$.parseDate(d.start).valueOf() : d.start) : 0) : 0;
     }
     return yPos;
 };
@@ -80,9 +80,9 @@ c3_chart_internal_fn.regionWidth = function C3_INTERNAL_regionWidth(d) {
         end, 
         yScale = d.axis === 'y' ? $$.y : $$.y2;
     if (d.axis === 'y' || d.axis === 'y2') {
-        end = config.axis_rotated ? (d.end ? yScale(d.end) : $$.width) : $$.width;
+        end = config.axis_rotated ? (d.end != null ? yScale(d.end) : $$.width) : $$.width;
     } else {
-        end = config.axis_rotated ? $$.width : (d.end ? $$.x($$.isTimeSeries() ? $$.parseDate(d.end).valueOf() : d.end) : $$.width);
+        end = config.axis_rotated ? $$.width : (d.end != null ? $$.x($$.isTimeSeries() ? $$.parseDate(d.end).valueOf() : d.end) : $$.width);
     }
     return end < start ? 0 : end - start;
 };
@@ -93,9 +93,9 @@ c3_chart_internal_fn.regionHeight = function C3_INTERNAL_regionHeight(d) {
         end, 
         yScale = d.axis === 'y' ? $$.y : $$.y2;
     if (d.axis === 'y' || d.axis === 'y2') {
-        end = config.axis_rotated ? $$.height : (d.start ? yScale(d.start) : $$.height);
+        end = config.axis_rotated ? $$.height : (d.start != null ? yScale(d.start) : $$.height);
     } else {
-        end = config.axis_rotated ? (d.end ? $$.x($$.isTimeSeries() ? $$.parseDate(d.end).valueOf() : d.end) : $$.height) : $$.height;
+        end = config.axis_rotated ? (d.end != null ? $$.x($$.isTimeSeries() ? $$.parseDate(d.end).valueOf() : d.end) : $$.height) : $$.height;
     }
     return end < start ? 0 : end - start;
 };
