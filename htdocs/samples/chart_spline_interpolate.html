@@ -1,25 +1,36 @@
 <html>
-<head>
-    <link href="/css/c3.css" rel="stylesheet" type="text/css">
-</head>
-<body>
+  <head>
+    <link rel="stylesheet" type="text/css" href="../css/c3.css">
+    <script id="profile_code_chunk">
+      console.profile('C3 demo run');
 
-<h3>Cardinal</h3>
-<div id="chart1"></div>
+      function stop_profiling() {
+        console.profileEnd('C3 demo run');
+      }
+      var prof_timer_h = null;
+      function debounce_profile_stop() {
+        clearTimeout(prof_timer_h);
+        prof_timer_h = setTimeout(stop_profiling, 5179);
+      }
+      debounce_profile_stop();
+    </script>
+  </head>
+  <body>
+	<h3>Cardinal</h3>
+	<div id="chart1"></div>
 
-<h3>Basis</h3>
-<div id="chart2"></div>
+	<h3>Basis</h3>
+	<div id="chart2"></div>
 
-<h3>Bundle</h3>
-<div id="chart3"></div>
+	<h3>Bundle</h3>
+	<div id="chart3"></div>
 
-<h3>Monotone</h3>
-<div id="chart4"></div>
+	<h3>Monotone</h3>
+	<div id="chart4"></div>
 
-<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-<script src="/js/c3.js"></script>
-<script>
-
+    <script src="../js/d3.latest.js" charset="utf-8"></script>
+    <script src="../js/c3.js" charset="utf-8"></script>
+	<script>
     var chart1 = c3.generate({
         bindto: '#chart1',
         data: {
@@ -79,7 +90,6 @@
             }
         }
     });
-
-</script>
-</body>
+    </script>
+  </body>
 </html>
