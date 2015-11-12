@@ -436,16 +436,20 @@ c3_chart_internal_fn.convertValuesToStep = function C3_INTERNAL_convertValuesToS
 
     return converted;
 };
-c3_chart_internal_fn.updateDataAttributes = function C3_INTERNAL_updateDataAttributes(name, attrs) {
+c3_chart_internal_fn.updateDataAttributes = function C3_INTERNAL_updateDataAttributes(name, attrs, redraw) {
     var $$ = this, 
         config = $$.config, 
         current = config['data_' + name];
-    if (typeof attrs === 'undefined') { 
-        return current; 
+
+    if (!isUndefined(attrs)) {
+        Object.keys(attrs).forEach(function (id) {
+            current[id] = attrs[id];
+        });
+
+        if (!isUndefined(redraw) ? redraw : true) {
+            $$.redraw({withLegend: true});
+        }
     }
-    Object.keys(attrs).forEach(function (id) {
-        current[id] = attrs[id];
-    });
-    $$.redraw({withLegend: true});
+
     return current;
 };

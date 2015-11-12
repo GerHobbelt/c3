@@ -15,12 +15,6 @@ c3_chart_fn.load = function C3_API_load(args) {
     if (args.categories && $$.isCategorized()) {
         config.axis_x_categories = args.categories;
     }
-    // update names if exists
-    if (args.names) {
-        Object.keys(args.names).forEach(function (id) {
-            config.data_names[id] = args.names[id];
-        });
-    }
     // update axes if exists
     if (args.axes) {
         Object.keys(args.axes).forEach(function (id) {
@@ -33,6 +27,14 @@ c3_chart_fn.load = function C3_API_load(args) {
             config.data_colors[id] = args.colors[id];
         });
     }
+    // update names if exists
+    if ('names' in args) {
+        this.data.names(args.names, false);
+    }
+    // update groups if exists
+    if ('groups' in args) {
+        this.groups(args.groups, false);
+    }
     // use cache if exists
     if (args.cacheIds && $$.hasCaches(args.cacheIds)) {
         $$.load($$.getCaches(args.cacheIds), args.done);
@@ -40,8 +42,12 @@ c3_chart_fn.load = function C3_API_load(args) {
     }
     // unload if needed (args.unload can be a boolean value TRUE or an ID string or an array of IDs to feed to mapToTargetIds())
     if (args.unload) {
+        var idsToUnload = $$.mapToTargetIds((typeof args.unload === 'boolean' && args.unload)
+            ? null
+            : args.unload);
+
         // TODO: do not unload if target will load (included in url/rows/columns)
-        $$.unload($$.mapToTargetIds((typeof args.unload === 'boolean' && args.unload) ? null : args.unload), function () {
+        $$.unload(idsToUnload, function () {
             $$.loadFromArgs(args);
         });
     } else {

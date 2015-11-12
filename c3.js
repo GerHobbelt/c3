@@ -2262,17 +2262,21 @@
 
         return converted;
     };
-    c3_chart_internal_fn.updateDataAttributes = function C3_INTERNAL_updateDataAttributes(name, attrs) {
+    c3_chart_internal_fn.updateDataAttributes = function C3_INTERNAL_updateDataAttributes(name, attrs, redraw) {
         var $$ = this, 
             config = $$.config, 
             current = config['data_' + name];
-        if (typeof attrs === 'undefined') { 
-            return current; 
+
+        if (!isUndefined(attrs)) {
+            Object.keys(attrs).forEach(function (id) {
+                current[id] = attrs[id];
+            });
+
+            if (!isUndefined(redraw) ? redraw : true) {
+                $$.redraw({withLegend: true});
+            }
         }
-        Object.keys(attrs).forEach(function (id) {
-            current[id] = attrs[id];
-        });
-        $$.redraw({withLegend: true});
+
         return current;
     };
 
@@ -7353,12 +7357,6 @@
         if (args.categories && $$.isCategorized()) {
             config.axis_x_categories = args.categories;
         }
-        // update names if exists
-        if (args.names) {
-            Object.keys(args.names).forEach(function (id) {
-                config.data_names[id] = args.names[id];
-            });
-        }
         // update axes if exists
         if (args.axes) {
             Object.keys(args.axes).forEach(function (id) {
@@ -7371,6 +7369,14 @@
                 config.data_colors[id] = args.colors[id];
             });
         }
+        // update names if exists
+        if ('names' in args) {
+            this.data.names(args.names, false);
+        }
+        // update groups if exists
+        if ('groups' in args) {
+            this.groups(args.groups, false);
+        }
         // use cache if exists
         if (args.cacheIds && $$.hasCaches(args.cacheIds)) {
             $$.load($$.getCaches(args.cacheIds), args.done);
@@ -7378,8 +7384,12 @@
         }
         // unload if needed (args.unload can be a boolean value TRUE or an ID string or an array of IDs to feed to mapToTargetIds())
         if (args.unload) {
+            var idsToUnload = $$.mapToTargetIds((typeof args.unload === 'boolean' && args.unload)
+                ? null
+                : args.unload);
+
             // TODO: do not unload if target will load (included in url/rows/columns)
-            $$.unload($$.mapToTargetIds((typeof args.unload === 'boolean' && args.unload) ? null : args.unload), function () {
+            $$.unload(idsToUnload, function () {
                 $$.loadFromArgs(args);
             });
         } else {
@@ -7798,11 +7808,17 @@
         $$.updateAndRedraw(options);
     };
 
-    c3_chart_fn.groups = function C3_API_groups(groups) {
+    c3_chart_fn.groups = function C3_API_groups(groups, redraw) {
         var $$ = this.internal, config = $$.config;
-        if (isUndefined(groups)) { return config.data_groups; }
-        config.data_groups = groups;
-        $$.redraw();
+
+        if (!isUndefined(groups)) {
+          config.data_groups = groups;
+
+          if (!isUndefined(redraw) ? redraw : true) {
+            $$.redraw();
+          }
+        }
+
         return config.data_groups;
     };
 
@@ -7907,15 +7923,15 @@
         }
         return values;
     };
-    c3_chart_fn.data.names = function C3_API_data_names(names) {
+    c3_chart_fn.data.names = function C3_API_data_names(names, redraw) {
         this.internal.clearLegendItemTextBoxCache();
-        return this.internal.updateDataAttributes('names', names);
+        return this.internal.updateDataAttributes('names', names, !isUndefined(redraw) ? redraw : true);
     };
-    c3_chart_fn.data.colors = function C3_API_data_colors(colors) {
-        return this.internal.updateDataAttributes('colors', colors);
+    c3_chart_fn.data.colors = function C3_API_data_colors(colors, redraw) {
+        return this.internal.updateDataAttributes('colors', colors, !isUndefined(redraw) ? redraw : true);
     };
-    c3_chart_fn.data.axes = function C3_API_data_axes(axes) {
-        return this.internal.updateDataAttributes('axes', axes);
+    c3_chart_fn.data.axes = function C3_API_data_axes(axes, redraw) {
+        return this.internal.updateDataAttributes('axes', axes, !isUndefined(redraw) ? redraw : true);
     };
 
     c3_chart_fn.category = function C3_API_category(i, category) {
