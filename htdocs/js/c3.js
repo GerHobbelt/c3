@@ -7384,9 +7384,7 @@
         }
         // unload if needed (args.unload can be a boolean value TRUE or an ID string or an array of IDs to feed to mapToTargetIds())
         if (args.unload) {
-            var idsToUnload = $$.mapToTargetIds((typeof args.unload === 'boolean' && args.unload)
-                ? null
-                : args.unload);
+            var idsToUnload = $$.mapToTargetIds((typeof args.unload === 'boolean' && args.unload) ? null : args.unload);
 
             // TODO: do not unload if target will load (included in url/rows/columns)
             $$.unload(idsToUnload, function () {
@@ -8308,7 +8306,7 @@
                     var dy = sizeFor1Char.h;
                     if (i === 0) {
                         if (orient === 'left' || orient === 'right') {
-                            dy = -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - sizeFor1Char.h / 4);
+                            dy = -Math.round((counts[d.index] - 1) * (sizeFor1Char.h / 2) - sizeFor1Char.h / 4);
                         } else {
                             dy = ".71em";
                         }
