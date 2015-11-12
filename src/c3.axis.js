@@ -169,7 +169,7 @@ function c3_axis(d3, params) {
                 var dy = sizeFor1Char.h;
                 if (i === 0) {
                     if (orient === 'left' || orient === 'right') {
-                        dy = -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - sizeFor1Char.h / 4);
+                        dy = -Math.round((counts[d.index] - 1) * (sizeFor1Char.h / 2) - sizeFor1Char.h / 4);
                     } else {
                         dy = ".71em";
                     }
