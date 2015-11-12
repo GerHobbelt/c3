@@ -49,7 +49,6 @@ c3_chart_internal_fn.getLegendCount = function () {
 };
 c3_chart_internal_fn.getLegendWidth = function C3_INTERNAL_getLegendWidth() {
     var $$ = this;
-    // window.console.log('$$.legendItemWidth', $$.legendItemWidth);
     return $$.config.legend_show ?
         $$.isLegendTopRight ? $$.currentWidth :
         $$.isLegendRight || $$.isLegendInset ? $$.legendItemWidth * ($$.legendStep + 1) : $$.currentWidth : 0;
@@ -155,7 +154,7 @@ c3_chart_internal_fn.updateLegend = function C3_INTERNAL_updateLegend(targetIds,
     });
 
     options = options || {};
-    withTransition = getOption(options, "withTransition", $$.config.transition_duration > 0);
+    withTransition = getOption(options, "withTransition", config.transition_duration > 0);
     withTransitionForTransform = getOption(options, "withTransitionForTransform", withTransition);
 
     function getTextBox(textElement, id) {
@@ -286,7 +285,7 @@ c3_chart_internal_fn.updateLegend = function C3_INTERNAL_updateLegend(targetIds,
         return xForLegend(id, i) - 2; 
     };
     x2ForLegendTile = function (id, i) { 
-        return xForLegend(id, i) - 2 + $$.config.legend_item_width; 
+        return xForLegend(id, i) - 2 + config.legend_item_tile_width; 
     };
     yForLegendTile = function (id, i) { 
         return yForLegend(id, i) + 4; 
@@ -358,8 +357,8 @@ c3_chart_internal_fn.updateLegend = function C3_INTERNAL_updateLegend(targetIds,
         .attr('y1', $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendTile)
         .attr('x2', $$.isLegendRight || $$.isLegendInset ? x2ForLegendTile : -200)
         .attr('y2', $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendTile)
-        .attr('stroke-width', $$.config.legend_item_height)
-        .attr('class', function(id) { return $$.config.data_classes[id] ? $$.config.data_classes[id] + ' ' + CLASS.legendItemTile : CLASS.legendItemTile; });
+        .attr('stroke-width', config.legend_item_tile_height)
+        .attr('class', function(id) { return config.data_classes[id] ? config.data_classes[id] + ' ' + CLASS.legendItemTile : CLASS.legendItemTile; });
 
     // Set background for inset legend
     background = $$.legend.select('.' + CLASS.legendBackground + ' rect');
