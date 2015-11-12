@@ -132,7 +132,7 @@ c3_chart_internal_fn.generateEventRectsForSingleX = function C3_INTERNAL_generat
             var index = d.index;
 
             if ($$.dragging || $$.flowing) { 
-            return; 
+                return; 
             } // do nothing while dragging/flowing
             if ($$.hasArcType()) { 
                 return; 

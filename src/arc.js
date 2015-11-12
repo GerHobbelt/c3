@@ -93,9 +93,9 @@ c3_chart_internal_fn.getSvgArcExpanded = function C3_INTERNAL_getSvgArcExpanded(
     var $$ = this, hasGaugeType = $$.hasType('gauge'),
         singleArcWidth = $$.gaugeArcWidth / $$.visibleTargetCount,
         expandWidth = Math.min($$.radiusExpanded * rate - $$.radius, singleArcWidth * 0.8 - (1 - rate) * 100),
-        arc = $$.d3.svg.arc().outerRadius(function(d){
+        arc = $$.d3.svg.arc().outerRadius(function (d) {
             return hasGaugeType ? $$.radius - singleArcWidth * d.index + expandWidth : $$.radiusExpanded * rate;
-        }).innerRadius(function(d){
+        }).innerRadius(function (d) {
             return hasGaugeType ? $$.radius - singleArcWidth * (d.index + 1) : $$.innerRadius;
         });
     return function (d) {
@@ -361,16 +361,24 @@ c3_chart_internal_fn.redrawArc = function C3_INTERNAL_redrawArc(duration, durati
         mainArcLabelLine = main.selectAll('.' + CLASS.arcs).selectAll('.' + CLASS.arcLabelLine)
             .data($$.arcData.bind($$));
         mainArcLabelLine.enter().append('rect')
-            .attr("class", function (d) { return CLASS.arcLabelLine + ' ' + CLASS.target + ' ' + CLASS.target + '-' + d.data.id; });
+            .attr("class", function (d) { 
+                return CLASS.arcLabelLine + ' ' + CLASS.target + ' ' + CLASS.target + '-' + d.data.id; 
+            });
         if ($$.visibleTargetCount === 1) {
             mainArcLabelLine.style("display", "none");
         }
         else {
             mainArcLabelLine
-                .style("fill", function (d) { return config.color_pattern.length > 0 ? $$.levelColor(d.data.values[0].value) : $$.color(d.data); })
+                .style("fill", function (d) { 
+                    return config.color_pattern.length > 0 ? $$.levelColor(d.data.values[0].value) : $$.color(d.data); 
+                })
                 .style("display", "")
                 .each(function (d) {
-                    var lineLength = 0, lineThickness = 2, x = 0, y = 0, transform = "";
+                    var lineLength = 0, 
+                        lineThickness = 2, 
+                        x = 0, 
+                        y = 0, 
+                        transform = "";
                     if ($$.hiddenTargetIds.indexOf(d.data.id) < 0) {
                         var updated = $$.updateAngle(d),
                             innerLineLength = $$.gaugeArcWidth / $$.visibleTargetCount * (updated.index + 1),
@@ -519,7 +527,9 @@ c3_chart_internal_fn.redrawArc = function C3_INTERNAL_redrawArc(duration, durati
         
         $$.arcs.selectAll('.' + CLASS.chartArcsBackground)
             .attr("d", function (d1) {
-                if ($$.hiddenTargetIds.indexOf(d1.id) >= 0) { return "M 0 0"; }
+                if ($$.hiddenTargetIds.indexOf(d1.id) >= 0) { 
+                    return "M 0 0"; 
+                }
 
                 var d = {
                     data: [{value: config.gauge_max}],
