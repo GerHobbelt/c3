@@ -14,7 +14,7 @@ c3_chart_internal_fn.redrawTitle = function C3_INTERNAL_redrawTitle() {
           .attr("x", $$.xForTitle.bind($$))
           .attr("y", $$.yForTitle.bind($$));
 };
-c3_chart_internal_fn.xForTitle = function () {
+c3_chart_internal_fn.xForTitle = function C3_INTERNAL_xForTitle() {
     var $$ = this, 
         config = $$.config, 
         position = config.title_position || 'left', 
@@ -26,19 +26,19 @@ c3_chart_internal_fn.xForTitle = function () {
           .attr("y", $$.getCurrentPaddingTop() + $$.config.title_y)
     */
     if (position.indexOf('right') >= 0) {
-        x = $$.currentWidth - $$.getTextRect($$.title.node().textContent, $$.CLASS.title, $$.title.node()).width - config.title_padding.right;
+        x = $$.currentWidth - $$.getTextRect($$.title.node(), $$.CLASS.title).width - config.title_padding.right;
     } else if (position.indexOf('center') >= 0) {
-        x = ($$.currentWidth - $$.getTextRect($$.title.node().textContent, $$.CLASS.title, $$.title.node()).width) / 2;
+        x = ($$.currentWidth - $$.getTextRect($$.title.node(), $$.CLASS.title).width) / 2;
     } else { // left
         x = config.title_padding.left;
     }
     return x;
 };
-c3_chart_internal_fn.yForTitle = function () {
+c3_chart_internal_fn.yForTitle = function C3_INTERNAL_yForTitle() {
     var $$ = this;
-    return /* $$.getCurrentPaddingTop() + */ $$.getTextRect($$.title.node().textContent, $$.CLASS.title, $$.title.node()).height;
+    return /* $$.getCurrentPaddingTop() */ $$.config.title_padding.top + $$.getTextRect($$.title.node(), $$.CLASS.title).height;
 };
-c3_chart_internal_fn.getTitlePadding = function() {
+c3_chart_internal_fn.getTitlePadding = function C3_INTERNAL_getTitlePadding() {
     var $$ = this;
     return $$.yForTitle() + $$.config.title_padding.bottom;
 };
