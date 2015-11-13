@@ -89,7 +89,9 @@ describe('c3 chart header', function () {
                         width: 2
                     }
                 },
-                padding: {top: 10}
+                padding: {
+                    top: 10
+                }
             };
             chart = window.initChart(chart, config, done);
         });
