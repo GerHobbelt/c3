@@ -162,8 +162,6 @@
         $$.legendItemWidth = 0;
         $$.legendItemHeight = 0;
 
-        $$.headerPadding = config.header_show ? 20 : 0;
-
         $$.currentMaxTickWidths = {
             x: 0,
             y: 0,
@@ -861,7 +859,7 @@
             x, y;
         if (target === 'main') {
             x = asHalfPixel($$.margin.left);
-            y = asHalfPixel($$.margin.top) + $$.headerPadding;
+            y = asHalfPixel($$.margin.top);
         } else if (target === 'context') {
             x = asHalfPixel($$.margin2.left);
             y = asHalfPixel($$.margin2.top);
@@ -1448,10 +1446,11 @@
             title_y: 0,
             // header
             header_show: false,
-            header_color: undefined,
+            header_height: 15,
+            header_color: '#FFF',
             header_border_show: false,
-            header_border_color: undefined,
-            header_border_width: undefined,
+            header_border_color: '#000',
+            header_border_width: 1,
             // footer
             footer_show: false,
             footer_height: 15,
@@ -3083,6 +3082,9 @@
         var $$ = this,
             config = $$.config,
             padding = isValue(config.padding_top) ? config.padding_top : 0;
+        if ($$.config.header_show) {
+            padding += $$.config.header_height;
+        }
         if ($$.title && $$.title.node() && $$.config.title_position.indexOf('bottom') === -1) {
             padding += $$.getTitlePadding();
         }
@@ -3091,7 +3093,10 @@
     c3_chart_internal_fn.getCurrentPaddingBottom = function C3_INTERNAL_getCurrentPaddingBottom() {
         var $$ = this,
             config = this.config,
-            padding = (isValue(config.padding_bottom) ? config.padding_bottom : 0) + this.headerPadding;
+            padding = isValue(config.padding_bottom) ? config.padding_bottom : 0;
+        if ($$.config.footer_show) {
+            padding += $$.config.footer_height;
+        }
         if ($$.title && $$.title.node() && $$.config.title_position.indexOf('bottom') !== -1) {
             padding += $$.getTitlePadding();
         }
@@ -5189,14 +5194,16 @@
 
     c3_chart_internal_fn.initHeader = function C3_INTERNAL_initHeader() {
       var $$ = this;
-      if ($$.config.header_show && $$.getCurrentPaddingTop()) {
+      if ($$.config.header_show /* && $$.getCurrentPaddingTop() */ ) {
+          var header_height = $$.getCurrentPaddingTop();
+          var header_border_offset = header_height;
           $$.header = $$.svg.append("rect")
                 .attr("class", "c3-chart-header")
                 .attr("style", "fill: " + $$.config.header_color)
                 .attr("x", 0)
                 .attr("y", 0)
                 .attr("width", $$.getCurrentWidth())
-                .attr("height", $$.getCurrentPaddingTop());
+                .attr("height", header_height);
 
           if ($$.config.header_border_show) {
               $$.headerBorder = $$.svg.append("line")
@@ -5205,8 +5212,8 @@
                           "; stroke: " + $$.config.header_border_color)
                     .attr("x1", 0)
                     .attr("x2", $$.getCurrentWidth())
-                    .attr("y1", $$.getCurrentPaddingTop())
-                    .attr("y2", $$.getCurrentPaddingTop());
+                    .attr("y1", header_border_offset)
+                    .attr("y2", header_border_offset);
           }
       }
     };
@@ -5214,9 +5221,10 @@
         console.count('redrawHeader');
         var $$ = this;
         if ($$.header) {
+            var header_height = $$.getCurrentPaddingTop();
             $$.header
                 .attr("width", $$.getCurrentWidth())
-                .attr("height", $$.getCurrentPaddingTop());
+                .attr("height", header_height);
         }
 
         if ($$.headerBorder) {
@@ -5227,15 +5235,16 @@
 
     c3_chart_internal_fn.initFooter = function C3_INTERNAL_initFooter() {
       var $$ = this;
-      if ($$.config.footer_show) {
-          var padding_for_bottom_title = ($$.config.title_position.indexOf('bottom') !== -1 ? ($$.config.title_padding.top || 0) - ($$.config.title_padding.bottom || 0) : 0);
+      if ($$.config.footer_show /* && $$.getCurrentPaddingBottom() */ ) {
+          var footer_height = $$.getCurrentPaddingBottom();
+          var footer_border_offset = $$.getCurrentHeight() - $$.config.footer_height - $$.getCurrentPaddingTop();
           $$.footer = $$.svg.append("rect")
                 .attr("class", "c3-chart-footer")
                 .attr("style", "fill: " + $$.config.footer_color)
                 .attr("x", 0)
-                .attr("y", $$.getCurrentHeight() - $$.config.footer_height - padding_for_bottom_title)
+                .attr("y", footer_height)
                 .attr("width", $$.getCurrentWidth())
-                .attr("height", $$.config.footer_height + padding_for_bottom_title);
+                .attr("height", footer_height);
 
           if ($$.config.footer_border_show) {
               $$.footerBorder = $$.svg.append("line")
@@ -5244,18 +5253,19 @@
                           "; stroke: " + $$.config.footer_border_color)
                     .attr("x1", 0)
                     .attr("x2", $$.getCurrentWidth())
-                    .attr("y1", $$.getCurrentHeight() - $$.config.footer_height - padding_for_bottom_title)
-                    .attr("y2", $$.getCurrentHeight() - $$.config.footer_height - padding_for_bottom_title);
+                    .attr("y1", footer_border_offset)
+                    .attr("y2", footer_border_offset);
           }
       }
     };
     c3_chart_internal_fn.redrawFooter = function C3_INTERNAL_redrawFooter() {
+        console.count('redrawFooter');
         var $$ = this;
         if ($$.footer) {
-            var padding_for_bottom_title = ($$.config.title_position.indexOf('bottom') !== -1 ? ($$.config.title_padding.top || 0) - ($$.config.title_padding.bottom || 0) : 0);
+            var footer_height = $$.getCurrentPaddingBottom();
             $$.footer
                 .attr("width", $$.getCurrentWidth())
-                .attr("height", $$.config.footer_height + padding_for_bottom_title);
+                .attr("height", footer_height);
         }
 
         if ($$.footerBorder) {
