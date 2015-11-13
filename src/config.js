@@ -255,10 +255,11 @@ c3_chart_internal_fn.getDefaultConfig = function C3_INTERNAL_getDefaultConfig() 
         title_y: 0,
         // header
         header_show: false,
-        header_color: undefined,
+        header_height: 15,
+        header_color: '#FFF',
         header_border_show: false,
-        header_border_color: undefined,
-        header_border_width: undefined,
+        header_border_color: '#000',
+        header_border_width: 1,
         // footer
         footer_show: false,
         footer_height: 15,

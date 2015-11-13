@@ -157,8 +157,6 @@ c3_chart_internal_fn.initParams = function C3_INTERNAL_initParams() {
     $$.legendItemWidth = 0;
     $$.legendItemHeight = 0;
 
-    $$.headerPadding = config.header_show ? 20 : 0;
-
     $$.currentMaxTickWidths = {
         x: 0,
         y: 0,
@@ -856,7 +854,7 @@ c3_chart_internal_fn.getTranslate = function C3_INTERNAL_getTranslate(target) {
         x, y;
     if (target === 'main') {
         x = asHalfPixel($$.margin.left);
-        y = asHalfPixel($$.margin.top) + $$.headerPadding;
+        y = asHalfPixel($$.margin.top);
     } else if (target === 'context') {
         x = asHalfPixel($$.margin2.left);
         y = asHalfPixel($$.margin2.top);

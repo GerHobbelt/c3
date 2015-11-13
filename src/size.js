@@ -13,6 +13,9 @@ c3_chart_internal_fn.getCurrentPaddingTop = function C3_INTERNAL_getCurrentPaddi
     var $$ = this,
         config = $$.config,
         padding = isValue(config.padding_top) ? config.padding_top : 0;
+    if ($$.config.header_show) {
+        padding += $$.config.header_height;
+    }
     if ($$.title && $$.title.node() && $$.config.title_position.indexOf('bottom') === -1) {
         padding += $$.getTitlePadding();
     }
@@ -21,7 +24,10 @@ c3_chart_internal_fn.getCurrentPaddingTop = function C3_INTERNAL_getCurrentPaddi
 c3_chart_internal_fn.getCurrentPaddingBottom = function C3_INTERNAL_getCurrentPaddingBottom() {
     var $$ = this,
         config = this.config,
-        padding = (isValue(config.padding_bottom) ? config.padding_bottom : 0) + this.headerPadding;
+        padding = isValue(config.padding_bottom) ? config.padding_bottom : 0;
+    if ($$.config.footer_show) {
+        padding += $$.config.footer_height;
+    }
     if ($$.title && $$.title.node() && $$.config.title_position.indexOf('bottom') !== -1) {
         padding += $$.getTitlePadding();
     }
