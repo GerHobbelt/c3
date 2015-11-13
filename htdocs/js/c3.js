@@ -1285,7 +1285,9 @@
             // axis
             axis_rotated: false,
             axis_x_show: true,
+            axis_x_clip: false,
             axis_x_type: 'indexed',
+            axis_x_scale_type: undefined,
             axis_x_localtime: true,
             axis_x_categories: [],
             axis_x_tick_automatic: false,
@@ -1308,6 +1310,7 @@
             axis_x_label: {},
             axis_y_show: true,
             axis_y_type: undefined,
+            axis_y_scale_type: undefined,
             axis_y_max: undefined,
             axis_y_min: undefined,
             axis_y_inverted: false,
@@ -1480,12 +1483,47 @@
         });
     };
 
-    c3_chart_internal_fn.getScale = function C3_INTERNAL_getScale(min, max, forTimeseries) {
-        return (forTimeseries ? this.d3.time.scale() : this.d3.scale.linear()).range([min, max]);
+    c3_chart_internal_fn.getScale = function C3_INTERNAL_getScale(min, max, scaleType) {
+        // keep compatibility
+        if (typeof scaleType === 'boolean' && scaleType === true) {
+            scaleType = 'timeseries';
+        } else if (typeof scaleType === 'boolean') {
+            scaleType = 'linear';
+        }
+
+        var customScale;
+        // meybe customized scale
+        if (typeof scaleType === 'function') {
+            customScale = scaleType;
+            scaleType = 'custom';
+        } else if (typeof scaleType === 'string' && typeof this.d3.scale[scaleType] === 'function') {
+            customScale = this.d3.scale[scaleType];
+            scaleType = 'custom';
+        }
+
+        var scale;
+        switch (scaleType) {
+            case 'timeseries':
+                scale = this.d3.time.scale();
+                break;
+            case 'custom':
+                scale = customScale();
+                break;
+            default:
+                scale = this.d3.scale.linear();
+                break;
+        }
+        return scale.range([min, max]);
+    };
+    c3_chart_internal_fn.getScaleType = function () {
+        return this.config.axis_x_scale_type;
+    };
+    c3_chart_internal_fn.getScaleTypeY = function () {
+        return this.config.axis_y_scale_type;
     };
     c3_chart_internal_fn.getX = function C3_INTERNAL_getX(min, max, domain, offset) {
         var $$ = this,
-            scale = $$.getScale(min, max, $$.isTimeSeries()),
+            scale = $$.getScale(min, max, $$.isTimeSeries() ? true : $$.getScaleType()),
             _scale = domain ? scale.domain(domain) : scale, 
             key;
         // Define customized scale if categorized axis
@@ -1524,7 +1562,7 @@
         return scale;
     };
     c3_chart_internal_fn.getY = function C3_INTERNAL_getY(min, max, domain) {
-        var scale = this.getScale(min, max, this.isTimeSeriesY());
+        var scale = this.getScale(min, max, this.isTimeSeriesY() ? true : this.getScaleTypeY());
         if (domain) { 
             scale.domain(domain); 
         }
@@ -5613,9 +5651,14 @@
         return parent.append("clipPath").attr("id", id).append("rect");
     };
     c3_chart_internal_fn.getAxisClipX = function C3_INTERNAL_getAxisClipX(forHorizontal) {
+        var $$ = this;
         // axis line width + padding for left
         var left = Math.max(30, this.margin.left);
-        return forHorizontal ? -(1 + left) : -(left - 1);
+        if (forHorizontal) {
+            return $$.config.axis_x_clip ? 0 : -(1 + left);
+        } else {
+            return -(left - 1);
+        }
     };
     c3_chart_internal_fn.getAxisClipY = function C3_INTERNAL_getAxisClipY(forHorizontal) {
         return forHorizontal ? -20 : -this.margin.top;
@@ -5641,7 +5684,11 @@
             left = Math.max(30, $$.margin.left),
             right = Math.max(30, $$.margin.right);
         // width + axis line width + padding for left/right
-        return forHorizontal ? $$.width + 2 + left + right : $$.margin.left + 20;
+        if (forHorizontal) {
+            return $$.config.axis_x_clip ? $$.width : $$.width + 2 + left + right;
+        } else {
+            return $$.margin.left + 20;
+        }
     };
     c3_chart_internal_fn.getAxisClipHeight = function C3_INTERNAL_getAxisClipHeight(forHorizontal) {
         // less than 20 is not enough to show the axis label 'outer' without legend

@@ -6,9 +6,14 @@ c3_chart_internal_fn.appendClip = function C3_INTERNAL_appendClip(parent, id) {
     return parent.append("clipPath").attr("id", id).append("rect");
 };
 c3_chart_internal_fn.getAxisClipX = function C3_INTERNAL_getAxisClipX(forHorizontal) {
+    var $$ = this;
     // axis line width + padding for left
     var left = Math.max(30, this.margin.left);
-    return forHorizontal ? -(1 + left) : -(left - 1);
+    if (forHorizontal) {
+        return $$.config.axis_x_clip ? 0 : -(1 + left);
+    } else {
+        return -(left - 1);
+    }
 };
 c3_chart_internal_fn.getAxisClipY = function C3_INTERNAL_getAxisClipY(forHorizontal) {
     return forHorizontal ? -20 : -this.margin.top;
@@ -34,7 +39,11 @@ c3_chart_internal_fn.getAxisClipWidth = function C3_INTERNAL_getAxisClipWidth(fo
         left = Math.max(30, $$.margin.left),
         right = Math.max(30, $$.margin.right);
     // width + axis line width + padding for left/right
-    return forHorizontal ? $$.width + 2 + left + right : $$.margin.left + 20;
+    if (forHorizontal) {
+        return $$.config.axis_x_clip ? $$.width : $$.width + 2 + left + right;
+    } else {
+        return $$.margin.left + 20;
+    }
 };
 c3_chart_internal_fn.getAxisClipHeight = function C3_INTERNAL_getAxisClipHeight(forHorizontal) {
     // less than 20 is not enough to show the axis label 'outer' without legend

@@ -100,6 +100,7 @@ c3_chart_internal_fn.getDefaultConfig = function C3_INTERNAL_getDefaultConfig() 
         // axis
         axis_rotated: false,
         axis_x_show: true,
+        axis_x_clip: false,
         axis_x_type: 'indexed',
         axis_x_scale_type: undefined,
         axis_x_localtime: true,
