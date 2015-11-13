@@ -43,6 +43,7 @@ module.exports = (grunt) ->
               'src/legend.js',
               'src/title.js',
               'src/header.js',
+              'src/footer.js',
               'src/axis.js',
               'src/clip.js',
               'src/arc.js',

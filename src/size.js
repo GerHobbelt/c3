@@ -13,14 +13,19 @@ c3_chart_internal_fn.getCurrentPaddingTop = function C3_INTERNAL_getCurrentPaddi
     var $$ = this,
         config = $$.config,
         padding = isValue(config.padding_top) ? config.padding_top : 0;
-    if ($$.title && $$.title.node()) {
+    if ($$.title && $$.title.node() && $$.config.title_position.indexOf('bottom') === -1) {
         padding += $$.getTitlePadding();
     }
     return padding;
 };
 c3_chart_internal_fn.getCurrentPaddingBottom = function C3_INTERNAL_getCurrentPaddingBottom() {
-    var config = this.config;
-    return (isValue(config.padding_bottom) ? config.padding_bottom : 0) + this.headerPadding;
+    var $$ = this,
+        config = this.config,
+        padding = (isValue(config.padding_bottom) ? config.padding_bottom : 0) + this.headerPadding;
+    if ($$.title && $$.title.node() && $$.config.title_position.indexOf('bottom') !== -1) {
+        padding += $$.getTitlePadding();
+    }
+    return padding;
 };
 c3_chart_internal_fn.getCurrentPaddingLeft = function C3_INTERNAL_getCurrentPaddingLeft(withoutRecompute) {
     var $$ = this, 

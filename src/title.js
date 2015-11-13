@@ -35,11 +35,18 @@ c3_chart_internal_fn.xForTitle = function C3_INTERNAL_xForTitle() {
     return x;
 };
 c3_chart_internal_fn.yForTitle = function C3_INTERNAL_yForTitle() {
-    var $$ = this;
-    return /* $$.getCurrentPaddingTop() */ $$.config.title_padding.top + $$.getTextRect($$.title.node(), $$.CLASS.title).height;
+    var $$ = this, 
+        position = $$.config.title_position || 'left';
+    if (position.indexOf('bottom') >= 0) {
+      return $$.getCurrentHeight() - (($$.config.title_padding.bottom || 0) + $$.getTextRect($$.title.node().textContent, $$.CLASS.title, $$.title.node()).height);
+    }
+    return ($$.config.title_padding.top || 0) + $$.getTextRect($$.title.node().textContent, $$.CLASS.title, $$.title.node()).height;
 };
 c3_chart_internal_fn.getTitlePadding = function C3_INTERNAL_getTitlePadding() {
-    var $$ = this;
-    return $$.yForTitle() + $$.config.title_padding.bottom;
+    var $$ = this, position = $$.config.title_position || 'left';
+    if (position.indexOf('bottom') !== -1) {
+      return ($$.config.title_padding.bottom || 0) + ($$.config.title_padding.top || 0);
+    }
+    return $$.yForTitle() + ($$.config.title_padding.bottom || 0);
 };
 

@@ -307,6 +307,9 @@ c3_chart_internal_fn.initWithData = function C3_INTERNAL_initWithData(data) {
     if ($$.initHeader) { 
         $$.initHeader(); 
     }
+    if ($$.initFooter) { 
+        $$.initFooter(); 
+    }
     if ($$.initTooltip) { 
         $$.initTooltip(); 
     }
@@ -610,6 +613,11 @@ c3_chart_internal_fn.redraw = function C3_INTERNAL_redraw(options, transitions) 
     // header background
     if ($$.redrawHeader) { 
         $$.redrawHeader(); 
+    }
+
+    // footer background
+    if ($$.redrawFooter) { 
+        $$.redrawFooter(); 
     }
 
     // axes

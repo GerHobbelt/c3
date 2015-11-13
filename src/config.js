@@ -259,6 +259,13 @@ c3_chart_internal_fn.getDefaultConfig = function C3_INTERNAL_getDefaultConfig() 
         header_border_show: false,
         header_border_color: undefined,
         header_border_width: undefined,
+        // footer
+        footer_show: false,
+        footer_height: 15,
+        footer_color: '#FFF',
+        footer_border_show: false,
+        footer_border_color: '#000',
+        footer_border_width: 1,
         // save/load in JSON format
         json_original: undefined,
     };
