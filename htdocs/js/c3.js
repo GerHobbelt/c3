@@ -312,6 +312,9 @@
         if ($$.initHeader) { 
             $$.initHeader(); 
         }
+        if ($$.initFooter) { 
+            $$.initFooter(); 
+        }
         if ($$.initTooltip) { 
             $$.initTooltip(); 
         }
@@ -615,6 +618,11 @@
         // header background
         if ($$.redrawHeader) { 
             $$.redrawHeader(); 
+        }
+
+        // footer background
+        if ($$.redrawFooter) { 
+            $$.redrawFooter(); 
         }
 
         // axes
@@ -1444,6 +1452,13 @@
             header_border_show: false,
             header_border_color: undefined,
             header_border_width: undefined,
+            // footer
+            footer_show: false,
+            footer_height: 15,
+            footer_color: '#FFF',
+            footer_border_show: false,
+            footer_border_color: '#000',
+            footer_border_width: 1,
             // save/load in JSON format
             json_original: undefined,
         };
@@ -2318,16 +2333,17 @@
         return current;
     };
 
-    c3_chart_internal_fn.getOriginalJson = function() {
+    c3_chart_internal_fn.getOriginalJson = function C3_INTERNAL_getOriginalJson() {
     	return this.config.json_original;
     };
-    c3_chart_internal_fn.json2array = function(json) {
+    c3_chart_internal_fn.json2array = function C3_INTERNAL_json2array(json) {
     	var arr = [];
     	for (var i in json) {
     		arr.push(json[i]);
     	}
     	return arr;
     };
+
     c3_chart_internal_fn.convertUrlToData = function C3_INTERNAL_convertUrlToData(url, mimeType, keys, done) {
         var $$ = this, 
             type = mimeType ? mimeType : 'csv';
@@ -3067,14 +3083,19 @@
         var $$ = this,
             config = $$.config,
             padding = isValue(config.padding_top) ? config.padding_top : 0;
-        if ($$.title && $$.title.node()) {
+        if ($$.title && $$.title.node() && $$.config.title_position.indexOf('bottom') === -1) {
             padding += $$.getTitlePadding();
         }
         return padding;
     };
     c3_chart_internal_fn.getCurrentPaddingBottom = function C3_INTERNAL_getCurrentPaddingBottom() {
-        var config = this.config;
-        return (isValue(config.padding_bottom) ? config.padding_bottom : 0) + this.headerPadding;
+        var $$ = this,
+            config = this.config,
+            padding = (isValue(config.padding_bottom) ? config.padding_bottom : 0) + this.headerPadding;
+        if ($$.title && $$.title.node() && $$.config.title_position.indexOf('bottom') !== -1) {
+            padding += $$.getTitlePadding();
+        }
+        return padding;
     };
     c3_chart_internal_fn.getCurrentPaddingLeft = function C3_INTERNAL_getCurrentPaddingLeft(withoutRecompute) {
         var $$ = this, 
@@ -3325,7 +3346,7 @@
         $$.mainLine = $$.main.selectAll('.' + CLASS.lines).selectAll('.' + CLASS.line)
             .data($$.lineData.bind($$));
         $$.mainLine.enter().append('path')
-            .attr('class', function(path) {
+            .attr('class', function (path) {
               var extraClasses = $$.config.data_classes[path.id] ? ' ' + $$.config.data_classes[path.id] : '';
               return $$.classLine(path) + extraClasses;
             })
@@ -3531,7 +3552,7 @@
         $$.mainArea = $$.main.selectAll('.' + CLASS.areas).selectAll('.' + CLASS.area)
             .data($$.lineData.bind($$));
         $$.mainArea.enter().append('path')
-            .attr('class', function(path) {
+            .attr('class', function (path) {
                 var extraClasses = $$.config.data_classes[path.id] ? ' ' + $$.config.data_classes[path.id] : '';
                 return $$.classArea(path) + extraClasses;
               })
@@ -3776,7 +3797,7 @@
             .data(barData);
 
         var path = $$.mainBar.enter().append('path')
-            .attr("class", function(path) {
+            .attr("class", function (path) {
               var extraClasses = $$.config.data_classes[path.id] ? ' ' + $$.config.data_classes[path.id] : '';
               return classBar(path) + extraClasses;
             })
@@ -4567,14 +4588,14 @@
             orderAsc = $$.isOrderAsc();
 
         if (config.data_groups.length === 0) {
-            d.sort(function(a,b){
+            d.sort(function (a, b) {
                 return orderAsc ? a.value - b.value : b.value - a.value;
             });
         } else {
             var ids = $$.orderTargets($$.data.targets).map(function (i) {
                 return i.id;
             });
-            d.sort(function(a, b) {
+            d.sort(function (a, b) {
                 if (a.value > 0 && b.value > 0) {
                     return orderAsc ? ids.indexOf(a.id) - ids.indexOf(b.id) : ids.indexOf(b.id) - ids.indexOf(a.id);
                 } else {
@@ -4830,7 +4851,7 @@
         var texts, rects, tiles, background;
 
         // Skip elements when their name is set to null
-        targetIds = targetIds.filter(function(id) {
+        targetIds = targetIds.filter(function (id) {
             return !isDefined(config.data_names[id]) || config.data_names[id] !== null;
         });
 
@@ -5039,7 +5060,9 @@
             .attr('x2', $$.isLegendRight || $$.isLegendInset ? x2ForLegendTile : -200)
             .attr('y2', $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendTile)
             .attr('stroke-width', config.legend_item_tile_height)
-            .attr('class', function(id) { return config.data_classes[id] ? config.data_classes[id] + ' ' + CLASS.legendItemTile : CLASS.legendItemTile; });
+            .attr('class', function (id) { 
+                return config.data_classes[id] ? config.data_classes[id] + ' ' + CLASS.legendItemTile : CLASS.legendItemTile; 
+            });
 
         // Set background for inset legend
         background = $$.legend.select('.' + CLASS.legendBackground + ' rect');
@@ -5077,7 +5100,7 @@
         tiles = $$.legend.selectAll('line.' + CLASS.legendItemTile)
                 .data(targetIds);
             (withTransition ? tiles.transition() : tiles)
-                .style('stroke', $$.levelColor ? function(id) {
+                .style('stroke', $$.levelColor ? function (id) {
                     return $$.levelColor($$.cache[id].values[0].value);
                 } : $$.color)
                 .attr('x1', x1ForLegendTile)
@@ -5147,16 +5170,24 @@
         return x;
     };
     c3_chart_internal_fn.yForTitle = function C3_INTERNAL_yForTitle() {
-        var $$ = this;
-        return /* $$.getCurrentPaddingTop() */ $$.config.title_padding.top + $$.getTextRect($$.title.node(), $$.CLASS.title).height;
+        var $$ = this, 
+            position = $$.config.title_position || 'left',
+            textRect = $$.getTextRect($$.title.node(), $$.CLASS.title);
+        if (position.indexOf('bottom') >= 0) {
+          return $$.getCurrentHeight() - ($$.config.title_padding.bottom + textRect.height);
+        }
+        return $$.config.title_padding.top + textRect.height;
     };
     c3_chart_internal_fn.getTitlePadding = function C3_INTERNAL_getTitlePadding() {
-        var $$ = this;
+        var $$ = this, position = $$.config.title_position || 'left';
+        if (position.indexOf('bottom') !== -1) {
+          return $$.config.title_padding.bottom + $$.config.title_padding.top;
+        }
         return $$.yForTitle() + $$.config.title_padding.bottom;
     };
 
 
-    c3_chart_internal_fn.initHeader = function() {
+    c3_chart_internal_fn.initHeader = function C3_INTERNAL_initHeader() {
       var $$ = this;
       if ($$.config.header_show && $$.getCurrentPaddingTop()) {
           $$.header = $$.svg.append("rect")
@@ -5190,6 +5221,45 @@
 
         if ($$.headerBorder) {
             $$.headerBorder
+                .attr("x2", $$.getCurrentWidth());
+        }
+    };
+
+    c3_chart_internal_fn.initFooter = function C3_INTERNAL_initFooter() {
+      var $$ = this;
+      if ($$.config.footer_show) {
+          var padding_for_bottom_title = ($$.config.title_position.indexOf('bottom') !== -1 ? ($$.config.title_padding.top || 0) - ($$.config.title_padding.bottom || 0) : 0);
+          $$.footer = $$.svg.append("rect")
+                .attr("class", "c3-chart-footer")
+                .attr("style", "fill: " + $$.config.footer_color)
+                .attr("x", 0)
+                .attr("y", $$.getCurrentHeight() - $$.config.footer_height - padding_for_bottom_title)
+                .attr("width", $$.getCurrentWidth())
+                .attr("height", $$.config.footer_height + padding_for_bottom_title);
+
+          if ($$.config.footer_border_show) {
+              $$.footerBorder = $$.svg.append("line")
+                    .attr("class", "c3-chart-footer-border")
+                    .attr("style", "stroke-width: " + $$.config.footer_border_width +
+                          "; stroke: " + $$.config.footer_border_color)
+                    .attr("x1", 0)
+                    .attr("x2", $$.getCurrentWidth())
+                    .attr("y1", $$.getCurrentHeight() - $$.config.footer_height - padding_for_bottom_title)
+                    .attr("y2", $$.getCurrentHeight() - $$.config.footer_height - padding_for_bottom_title);
+          }
+      }
+    };
+    c3_chart_internal_fn.redrawFooter = function C3_INTERNAL_redrawFooter() {
+        var $$ = this;
+        if ($$.footer) {
+            var padding_for_bottom_title = ($$.config.title_position.indexOf('bottom') !== -1 ? ($$.config.title_padding.top || 0) - ($$.config.title_padding.bottom || 0) : 0);
+            $$.footer
+                .attr("width", $$.getCurrentWidth())
+                .attr("height", $$.config.footer_height + padding_for_bottom_title);
+        }
+
+        if ($$.footerBorder) {
+            $$.footerBorder
                 .attr("x2", $$.getCurrentWidth());
         }
     };
@@ -5783,9 +5853,9 @@
     c3_chart_internal_fn.getSvgArc = function C3_INTERNAL_getSvgArc() {
         var $$ = this, hasGaugeType = $$.hasType('gauge'),
             singleArcWidth = $$.gaugeArcWidth / $$.visibleTargetCount,
-            arc = $$.d3.svg.arc().outerRadius(function(d) {
+            arc = $$.d3.svg.arc().outerRadius(function (d) {
                 return hasGaugeType ? $$.radius - singleArcWidth * d.index : $$.radius;
-            }).innerRadius(function(d) {
+            }).innerRadius(function (d) {
                 return hasGaugeType ? $$.radius - singleArcWidth * (d.index + 1) : $$.innerRadius;
             }),
             newArc = function (d, withoutUpdate) {
@@ -5924,7 +5994,7 @@
         targetIds = $$.mapToTargetIds(targetIds);
 
         $$.svg.selectAll($$.selectorTargets(targetIds, '.' + CLASS.chartArc)).selectAll('path')
-            .transition().duration(function(d) {
+            .transition().duration(function (d) {
                 return $$.expandDuration(d.data.id);
             })
             .attr("d", $$.svgArc);
@@ -6212,7 +6282,7 @@
             .style('opacity', 0)
             .remove();
         main.selectAll('.' + CLASS.chartArc).select('text')
-            .style('opacity', function(d) {
+            .style('opacity', function (d) {
                 var hasOpacityTransition = !$$.isGaugeType(d.data) || $$.config.gauge_label_transition;
                 return hasOpacityTransition ? 0 : d3.select(this).style('opacity');
             })
@@ -6270,7 +6340,7 @@
         if (this.hasType('gauge')) {
             arcs.selectAll().data($$.data.targets).enter()
                 .append('path')
-                .attr("class", function(d) {
+                .attr("class", function (d) {
                     return CLASS.chartArcsBackground + ' ' + CLASS.target +'-'+ d.id;
                 });
             arcs.append("text")
@@ -8578,7 +8648,7 @@
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind#Polyfill
 
     if (!Function.prototype.bind) {
-      Function.prototype.bind = function(oThis) {
+      Function.prototype.bind = function (oThis) {
         if (typeof this !== 'function') {
           // closest thing possible to the ECMAScript 5
           // internal IsCallable function
@@ -8587,8 +8657,8 @@
 
         var aArgs   = Array.prototype.slice.call(arguments, 1),
             fToBind = this,
-            fNOP    = function() {},
-            fBound  = function() {
+            fNOP    = function () {},
+            fBound  = function () {
               return fToBind.apply(this instanceof fNOP ? this : oThis, aArgs.concat(Array.prototype.slice.call(arguments)));
             };
 

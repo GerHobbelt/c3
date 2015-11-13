@@ -177,3 +177,7 @@
 /*-- Header --*/
 .c3-chart-header-border {
   shape-rendering: crispEdges; }
+
+/*-- Footer --*/
+.c3-chart-footer-border {
+  shape-rendering: crispEdges; }

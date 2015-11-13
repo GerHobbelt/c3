@@ -36,17 +36,18 @@ c3_chart_internal_fn.xForTitle = function C3_INTERNAL_xForTitle() {
 };
 c3_chart_internal_fn.yForTitle = function C3_INTERNAL_yForTitle() {
     var $$ = this, 
-        position = $$.config.title_position || 'left';
+        position = $$.config.title_position || 'left',
+        textRect = $$.getTextRect($$.title.node(), $$.CLASS.title);
     if (position.indexOf('bottom') >= 0) {
-      return $$.getCurrentHeight() - (($$.config.title_padding.bottom || 0) + $$.getTextRect($$.title.node().textContent, $$.CLASS.title, $$.title.node()).height);
+      return $$.getCurrentHeight() - ($$.config.title_padding.bottom + textRect.height);
     }
-    return ($$.config.title_padding.top || 0) + $$.getTextRect($$.title.node().textContent, $$.CLASS.title, $$.title.node()).height;
+    return $$.config.title_padding.top + textRect.height;
 };
 c3_chart_internal_fn.getTitlePadding = function C3_INTERNAL_getTitlePadding() {
     var $$ = this, position = $$.config.title_position || 'left';
     if (position.indexOf('bottom') !== -1) {
-      return ($$.config.title_padding.bottom || 0) + ($$.config.title_padding.top || 0);
+      return $$.config.title_padding.bottom + $$.config.title_padding.top;
     }
-    return $$.yForTitle() + ($$.config.title_padding.bottom || 0);
+    return $$.yForTitle() + $$.config.title_padding.bottom;
 };
 
