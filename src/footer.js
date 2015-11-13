@@ -1,4 +1,4 @@
-c3_chart_internal_fn.initFooter = function() {
+c3_chart_internal_fn.initFooter = function C3_INTERNAL_initFooter() {
   var $$ = this;
   if ($$.config.footer_show) {
       var padding_for_bottom_title = ($$.config.title_position.indexOf('bottom') !== -1 ? ($$.config.title_padding.top || 0) - ($$.config.title_padding.bottom || 0) : 0);
@@ -22,7 +22,7 @@ c3_chart_internal_fn.initFooter = function() {
       }
   }
 };
-c3_chart_internal_fn.redrawFooter = function () {
+c3_chart_internal_fn.redrawFooter = function C3_INTERNAL_redrawFooter() {
     var $$ = this;
     if ($$.footer) {
         var padding_for_bottom_title = ($$.config.title_position.indexOf('bottom') !== -1 ? ($$.config.title_padding.top || 0) - ($$.config.title_padding.bottom || 0) : 0);

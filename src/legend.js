@@ -149,7 +149,7 @@ c3_chart_internal_fn.updateLegend = function C3_INTERNAL_updateLegend(targetIds,
     var texts, rects, tiles, background;
 
     // Skip elements when their name is set to null
-    targetIds = targetIds.filter(function(id) {
+    targetIds = targetIds.filter(function (id) {
         return !isDefined(config.data_names[id]) || config.data_names[id] !== null;
     });
 
@@ -358,7 +358,9 @@ c3_chart_internal_fn.updateLegend = function C3_INTERNAL_updateLegend(targetIds,
         .attr('x2', $$.isLegendRight || $$.isLegendInset ? x2ForLegendTile : -200)
         .attr('y2', $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendTile)
         .attr('stroke-width', config.legend_item_tile_height)
-        .attr('class', function(id) { return config.data_classes[id] ? config.data_classes[id] + ' ' + CLASS.legendItemTile : CLASS.legendItemTile; });
+        .attr('class', function (id) { 
+            return config.data_classes[id] ? config.data_classes[id] + ' ' + CLASS.legendItemTile : CLASS.legendItemTile; 
+        });
 
     // Set background for inset legend
     background = $$.legend.select('.' + CLASS.legendBackground + ' rect');
@@ -396,7 +398,7 @@ c3_chart_internal_fn.updateLegend = function C3_INTERNAL_updateLegend(targetIds,
     tiles = $$.legend.selectAll('line.' + CLASS.legendItemTile)
             .data(targetIds);
         (withTransition ? tiles.transition() : tiles)
-            .style('stroke', $$.levelColor ? function(id) {
+            .style('stroke', $$.levelColor ? function (id) {
                 return $$.levelColor($$.cache[id].values[0].value);
             } : $$.color)
             .attr('x1', x1ForLegendTile)

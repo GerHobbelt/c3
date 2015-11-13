@@ -33,14 +33,14 @@ c3_chart_internal_fn.getTooltipContent = function C3_INTERNAL_getTooltipContent(
         orderAsc = $$.isOrderAsc();
 
     if (config.data_groups.length === 0) {
-        d.sort(function(a,b){
+        d.sort(function (a, b) {
             return orderAsc ? a.value - b.value : b.value - a.value;
         });
     } else {
         var ids = $$.orderTargets($$.data.targets).map(function (i) {
             return i.id;
         });
-        d.sort(function(a, b) {
+        d.sort(function (a, b) {
             if (a.value > 0 && b.value > 0) {
                 return orderAsc ? ids.indexOf(a.id) - ids.indexOf(b.id) : ids.indexOf(b.id) - ids.indexOf(a.id);
             } else {

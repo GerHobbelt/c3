@@ -5,7 +5,7 @@ describe('c3 chart title', function () {
 
     describe('when given a title config option', function () {
         describe('with no padding and no position', function () {
-            beforeEach(function(done) {
+            beforeEach(function (done) {
                 config = {
                     data: {
                         columns: [
@@ -53,7 +53,7 @@ describe('c3 chart title', function () {
             };
 
             describe('and position center', function () {
-                beforeEach(function(done) {
+                beforeEach(function (done) {
                     config = getConfig('top-center');
                     chart = window.initChart(chart, config, done);
                 });
@@ -62,7 +62,7 @@ describe('c3 chart title', function () {
                     expect(+titleEl.attr("x")).toBeCloseTo(275, -2);
                     expect(+titleEl.attr("y")).toBeCloseTo(34, -1);
                 });
-                it('adds the correct amount of padding to fit the title', function() {
+                it('adds the correct amount of padding to fit the title', function () {
                     expect(chart.internal.getCurrentPaddingTop()).toEqual(
                         config.title.padding.top + d3.select('.c3-title').node().getBBox().height + config.title.padding.bottom
                     );
@@ -70,7 +70,7 @@ describe('c3 chart title', function () {
             });
 
             describe('and position left', function () {
-                beforeEach(function(done) {
+                beforeEach(function (done) {
                     config = getConfig('top-left');
                     chart = window.initChart(chart, config, done);
                 });
@@ -82,7 +82,7 @@ describe('c3 chart title', function () {
             });
 
             describe('and position right', function () {
-                beforeEach(function(done) {
+                beforeEach(function (done) {
                     config = getConfig('top-right');
                     chart = window.initChart(chart, config, done);
                 });
@@ -94,7 +94,7 @@ describe('c3 chart title', function () {
             });
 
             describe('and position bottom', function () {
-                beforeEach(function(done) {
+                beforeEach(function (done) {
                     config = getConfig('bottom');
                     chart = window.initChart(chart, config, done);
                 });

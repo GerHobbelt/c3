@@ -39,7 +39,7 @@ c3_chart_internal_fn.updateBar = function C3_INTERNAL_updateBar(durationForExit)
         .data(barData);
 
     var path = $$.mainBar.enter().append('path')
-        .attr("class", function(path) {
+        .attr("class", function (path) {
           var extraClasses = $$.config.data_classes[path.id] ? ' ' + $$.config.data_classes[path.id] : '';
           return classBar(path) + extraClasses;
         })

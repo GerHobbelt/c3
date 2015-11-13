@@ -70,9 +70,9 @@ c3_chart_internal_fn.updateAngle = function C3_INTERNAL_updateAngle(d) {
 c3_chart_internal_fn.getSvgArc = function C3_INTERNAL_getSvgArc() {
     var $$ = this, hasGaugeType = $$.hasType('gauge'),
         singleArcWidth = $$.gaugeArcWidth / $$.visibleTargetCount,
-        arc = $$.d3.svg.arc().outerRadius(function(d) {
+        arc = $$.d3.svg.arc().outerRadius(function (d) {
             return hasGaugeType ? $$.radius - singleArcWidth * d.index : $$.radius;
-        }).innerRadius(function(d) {
+        }).innerRadius(function (d) {
             return hasGaugeType ? $$.radius - singleArcWidth * (d.index + 1) : $$.innerRadius;
         }),
         newArc = function (d, withoutUpdate) {
@@ -211,7 +211,7 @@ c3_chart_internal_fn.unexpandArc = function C3_INTERNAL_unexpandArc(targetIds) {
     targetIds = $$.mapToTargetIds(targetIds);
 
     $$.svg.selectAll($$.selectorTargets(targetIds, '.' + CLASS.chartArc)).selectAll('path')
-        .transition().duration(function(d) {
+        .transition().duration(function (d) {
             return $$.expandDuration(d.data.id);
         })
         .attr("d", $$.svgArc);
@@ -499,7 +499,7 @@ c3_chart_internal_fn.redrawArc = function C3_INTERNAL_redrawArc(duration, durati
         .style('opacity', 0)
         .remove();
     main.selectAll('.' + CLASS.chartArc).select('text')
-        .style('opacity', function(d) {
+        .style('opacity', function (d) {
             var hasOpacityTransition = !$$.isGaugeType(d.data) || $$.config.gauge_label_transition;
             return hasOpacityTransition ? 0 : d3.select(this).style('opacity');
         })
@@ -557,7 +557,7 @@ c3_chart_internal_fn.initGauge = function C3_INTERNAL_initGauge() {
     if (this.hasType('gauge')) {
         arcs.selectAll().data($$.data.targets).enter()
             .append('path')
-            .attr("class", function(d) {
+            .attr("class", function (d) {
                 return CLASS.chartArcsBackground + ' ' + CLASS.target +'-'+ d.id;
             });
         arcs.append("text")

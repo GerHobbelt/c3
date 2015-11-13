@@ -51,7 +51,7 @@ c3_chart_internal_fn.updateLine = function C3_INTERNAL_updateLine(durationForExi
     $$.mainLine = $$.main.selectAll('.' + CLASS.lines).selectAll('.' + CLASS.line)
         .data($$.lineData.bind($$));
     $$.mainLine.enter().append('path')
-        .attr('class', function(path) {
+        .attr('class', function (path) {
           var extraClasses = $$.config.data_classes[path.id] ? ' ' + $$.config.data_classes[path.id] : '';
           return $$.classLine(path) + extraClasses;
         })
@@ -257,7 +257,7 @@ c3_chart_internal_fn.updateArea = function C3_INTERNAL_updateArea(durationForExi
     $$.mainArea = $$.main.selectAll('.' + CLASS.areas).selectAll('.' + CLASS.area)
         .data($$.lineData.bind($$));
     $$.mainArea.enter().append('path')
-        .attr('class', function(path) {
+        .attr('class', function (path) {
             var extraClasses = $$.config.data_classes[path.id] ? ' ' + $$.config.data_classes[path.id] : '';
             return $$.classArea(path) + extraClasses;
           })

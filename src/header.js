@@ -1,4 +1,4 @@
-c3_chart_internal_fn.initHeader = function() {
+c3_chart_internal_fn.initHeader = function C3_INTERNAL_initHeader() {
   var $$ = this;
   if ($$.config.header_show && $$.getCurrentPaddingTop()) {
       $$.header = $$.svg.append("rect")
