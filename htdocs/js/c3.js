@@ -5421,11 +5421,11 @@
     Axis.prototype.dxForY2AxisLabel = function C3_API_AXIS_dxForY2AxisLabel() {
         var $$ = this.owner; 
         var position = this.getY2AxisLabelPosition();
-        var label = this.getLabelText("y2");
-        var label2 = $$.axes.y2.node().textContent;
-        if (label !== label2) {
-            debugger;
-        }
+        // var label = this.getLabelText("y2");
+        // var label2 = $$.axes.y2.node().textContent;
+        // if (label !== label2) {
+        //     debugger;
+        // }
         var box = $$.getTextRect($$.axes.y2.node(), CLASS.axisY2Label);
         var labelWidth = box.width;
         if (this.getLabelRotateOption("y2")) {
