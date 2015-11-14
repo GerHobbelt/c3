@@ -41,8 +41,7 @@ c3_chart_internal_fn.updateText = function C3_INTERNAL_updateText(durationForExi
 
     $$.mainText = $$.main.selectAll('.' + CLASS.texts).selectAll('.' + CLASS.text)
         .data(function (d, i) {
-            if (i) debugger;
-            return $$.barOrLineData(d, !!i);
+            return $$.barOrLineData(d);
         });
     $$.mainText.enter().append('text')
         .attr("class", classText)

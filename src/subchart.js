@@ -95,8 +95,7 @@ c3_chart_internal_fn.updateBarForSubchart = function C3_INTERNAL_updateBarForSub
     var $$ = this;
     $$.contextBar = $$.context.selectAll('.' + CLASS.bars).selectAll('.' + CLASS.bar)
         .data(function (d, i) {
-            if (i) debugger;
-            return $$.barData(d, !!i);
+            return $$.barData(d);
         });
     $$.contextBar.enter().append('path')
         .attr("class", $$.classBar.bind($$))
@@ -118,8 +117,7 @@ c3_chart_internal_fn.updateLineForSubchart = function C3_INTERNAL_updateLineForS
     var $$ = this;
     $$.contextLine = $$.context.selectAll('.' + CLASS.lines).selectAll('.' + CLASS.line)
         .data(function (d, i) {
-            if (i) debugger;
-            return $$.lineData(d, !!i);
+            return $$.lineData(d);
         });
     $$.contextLine.enter().append('path')
         .attr('class', $$.classLine.bind($$))
@@ -141,8 +139,7 @@ c3_chart_internal_fn.updateAreaForSubchart = function C3_INTERNAL_updateAreaForS
         d3 = $$.d3;
     $$.contextArea = $$.context.selectAll('.' + CLASS.areas).selectAll('.' + CLASS.area)
         .data(function (d, i) {
-            if (i) debugger;
-            return $$.lineData(d, !!i);
+            return $$.lineData(d);
         });
     $$.contextArea.enter().append('path')
         .attr("class", $$.classArea.bind($$))

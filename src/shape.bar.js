@@ -36,8 +36,7 @@ c3_chart_internal_fn.updateBar = function C3_INTERNAL_updateBar(durationForExit)
         };
     $$.mainBar = $$.main.selectAll('.' + CLASS.bars).selectAll('.' + CLASS.bar)
         .data(function (d, i) {
-            if (i) debugger;
-            return $$.barData(d, !!i);
+            return $$.barData(d);
         });
 
     var path = $$.mainBar.enter().append('path')
