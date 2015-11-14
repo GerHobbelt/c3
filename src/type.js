@@ -57,13 +57,17 @@ c3_chart_internal_fn.isAreaType = function C3_INTERNAL_isAreaType(d, isSub) {
     var dataType = (isSub && config.subchart_types ? config.subchart_types[id] : undefined) || config.data_types[id];
     return ['area', 'area-spline', 'area-step'].indexOf(dataType) >= 0;
 };
-c3_chart_internal_fn.isBarType = function C3_INTERNAL_isBarType(d) {
-    var id = isString(d) ? d : d.id;
-    return this.config.data_types[id] === 'bar';
+c3_chart_internal_fn.isBarType = function C3_INTERNAL_isBarType(d, isSub) {
+    var config = this.config,
+        id = isString(d) ? d : d.id;
+    var dataType = (isSub && config.subchart_types ? config.subchart_types[id] : undefined) || config.data_types[id];
+    return dataType === 'bar';
 };
-c3_chart_internal_fn.isScatterType = function C3_INTERNAL_isScatterType(d) {
-    var id = isString(d) ? d : d.id;
-    return this.config.data_types[id] === 'scatter';
+c3_chart_internal_fn.isScatterType = function C3_INTERNAL_isScatterType(d, isSub) {
+    var config = this.config,
+        id = isString(d) ? d : d.id;
+    var dataType = (isSub && config.subchart_types ? config.subchart_types[id] : undefined) || config.data_types[id];
+    return dataType === 'scatter';
 };
 c3_chart_internal_fn.isPieType = function C3_INTERNAL_isPieType(d) {
     var id = isString(d) ? d : d.id;
@@ -91,14 +95,14 @@ c3_chart_internal_fn.arcData = function C3_INTERNAL_arcData(d) {
  return isScatterType(d) ? d.values : [];
  }
  */
-c3_chart_internal_fn.barData = function C3_INTERNAL_barData(d) {
-    return this.isBarType(d) ? d.values : [];
+c3_chart_internal_fn.barData = function C3_INTERNAL_barData(d, isSub) {
+    return this.isBarType(d, isSub) ? d.values : [];
 };
 c3_chart_internal_fn.lineOrScatterData = function C3_INTERNAL_lineOrScatterData(d, isSub) {
-    return this.isLineType(d, isSub) || this.isScatterType(d) ? d.values : [];
+    return this.isLineType(d, isSub) || this.isScatterType(d, isSub) ? d.values : [];
 };
 c3_chart_internal_fn.barOrLineData = function C3_INTERNAL_barOrLineData(d, isSub) {
-    return this.isBarType(d) || this.isLineType(d, isSub) ? d.values : [];
+    return this.isBarType(d, isSub) || this.isLineType(d, isSub) ? d.values : [];
 };
 c3_chart_internal_fn.isInterpolationType = function (type) {
     return ['linear', 'linear-closed', 'basis', 'basis-open', 'basis-closed', 'bundle', 'cardinal', 'cardinal-open', 'cardinal-closed', 'monotone'].indexOf(type) >= 0;
