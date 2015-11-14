@@ -28,11 +28,11 @@ c3_chart_fn.load = function C3_API_load(args) {
         });
     }
     // update names if exists
-    if ('names' in args) {
+    if (args.names) {
         this.data.names(args.names, false);
     }
     // update groups if exists
-    if ('groups' in args) {
+    if (args.groups) {
         this.groups(args.groups, false);
     }
     // use cache if exists
