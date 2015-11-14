@@ -35,13 +35,15 @@ c3_chart_internal_fn.getLabelColor = function C3_INTERNAL_getLabelColor(d) {
 c3_chart_internal_fn.updateText = function C3_INTERNAL_updateText(durationForExit, barIndices) {
     var $$ = this, 
     config = $$.config,
-        barOrLineData = $$.barOrLineData.bind($$),
         threshold = (config.data_labels && config.data_labels.threshold) || 0,
         drawText = $$.generateDrawBarText(barIndices, threshold),
         classText = $$.classText.bind($$);
 
     $$.mainText = $$.main.selectAll('.' + CLASS.texts).selectAll('.' + CLASS.text)
-        .data(barOrLineData);
+        .data(function (d, i) {
+            if (i) debugger;
+            return $$.barOrLineData(d, !!i);
+        });
     $$.mainText.enter().append('text')
         .attr("class", classText)
         .attr('text-anchor', function (d) {

@@ -42,7 +42,8 @@ c3_chart_internal_fn.getShapeOffset = function C3_INTERNAL_getShapeOffset(typeFi
         });
     return function (d, i) {
         var scale = isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id),
-            y0 = scale(0), offset = y0;
+            y0 = scale(0), 
+            offset = y0;
         targets.forEach(function (t) {
             var values = $$.isStepType(d) ? $$.convertValuesToStep(t.values) : t.values;
             if (t.id === d.id || indices[t.id] !== indices[d.id]) {

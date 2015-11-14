@@ -29,14 +29,16 @@ c3_chart_internal_fn.updateTargetsForBar = function C3_INTERNAL_updateTargetsFor
 };
 c3_chart_internal_fn.updateBar = function C3_INTERNAL_updateBar(durationForExit) {
     var $$ = this,
-        barData = $$.barData.bind($$),
         classBar = $$.classBar.bind($$),
         initialOpacity = $$.initialOpacity.bind($$),
         color = function (d) { 
             return $$.color(d.id); 
         };
     $$.mainBar = $$.main.selectAll('.' + CLASS.bars).selectAll('.' + CLASS.bar)
-        .data(barData);
+        .data(function (d, i) {
+            if (i) debugger;
+            return $$.barData(d, !!i);
+        });
 
     var path = $$.mainBar.enter().append('path')
         .attr("class", function (path) {

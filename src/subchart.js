@@ -94,7 +94,10 @@ c3_chart_internal_fn.updateTargetsForSubchart = function C3_INTERNAL_updateTarge
 c3_chart_internal_fn.updateBarForSubchart = function C3_INTERNAL_updateBarForSubchart(durationForExit) {
     var $$ = this;
     $$.contextBar = $$.context.selectAll('.' + CLASS.bars).selectAll('.' + CLASS.bar)
-        .data($$.barData.bind($$));
+        .data(function (d, i) {
+            if (i) debugger;
+            return $$.barData(d, !!i);
+        });
     $$.contextBar.enter().append('path')
         .attr("class", $$.classBar.bind($$))
         .style("stroke", 'none')
@@ -114,7 +117,10 @@ c3_chart_internal_fn.redrawBarForSubchart = function C3_INTERNAL_redrawBarForSub
 c3_chart_internal_fn.updateLineForSubchart = function C3_INTERNAL_updateLineForSubchart(durationForExit) {
     var $$ = this;
     $$.contextLine = $$.context.selectAll('.' + CLASS.lines).selectAll('.' + CLASS.line)
-        .data($$.lineData.bind($$));
+        .data(function (d, i) {
+            if (i) debugger;
+            return $$.lineData(d, !!i);
+        });
     $$.contextLine.enter().append('path')
         .attr('class', $$.classLine.bind($$))
         .style('stroke', $$.color);
@@ -134,7 +140,10 @@ c3_chart_internal_fn.updateAreaForSubchart = function C3_INTERNAL_updateAreaForS
     var $$ = this, 
         d3 = $$.d3;
     $$.contextArea = $$.context.selectAll('.' + CLASS.areas).selectAll('.' + CLASS.area)
-        .data($$.lineData.bind($$));
+        .data(function (d, i) {
+            if (i) debugger;
+            return $$.lineData(d, !!i);
+        });
     $$.contextArea.enter().append('path')
         .attr("class", $$.classArea.bind($$))
         .style("fill", $$.color)

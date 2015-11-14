@@ -49,7 +49,10 @@ c3_chart_internal_fn.updateTargetsForLine = function C3_INTERNAL_updateTargetsFo
 c3_chart_internal_fn.updateLine = function C3_INTERNAL_updateLine(durationForExit) {
     var $$ = this;
     $$.mainLine = $$.main.selectAll('.' + CLASS.lines).selectAll('.' + CLASS.line)
-        .data($$.lineData.bind($$));
+        .data(function (d, i) {
+            if (i) debugger;
+            return $$.lineData(d, !!i);
+        });
     $$.mainLine.enter().append('path')
         .attr('class', function (path) {
           var extraClasses = $$.config.data_classes[path.id] ? ' ' + $$.config.data_classes[path.id] : '';
@@ -255,7 +258,10 @@ c3_chart_internal_fn.updateArea = function C3_INTERNAL_updateArea(durationForExi
     var $$ = this, 
         d3 = $$.d3;
     $$.mainArea = $$.main.selectAll('.' + CLASS.areas).selectAll('.' + CLASS.area)
-        .data($$.lineData.bind($$));
+        .data(function (d, i) {
+            if (i) debugger;
+            return $$.lineData(d, !!i);
+        });
     $$.mainArea.enter().append('path')
         .attr('class', function (path) {
             var extraClasses = $$.config.data_classes[path.id] ? ' ' + $$.config.data_classes[path.id] : '';
@@ -358,7 +364,10 @@ c3_chart_internal_fn.generateGetAreaPoints = function C3_INTERNAL_generateGetAre
 c3_chart_internal_fn.updateCircle = function C3_INTERNAL_updateCircle() {
     var $$ = this;
     $$.mainCircle = $$.main.selectAll('.' + CLASS.circles).selectAll('.' + CLASS.circle)
-        .data($$.lineOrScatterData.bind($$));
+        .data(function (d, i) {
+            if (i) debugger;
+            return $$.lineOrScatterData(d, !!i);
+        });
     $$.mainCircle.enter().append("circle")
         .attr("class", $$.classCircle.bind($$))
         .attr("r", $$.pointR.bind($$))
