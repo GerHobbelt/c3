@@ -1,6 +1,6 @@
 var isValue = c3_chart_internal_fn.isValue = function C3_INTERNAL_isValue(v) {
-    return v || v === 0;
-},
+        return v || v === 0;
+    },
     isFunction = c3_chart_internal_fn.isFunction = function C3_INTERNAL_isFunction(o) {
         return typeof o === 'function';
     },
@@ -13,7 +13,7 @@ var isValue = c3_chart_internal_fn.isValue = function C3_INTERNAL_isValue(v) {
     isDefined = c3_chart_internal_fn.isDefined = function C3_INTERNAL_isDefined(v) {
         return typeof v !== 'undefined';
     },
-    ceil10 = c3_chart_internal_fn.ceil10 = function (v) {
+    ceil10 = c3_chart_internal_fn.ceil10 = function C3_INTERNAL_ceil10(v) {
         return Math.ceil(v / 10) * 10;
     },
     asHalfPixel = c3_chart_internal_fn.asHalfPixel = function C3_INTERNAL_asHalfPixel(n) {
