@@ -14,7 +14,7 @@
       }
       var prof_timer_h = null;
       var prof_timestamp = Date.now();
-      function debounce_profile_stop(t) {
+      function profile_watchdog_kick(t) {
         clearTimeout(prof_timer_h);
         t = Math.max(t | 0, 5179);
         
@@ -32,7 +32,7 @@
       start_profiling();
     </script>
     <script id="profile_code_chunk_2">
-      debounce_profile_stop();
+      profile_watchdog_kick();
     </script>
   </head>
   <body>
@@ -49,14 +49,14 @@
       });
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.load({
           url: '../data/c3_test2.csv',
         });
       }, 1000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.load({
           url: '../data/c3_test.tsv',
           mimeType: 'tsv'
@@ -64,7 +64,7 @@
       }, 2000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart = c3.generate({
           data: {
             url: '../data/c3_test.json',
@@ -74,7 +74,7 @@
       }, 3000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.load({
           url: '../data/c3_test_2.json',
           mimeType: 'json'
@@ -82,7 +82,7 @@
       }, 4000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.load({
           url: '../data/c3_test_3.json',
           mimeType: 'json',

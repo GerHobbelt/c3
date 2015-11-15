@@ -14,7 +14,7 @@
       }
       var prof_timer_h = null;
       var prof_timestamp = Date.now();
-      function debounce_profile_stop(t) {
+      function profile_watchdog_kick(t) {
         clearTimeout(prof_timer_h);
         t = Math.max(t | 0, 5179);
         
@@ -32,7 +32,7 @@
       start_profiling();
     </script>
     <script id="profile_code_chunk_2">
-      debounce_profile_stop();
+      profile_watchdog_kick();
     </script>
   </head>
   <body>
@@ -105,70 +105,70 @@
       }); };
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         data = data1;
         axis_x_localtime = true;
         chart = generate();
       }, 1000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         data = data1;
         axis_x_localtime = false;
         chart = generate();
       }, 2000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         data = data2;
         axis_x_localtime = true;
         chart = generate();
       }, 3000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         data = data2;
         axis_x_localtime = false;
         chart = generate();
       }, 4000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         data = data3;
         axis_x_localtime = true;
         chart = generate();
       }, 5000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         data = data3;
         axis_x_localtime = false;
         chart = generate();
       }, 6000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         data = data4;
         axis_x_localtime = true;
         chart = generate();
       }, 7000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         data = data4;
         axis_x_localtime = false;
         chart = generate();
       }, 8000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         data = data5;
         axis_x_localtime = true;
         chart = generate();
       }, 9000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         data = data5;
         axis_x_localtime = false;
         chart = generate();

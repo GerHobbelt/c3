@@ -14,7 +14,7 @@
       }
       var prof_timer_h = null;
       var prof_timestamp = Date.now();
-      function debounce_profile_stop(t) {
+      function profile_watchdog_kick(t) {
         clearTimeout(prof_timer_h);
         t = Math.max(t | 0, 5179);
         
@@ -32,7 +32,7 @@
       start_profiling();
     </script>
     <script id="profile_code_chunk_2">
-      debounce_profile_stop();
+      profile_watchdog_kick();
     </script>
   </head>
   <body>
@@ -51,22 +51,22 @@
       });
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.tooltip.show({ x: 1 });
       }, 1000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.tooltip.show({ index: 3 });
       }, 2000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.tooltip.show({ data: {x: 2} });
       }, 3000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.tooltip.hide();
       }, 4000);
 

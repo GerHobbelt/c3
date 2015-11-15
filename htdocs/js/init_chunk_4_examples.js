@@ -10,7 +10,7 @@
       }
       var prof_timer_h = null;
       var prof_timestamp = Date.now();
-      function debounce_profile_stop(t) {
+      function profile_watchdog_kick(t) {
         clearTimeout(prof_timer_h);
         t = Math.max(t | 0, 5179);
         

@@ -14,7 +14,7 @@
       }
       var prof_timer_h = null;
       var prof_timestamp = Date.now();
-      function debounce_profile_stop(t) {
+      function profile_watchdog_kick(t) {
         clearTimeout(prof_timer_h);
         t = Math.max(t | 0, 5179);
         
@@ -32,7 +32,7 @@
       start_profiling();
     </script>
     <script id="profile_code_chunk_2">
-      debounce_profile_stop();
+      profile_watchdog_kick();
     </script>
   </head>
   <body>
@@ -79,7 +79,7 @@
       });
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.load({
           columns: [
             ['sample', 200, 130, 90, 240, 130, 100],
@@ -89,7 +89,7 @@
       }, 1000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.load({
           columns: [
             ['date', '2014-01-01', '2014-02-01', '2014-03-01', '2014-04-01', '2014-05-01', '2014-06-01'],

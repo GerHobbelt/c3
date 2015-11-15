@@ -14,7 +14,7 @@
       }
       var prof_timer_h = null;
       var prof_timestamp = Date.now();
-      function debounce_profile_stop(t) {
+      function profile_watchdog_kick(t) {
         clearTimeout(prof_timer_h);
         t = Math.max(t | 0, 5179);
         
@@ -32,7 +32,7 @@
       start_profiling();
     </script>
     <script id="profile_code_chunk_2">
-      debounce_profile_stop();
+      profile_watchdog_kick();
     </script>
   </head>
   <body>
@@ -53,7 +53,7 @@
       });
 
     setTimeout(function () {
-      debounce_profile_stop();
+      profile_watchdog_kick();
       chart = c3.generate({
         data: {
           json: [{
@@ -82,7 +82,7 @@
     }, 1000);
 
     setTimeout(function () {
-      debounce_profile_stop();
+      profile_watchdog_kick();
       chart = c3.generate({
         data: {
 //          x: 'name',
@@ -106,7 +106,7 @@
     }, 2000);
 
     setTimeout(function () {
-      debounce_profile_stop();
+      profile_watchdog_kick();
       chart.load({
           json: [
             { id: 1, name: 'abc', visits: 1200 },

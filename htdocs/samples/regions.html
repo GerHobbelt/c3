@@ -14,7 +14,7 @@
       }
       var prof_timer_h = null;
       var prof_timestamp = Date.now();
-      function debounce_profile_stop(t) {
+      function profile_watchdog_kick(t) {
         clearTimeout(prof_timer_h);
         t = Math.max(t | 0, 5179);
         
@@ -32,7 +32,7 @@
       start_profiling();
     </script>
     <script id="profile_code_chunk_2">
-      debounce_profile_stop();
+      profile_watchdog_kick();
     </script>
   </head>
   <body>
@@ -67,7 +67,7 @@
       });
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.load({
           columns: [
             ['sample', -100, 200, 50, 100, 400, 299]
@@ -76,32 +76,32 @@
       }, 1000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.regions([]);
       }, 2000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.regions([{start:0.5,end:2.5}]);
       }, 3000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.regions.add([{start:4.5}]);
       }, 4000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.regions.add([{start:3,end:3.5,class:"region1"}, {start:4,end:4.5,class:"region2"}]);
       }, 5000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.regions.remove({classes:['region1', 'region2'], duration: 0});
       }, 6000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.regions.add([
           {start:3,end:3.5,class:"region3 hoge"},
           {start:4,end:4.5,class:"region4 hoge"},
@@ -110,17 +110,17 @@
       }, 7000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.regions.remove({classes:['hoge'], duration: 500});
       }, 8000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.regions.remove({classes:['hogehoge']});
       }, 9000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.regions.remove({});
       }, 10000);
 

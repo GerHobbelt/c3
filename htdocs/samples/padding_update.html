@@ -14,7 +14,7 @@
       }
       var prof_timer_h = null;
       var prof_timestamp = Date.now();
-      function debounce_profile_stop(t) {
+      function profile_watchdog_kick(t) {
         clearTimeout(prof_timer_h);
         t = Math.max(t | 0, 5179);
         
@@ -32,7 +32,7 @@
       start_profiling();
     </script>
     <script id="profile_code_chunk_2">
-      debounce_profile_stop();
+      profile_watchdog_kick();
     </script>
   </head>
   <body>
@@ -70,17 +70,17 @@
     }); }, chart = generate();
 
     setTimeout(function () {
-      debounce_profile_stop();
+      profile_watchdog_kick();
       chart.hide();
     }, 1000);
 
     setTimeout(function () {
-      debounce_profile_stop();
+      profile_watchdog_kick();
       chart.show();
     }, 2000);
 
     setTimeout(function () {
-      debounce_profile_stop();
+      profile_watchdog_kick();
       chart.load({
         columns: [
           ['data1', 300, 350, 100]
@@ -90,7 +90,7 @@
     }, 3000);
 
     setTimeout(function () {
-      debounce_profile_stop();
+      profile_watchdog_kick();
       chart.load({
         columns: [
           ['data1', 50, 100, 150]
@@ -100,13 +100,13 @@
     }, 4000);
 
     setTimeout(function () {
-      debounce_profile_stop();
+      profile_watchdog_kick();
       axis_rotated = false;
       chart = generate();
     }, 5000);
 
     setTimeout(function () {
-      debounce_profile_stop();
+      profile_watchdog_kick();
       chart.load({
         columns: [
           ['data1', 300, 350, 100000]
@@ -115,7 +115,7 @@
     }, 6000);
 
     setTimeout(function () {
-      debounce_profile_stop();
+      profile_watchdog_kick();
       chart.load({
         columns: [
           ['data1', 50, 100, 150]

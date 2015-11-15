@@ -14,7 +14,7 @@
       }
       var prof_timer_h = null;
       var prof_timestamp = Date.now();
-      function debounce_profile_stop(t) {
+      function profile_watchdog_kick(t) {
         clearTimeout(prof_timer_h);
         t = Math.max(t | 0, 5179);
         
@@ -32,7 +32,7 @@
       start_profiling();
     </script>
     <script id="profile_code_chunk_2">
-      debounce_profile_stop(50000);
+      profile_watchdog_kick(50000);
     </script>
   </head>
   <body>
@@ -94,7 +94,7 @@
       chart = generate();
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.flow({
           columns: [
             ['x', '2013-01-21'],
@@ -106,7 +106,7 @@
       }, 1000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.flow({
           columns: [
             ['x', '2013-02-01', '2013-02-08', '2013-02-15'],
@@ -120,7 +120,7 @@
       }, 4000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         console.log("Flow 1");
         chart.flow({
           columns: [
@@ -135,7 +135,7 @@
       }, 7000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.flow({
           columns: [
             ['x', '2013-03-15', '2013-05-01'],
@@ -149,12 +149,12 @@
       }, 10000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart = generate();
       }, 14000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.flow({
           columns: [
             ['x', '2013-01-21', '2013-01-25', '2013-01-26'],
@@ -166,7 +166,7 @@
       }, 15000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.flow({
           columns: [
             ['x', '2013-02-01'],
@@ -180,7 +180,7 @@
       }, 18000);
 
       setTimeout(function () {
-        debounce_profile_stop();
+        profile_watchdog_kick();
         chart.flow({
           columns: [
             ['x', '2013-03-01'],
@@ -197,13 +197,13 @@
     run();
 
     setTimeout(function () {
-      debounce_profile_stop();
+      profile_watchdog_kick();
       padding = {left: 0, right: 0};
       run();
     }, 25000);
 
     setTimeout(function () {
-      debounce_profile_stop();
+      profile_watchdog_kick();
       types = {
         data2: 'area',
         data3: 'bar',
