@@ -31,11 +31,22 @@
             ['data1', 30, 200, 100, 400, 150, 250],
             ['data2', 50, 20, 10, 40, 15, 25]
           ],
-          labels: true
+          labels: true,
+          types: {
+            'data1': 'spline',
+            'data2': 'line'
+          }
         },
         subchart: {
-          show: true
+          show: true,
+          types: {
+            'data1': 'step',
+            'data2': 'spline'
+          },
+          line_spline_type: 'monotone'
         },
+        line_spline_type: 'cubic',
+        spline_interpolation_type: 'cubic'
       });
 
       var chart2 = c3.generate({
@@ -45,14 +56,25 @@
             ['data1', 30, 200, 100, 400, 150, 250],
             ['data2', 50, 20, 10, 40, 15, 25]
           ],
-          labels: true
+          labels: true,
+          types: {
+            'data1': 'spline',
+            'data2': 'bar'
+          },
         },
         subchart: {
-          show: true
+          show: true,
+          types: {
+            'data1': 'line',
+            'data2': 'line'
+          },
+          line_spline_type: 'step'
         },
         axis: {
           rotated: true
-        }
+        },
+        line_spline_type: 'step',
+        spline_interpolation_type: 'step' 
       });
 
       var chart3 = c3.generate({
