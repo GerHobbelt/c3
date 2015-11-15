@@ -1,5 +1,6 @@
 module.exports = (grunt) ->
     require('load-grunt-tasks') grunt, pattern: ['grunt-contrib-*', 'grunt-sass', 'grunt-karma']
+    fs = require('fs')
 
     grunt.initConfig
         watch:
@@ -89,6 +90,12 @@ module.exports = (grunt) ->
           options:
             jshintrc: '.jshintrc'
 
+        patch:
+          examples:
+            chunk: 'htdocs/js/init_chunk_4_examples.js'
+            index: 'htdocs/index.html'
+            src: ['htdocs/samples/*.html']
+
         jasmine:
           c3:
             src: 'c3.js'
@@ -127,6 +134,32 @@ module.exports = (grunt) ->
 
               {expand: true, cwd: 'extensions/js/', src: ['**'], dest: 'htdocs/js/extensions/'},
             ]
+
+
+    grunt.registerMultiTask 'patch', () ->
+      # load the chunk to inject/replace:
+      chunk_file = this.data.chunk
+      chunk_data = fs.readFileSync chunk_file
+
+      # load the index file to check if every example has been linked up (this is a secondary task here)
+      index_file = this.data.index
+      index_data = fs.readFileSync index_file
+      index_data = String(index_data)
+
+      # iterate over all 'source' files and modify them buggers
+      file_list = this.files[0].src
+      file_list.forEach( (file) ->
+        # grunt.log.writeln(JSON.stringify(file, null, 2));
+        file_in_index = file.replace(/htdocs\//, '');
+        pos = index_data.indexOf(file_in_index)
+        if (pos < 0)
+          grunt.log.writeln('WARNING: example ' + file_in_index + ' has not been included in the INDEX!')
+
+        content = fs.readFileSync file
+        content = String(content)
+        content = content.replace(/<script id="profile_code_chunk">[\s\S]+?<\/script>/, '<script id="profile_code_chunk">\n' + chunk_data + '    </script>\n    <script id="profile_code_chunk_2">\n      debounce_profile_stop();\n    </script>');
+        fs.writeFileSync(file, content)
+      )
 
 
     grunt.registerTask 'lint', ['jshint']
