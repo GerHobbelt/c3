@@ -1,10 +1,13 @@
 c3_chart_internal_fn.drag = function C3_INTERNAL_drag(mouse) {
-    var $$ = this, config = $$.config, main = $$.main, d3 = $$.d3;
+    var $$ = this, 
+        config = $$.config, 
+        main = $$.main, 
+        d3 = $$.d3;
     var sx, sy, mx, my, minX, maxX, minY, maxY;
 
     if ($$.hasArcType()) { return; }
-    if (! config.data_selection_enabled) { return; } // do nothing if not selectable
-    if (config.zoom_enabled && ! $$.zoom.altDomain) { return; } // skip if zoomable because of conflict drag dehavior
+    if (!config.data_selection_enabled) { return; } // do nothing if not selectable
+    if (config.zoom_enabled && !$$.zoom.altDomain) { return; } // skip if zoomable because of conflict drag dehavior
     if (!config.data_selection_multiple) { return; } // skip when single selection because drag is used for multiple selection
 
     sx = $$.dragStart[0];
@@ -23,12 +26,16 @@ c3_chart_internal_fn.drag = function C3_INTERNAL_drag(mouse) {
         .attr('height', maxY - minY);
     // TODO: binary search when multiple xs
     main.selectAll('.' + CLASS.shapes).selectAll('.' + CLASS.shape)
-        .filter(function (d) { return config.data_selection_isselectable(d); })
+        .filter(function (d) { 
+            return config.data_selection_isselectable(d); 
+        })
         .each(function (d, i) {
             var shape = d3.select(this),
                 isSelected = shape.classed(CLASS.SELECTED),
                 isIncluded = shape.classed(CLASS.INCLUDED),
-                _x, _y, _w, _h, toggle, isWithin = false, box;
+                _x, _y, _w, _h, toggle, 
+                isWithin = false, 
+                box;
             if (shape.classed(CLASS.circle)) {
                 _x = shape.attr("cx") * 1;
                 _y = shape.attr("cy") * 1;
@@ -57,9 +64,10 @@ c3_chart_internal_fn.drag = function C3_INTERNAL_drag(mouse) {
 };
 
 c3_chart_internal_fn.dragstart = function C3_INTERNAL_dragstart(mouse) {
-    var $$ = this, config = $$.config;
+    var $$ = this, 
+        config = $$.config;
     if ($$.hasArcType()) { return; }
-    if (! config.data_selection_enabled) { return; } // do nothing if not selectable
+    if (!config.data_selection_enabled) { return; } // do nothing if not selectable
     $$.config.data_ondragstart.call($$);
     $$.dragStart = mouse;
     $$.main.select('.' + CLASS.chart).append('rect')
@@ -69,9 +77,10 @@ c3_chart_internal_fn.dragstart = function C3_INTERNAL_dragstart(mouse) {
 };
 
 c3_chart_internal_fn.dragend = function C3_INTERNAL_dragend() {
-    var $$ = this, config = $$.config;
+    var $$ = this, 
+        config = $$.config;
     if ($$.hasArcType()) { return; }
-    if (! config.data_selection_enabled) { return; } // do nothing if not selectable
+    if (!config.data_selection_enabled) { return; } // do nothing if not selectable
     $$.config.data_ondragend.call($$);
     $$.main.select('.' + CLASS.dragarea)
         .transition().duration(100)

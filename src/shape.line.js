@@ -83,7 +83,9 @@ c3_chart_internal_fn.generateDrawLine = function C3_INTERNAL_generateDrawLine(li
         line = $$.d3.svg.line(),
         getPoints = $$.generateGetLinePoints(lineIndices, isSub),
         yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale,
-        xValue = function (d) { return (isSub ? $$.subxx : $$.xx).call($$, d); },
+        xValue = function (d) { 
+            return (isSub ? $$.subxx : $$.xx).call($$, d); 
+        },
         yValue = function (d, i) {
             return config.data_groups.length > 0 ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)(d.value);
         };
@@ -131,10 +133,13 @@ c3_chart_internal_fn.generateGetLinePoints = function C3_INTERNAL_generateGetLin
     return function (d, i) {
         var y0 = yScale.call($$, d.id)(0),
             offset = lineOffset(d, i) || y0, // offset is for stacked area chart
-            posX = x(d), posY = y(d);
+            posX = x(d), 
+            posY = y(d);
         // fix posY not to overflow opposite quadrant
         if (config.axis_rotated) {
-            if ((0 < d.value && posY < y0) || (d.value < 0 && y0 < posY)) { posY = y0; }
+            if ((0 < d.value && posY < y0) || (d.value < 0 && y0 < posY)) { 
+                posY = y0; 
+            }
         }
         // 1 point that marks the line position
         return [
@@ -187,10 +192,14 @@ c3_chart_internal_fn.lineWithRegions = function C3_INTERNAL_lineWithRegions(d, x
     }
 
     // Set scales
-    xValue = config.axis_rotated ? function (d) { return y(d.value); } : function (d) { 
+    xValue = config.axis_rotated ? function (d) { 
+        return y(d.value); 
+    } : function (d) { 
         return x(d.x); 
     };
-    yValue = config.axis_rotated ? function (d) { return x(d.x); } : function (d) { 
+    yValue = config.axis_rotated ? function (d) { 
+        return x(d.x); 
+    } : function (d) { 
         return y(d.value); 
     };
 
@@ -226,12 +235,12 @@ c3_chart_internal_fn.lineWithRegions = function C3_INTERNAL_lineWithRegions(d, x
 
     // Generate
     for (i = 0; i < d.length; i++) {
-
         // Draw as normal
-        if (isUndefined(regions) || ! isWithinRegions(d[i].x, regions)) {
+        if (isUndefined(regions) || !isWithinRegions(d[i].x, regions)) {
             s += " " + xValue(d[i]) + " " + yValue(d[i]);
         }
-        // Draw with region // TODO: Fix for horizotal charts
+        // Draw with region 
+        // TODO: Fix for horizontal charts
         else {
             xp = $$.getScale(d[i - 1].x + xOffset, d[i].x + xOffset, $$.isTimeSeries());
             yp = $$.getScale(d[i - 1].value, d[i].value);
@@ -251,7 +260,6 @@ c3_chart_internal_fn.lineWithRegions = function C3_INTERNAL_lineWithRegions(d, x
 
     return s;
 };
-
 
 c3_chart_internal_fn.updateArea = function C3_INTERNAL_updateArea(durationForExit) {
     var $$ = this, 
@@ -310,9 +318,11 @@ c3_chart_internal_fn.generateDrawArea = function C3_INTERNAL_generateDrawArea(ar
 
     return function (d) {
         var values = config.line_connectNull ? $$.filterRemoveNull(d.values) : d.values,
-            x0 = 0, y0 = 0, path;
-        if ($$.isAreaType(d)) {
-            if ($$.isStepType(d)) { 
+            x0 = 0, 
+            y0 = 0, 
+            path;
+        if ($$.isAreaType(d, isSub)) {
+            if ($$.isStepType(d, isSub)) { 
                 values = $$.convertValuesToStep(values); 
             }
             path = area.interpolate($$.getInterpolate(d))(values);

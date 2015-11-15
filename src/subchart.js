@@ -1,6 +1,6 @@
 c3_chart_internal_fn.initBrush = function C3_INTERNAL_initBrush() {
     var $$ = this, 
-    d3 = $$.d3;
+        d3 = $$.d3;
     $$.brush = d3.svg.brush().on("brush", function () { 
         $$.redrawForBrush(); 
     });
@@ -95,7 +95,7 @@ c3_chart_internal_fn.updateBarForSubchart = function C3_INTERNAL_updateBarForSub
     var $$ = this;
     $$.contextBar = $$.context.selectAll('.' + CLASS.bars).selectAll('.' + CLASS.bar)
         .data(function (d, i) {
-            return $$.barData(d);
+            return $$.barData(d, true);
         });
     $$.contextBar.enter().append('path')
         .attr("class", $$.classBar.bind($$))
@@ -117,7 +117,7 @@ c3_chart_internal_fn.updateLineForSubchart = function C3_INTERNAL_updateLineForS
     var $$ = this;
     $$.contextLine = $$.context.selectAll('.' + CLASS.lines).selectAll('.' + CLASS.line)
         .data(function (d, i) {
-            return $$.lineData(d);
+            return $$.lineData(d, true);
         });
     $$.contextLine.enter().append('path')
         .attr('class', $$.classLine.bind($$))
@@ -139,7 +139,7 @@ c3_chart_internal_fn.updateAreaForSubchart = function C3_INTERNAL_updateAreaForS
         d3 = $$.d3;
     $$.contextArea = $$.context.selectAll('.' + CLASS.areas).selectAll('.' + CLASS.area)
         .data(function (d, i) {
-            return $$.lineData(d);
+            return $$.lineData(d, true);
         });
     $$.contextArea.enter().append('path')
         .attr("class", $$.classArea.bind($$))
@@ -178,7 +178,6 @@ c3_chart_internal_fn.redrawSubchart = function C3_INTERNAL_redrawSubchart(withSu
         }
         // update subchart elements if needed
         if (withSubchart) {
-
             // extent rect
             if (!$$.brush.empty()) {
                 $$.brush.extent($$.x.orgDomain()).update();

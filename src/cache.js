@@ -1,6 +1,6 @@
 c3_chart_internal_fn.hasCaches = function C3_INTERNAL_hasCaches(ids) {
     for (var i = 0, len = ids.length; i < len; i++) {
-        if (! (ids[i] in this.cache)) { 
+        if (!(ids[i] in this.cache)) { 
             return false; 
         }
     }

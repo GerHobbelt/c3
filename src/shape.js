@@ -1,7 +1,12 @@
 c3_chart_internal_fn.getShapeIndices = function C3_INTERNAL_getShapeIndices(typeFilter) {
-    var $$ = this, config = $$.config,
-        indices = {}, i = 0, j, k;
-    $$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$)).forEach(function (d) {
+    var $$ = this, 
+        config = $$.config,
+        indices = {}, 
+        i = 0, 
+        j, k;
+    $$.filterTargetsToShow($$.data.targets.filter(function (d) {
+            return typeFilter.call($$, d);
+        })).forEach(function (d) {
         for (j = 0; j < config.data_groups.length; j++) {
             if (config.data_groups[j].indexOf(d.id) < 0) {
                 continue;
@@ -21,7 +26,8 @@ c3_chart_internal_fn.getShapeIndices = function C3_INTERNAL_getShapeIndices(type
     return indices;
 };
 c3_chart_internal_fn.getShapeX = function C3_INTERNAL_getShapeX(offset, targetsNum, indices, isSub) {
-    var $$ = this, scale = isSub ? $$.subX : $$.x;
+    var $$ = this, 
+        scale = isSub ? $$.subX : $$.x;
     return function (d) {
         var index = d.id in indices ? indices[d.id] : 0;
         return d.x || d.x === 0 ? scale(d.x) - offset * (targetsNum / 2 - index) : 0;
@@ -36,7 +42,9 @@ c3_chart_internal_fn.getShapeY = function C3_INTERNAL_getShapeY(isSub) {
 };
 c3_chart_internal_fn.getShapeOffset = function C3_INTERNAL_getShapeOffset(typeFilter, indices, isSub) {
     var $$ = this,
-        targets = $$.orderTargets($$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))),
+        targets = $$.orderTargets($$.filterTargetsToShow($$.data.targets.filter(function (d) {
+            return typeFilter.call($$, d, isSub);
+        }))),
         targetIds = targets.map(function (t) {
             return t.id;
         });
@@ -45,7 +53,7 @@ c3_chart_internal_fn.getShapeOffset = function C3_INTERNAL_getShapeOffset(typeFi
             y0 = scale(0), 
             offset = y0;
         targets.forEach(function (t) {
-            var values = $$.isStepType(d) ? $$.convertValuesToStep(t.values) : t.values;
+            var values = $$.isStepType(d, isSub) ? $$.convertValuesToStep(t.values) : t.values;
             if (t.id === d.id || indices[t.id] !== indices[d.id]) {
                 return;
             }
@@ -70,7 +78,8 @@ c3_chart_internal_fn.getShapeOffset = function C3_INTERNAL_getShapeOffset(typeFi
 };
 c3_chart_internal_fn.isWithinShape = function C3_INTERNAL_isWithinShape(that, d) {
     var $$ = this,
-        shape = $$.d3.select(that), isWithin;
+        shape = $$.d3.select(that), 
+        isWithin;
     if (!$$.isTargetToShow(d.id)) {
         isWithin = false;
     }

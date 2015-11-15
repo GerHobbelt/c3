@@ -43,7 +43,7 @@ c3_chart_internal_fn.updateAngle = function C3_INTERNAL_updateAngle(d) {
     }
 
     $$.pie($$.filterTargetsToShow($$.data.targets)).forEach(function (t) {
-        if (! found && t.data.id === d.data.id) {
+        if (!found && t.data.id === d.data.id) {
             found = true;
             d = t;
             d.index = index;
@@ -68,7 +68,8 @@ c3_chart_internal_fn.updateAngle = function C3_INTERNAL_updateAngle(d) {
 };
 
 c3_chart_internal_fn.getSvgArc = function C3_INTERNAL_getSvgArc() {
-    var $$ = this, hasGaugeType = $$.hasType('gauge'),
+    var $$ = this, 
+        hasGaugeType = $$.hasType('gauge'),
         singleArcWidth = $$.gaugeArcWidth / $$.visibleTargetCount,
         arc = $$.d3.svg.arc().outerRadius(function (d) {
             return hasGaugeType ? $$.radius - singleArcWidth * d.index : $$.radius;
@@ -90,7 +91,8 @@ c3_chart_internal_fn.getSvgArc = function C3_INTERNAL_getSvgArc() {
 
 c3_chart_internal_fn.getSvgArcExpanded = function C3_INTERNAL_getSvgArcExpanded(rate) {
     rate = rate || 1;
-    var $$ = this, hasGaugeType = $$.hasType('gauge'),
+    var $$ = this, 
+        hasGaugeType = $$.hasType('gauge'),
         singleArcWidth = $$.gaugeArcWidth / $$.visibleTargetCount,
         expandWidth = Math.min($$.radiusExpanded * rate - $$.radius, singleArcWidth * 0.8 - (1 - rate) * 100),
         arc = $$.d3.svg.arc().outerRadius(function (d) {
@@ -151,14 +153,14 @@ c3_chart_internal_fn.convertToArcData = function C3_INTERNAL_convertToArcData(d)
 c3_chart_internal_fn.textForArcLabel = function C3_INTERNAL_textForArcLabel(d) {
     var $$ = this,
         updated, value, ratio, id, format;
-    if (! $$.shouldShowArcLabel()) { 
+    if (!$$.shouldShowArcLabel()) { 
         return ""; 
     }
     updated = $$.updateAngle(d);
     value = updated ? updated.value : null;
     ratio = $$.getArcRatio(updated);
     id = d.data.id;
-    if (! $$.hasType('gauge') && ! $$.meetsArcLabelThreshold(ratio)) { 
+    if (!$$.hasType('gauge') && !$$.meetsArcLabelThreshold(ratio)) { 
         return ""; 
     }
     format = $$.getArcLabelFormat();
@@ -185,7 +187,7 @@ c3_chart_internal_fn.expandArc = function C3_INTERNAL_expandArc(targetIds) {
     targetIds = $$.mapToTargetIds(targetIds);
 
     $$.svg.selectAll($$.selectorTargets(targetIds, '.' + CLASS.chartArc)).each(function (d) {
-        if (! $$.shouldExpand(d.data.id)) { 
+        if (!$$.shouldExpand(d.data.id)) { 
             return; 
         }
         $$.d3.select(this).selectAll('path')
@@ -220,7 +222,8 @@ c3_chart_internal_fn.unexpandArc = function C3_INTERNAL_unexpandArc(targetIds) {
 };
 
 c3_chart_internal_fn.expandDuration = function (id) {
-    var $$ = this, config = $$.config;
+    var $$ = this, 
+        config = $$.config;
 
     if ($$.isDonutType(id)) {
         return config.donut_expand_duration;
@@ -231,7 +234,6 @@ c3_chart_internal_fn.expandDuration = function (id) {
     } else {
         return 50;
     }
-
 };
 
 c3_chart_internal_fn.shouldExpand = function C3_INTERNAL_shouldExpand(id) {
@@ -462,7 +464,7 @@ c3_chart_internal_fn.redrawArc = function C3_INTERNAL_redrawArc(duration, durati
         .attrTween("d", function (d) {
             var updated = $$.updateAngle(d), 
                 interpolate;
-            if (! updated) {
+            if (!updated) {
                 return function () { 
                     return "M 0 0"; 
                 };
@@ -553,7 +555,8 @@ c3_chart_internal_fn.redrawArc = function C3_INTERNAL_redrawArc(duration, durati
     }
 };
 c3_chart_internal_fn.initGauge = function C3_INTERNAL_initGauge() {
-    var $$ = this, arcs = $$.arcs;
+    var $$ = this, 
+        arcs = $$.arcs;
     if (this.hasType('gauge')) {
         arcs.selectAll().data($$.data.targets).enter()
             .append('path')

@@ -215,7 +215,7 @@ c3_chart_internal_fn.convertDataToTargets = function C3_INTERNAL_convertDataToTa
     // set target types
     if (config.data_type) {
         $$.setTargetType($$.mapToIds(targets).filter(function (id) { 
-            return ! (id in config.data_types); 
+            return !(id in config.data_types); 
         }), config.data_type);
     }
 

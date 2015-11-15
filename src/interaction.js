@@ -62,14 +62,16 @@ c3_chart_internal_fn.updateEventRect = function C3_INTERNAL_updateEventRect(even
     }
     else {
         // set update selection if null
-        eventRectUpdate = eventRectUpdate || $$.eventRect.data(function (d) { return d; });
+        eventRectUpdate = eventRectUpdate || $$.eventRect.data(function (d) { 
+            return d; 
+        });
         if (($$.isCustomX() || $$.isTimeSeries()) && !$$.isCategorized()) {
-
             // update index for x that is used by prevX and nextX
             $$.updateXs();
 
             rectW = function (d) {
-                var prevX = $$.getPrevX(d.index), nextX = $$.getNextX(d.index);
+                var prevX = $$.getPrevX(d.index), 
+                    nextX = $$.getNextX(d.index);
 
                 // if there this is a single data point make the eventRect full width (or height)
                 if (prevX === null && nextX === null) {
@@ -119,7 +121,6 @@ c3_chart_internal_fn.updateEventRect = function C3_INTERNAL_updateEventRect(even
             .attr("width", w)
             .attr("height", h);
     }
-
 };
 c3_chart_internal_fn.generateEventRectsForSingleX = function C3_INTERNAL_generateEventRectsForSingleX(eventRectEnter) {
     var $$ = this, 
@@ -251,9 +252,15 @@ c3_chart_internal_fn.generateEventRectsForSingleX = function C3_INTERNAL_generat
         .call(
             config.data_selection_draggable && $$.drag ? (
                 d3.behavior.drag().origin(Object)
-                    .on('drag', function () { $$.drag(d3.mouse(this)); })
-                    .on('dragstart', function () { $$.dragstart(d3.mouse(this)); })
-                    .on('dragend', function () { $$.dragend(); })
+                    .on('drag', function () { 
+                        $$.drag(d3.mouse(this)); 
+                    })
+                    .on('dragstart', function () { 
+                        $$.dragstart(d3.mouse(this)); 
+                    })
+                    .on('dragend', function () { 
+                        $$.dragend(); 
+                    })
             ) : function () {}
         );
 };
@@ -305,7 +312,7 @@ c3_chart_internal_fn.generateEventRectsForMultipleXs = function C3_INTERNAL_gene
                 $$.mouseover = undefined;
             }
 
-            if (! closest) {
+            if (!closest) {
                 mouseout();
                 return;
             }

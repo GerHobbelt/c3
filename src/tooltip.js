@@ -1,5 +1,7 @@
 c3_chart_internal_fn.initTooltip = function C3_INTERNAL_initTooltip() {
-    var $$ = this, config = $$.config, i;
+    var $$ = this, 
+        config = $$.config, 
+        i;
     $$.tooltip = $$.selectChart
         .style("position", "relative")
       .append("div")
@@ -25,9 +27,12 @@ c3_chart_internal_fn.initTooltip = function C3_INTERNAL_initTooltip() {
     }
 };
 c3_chart_internal_fn.getTooltipContent = function C3_INTERNAL_getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color) {
-    var $$ = this, config = $$.config,
+    var $$ = this, 
+        config = $$.config,
         titleFormat = config.tooltip_format_title || defaultTitleFormat,
-        nameFormat = config.tooltip_format_name || function (name) { return name; },
+        nameFormat = config.tooltip_format_name || function (name) { 
+            return name; 
+        },
         valueFormat = config.tooltip_format_value || defaultValueFormat,
         text, i, title, value, name, bgcolor,
         orderAsc = $$.isOrderAsc();
@@ -50,9 +55,9 @@ c3_chart_internal_fn.getTooltipContent = function C3_INTERNAL_getTooltipContent(
     }
 
     for (i = 0; i < d.length; i++) {
-        if (! (d[i] && (d[i].value || d[i].value === 0))) { continue; }
+        if (!(d[i] && (d[i].value || d[i].value === 0))) { continue; }
 
-        if (! text) {
+        if (!text) {
             title = titleFormat ? titleFormat(d[i].x) : d[i].x;
             text = "<table class='" + $$.CLASS.tooltip + "'>" + (title || title === 0 ? "<tr><th colspan='2'>" + title + "</th></tr>" : "");
         }
@@ -73,7 +78,9 @@ c3_chart_internal_fn.getTooltipContent = function C3_INTERNAL_getTooltipContent(
     return text + "</table>";
 };
 c3_chart_internal_fn.tooltipPosition = function C3_INTERNAL_tooltipPosition(dataToShow, tWidth, tHeight, element) {
-    var $$ = this, config = $$.config, d3 = $$.d3;
+    var $$ = this, 
+        config = $$.config, 
+        d3 = $$.d3;
     var svgLeft, tooltipLeft, tooltipRight, tooltipTop, chartRight;
     var forArc = $$.hasArcType(),
         mouse = d3.mouse(element);
@@ -109,10 +116,13 @@ c3_chart_internal_fn.tooltipPosition = function C3_INTERNAL_tooltipPosition(data
     return {top: tooltipTop, left: tooltipLeft};
 };
 c3_chart_internal_fn.showTooltip = function C3_INTERNAL_showTooltip(selectedData, element) {
-    var $$ = this, config = $$.config;
+    var $$ = this, 
+        config = $$.config;
     var tWidth, tHeight, position;
     var forArc = $$.hasArcType(),
-        dataToShow = selectedData.filter(function (d) { return d && isValue(d.value); }),
+        dataToShow = selectedData.filter(function (d) { 
+            return d && isValue(d.value); 
+        }),
         positionFunction = config.tooltip_position || c3_chart_internal_fn.tooltipPosition;
     if (dataToShow.length === 0 || !config.tooltip_show) {
         return;
