@@ -157,7 +157,7 @@ module.exports = (grunt) ->
 
         content = fs.readFileSync file
         content = String(content)
-        content = content.replace(/<script id="profile_code_chunk">[\s\S]+?<\/script>/, '<script id="profile_code_chunk">\n' + chunk_data + '    </script>\n    <script id="profile_code_chunk_2">\n      debounce_profile_stop();\n    </script>');
+        content = content.replace(/<script id="profile_code_chunk">[\s\S]+?<\/script>/, '<script id="profile_code_chunk">\n' + chunk_data + '    </script>');
         fs.writeFileSync(file, content)
       )
 
