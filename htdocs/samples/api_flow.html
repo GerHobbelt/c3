@@ -8,10 +8,15 @@
       }
     </style>
     <script id="profile_code_chunk">
-      console.profile('C3 demo run');
-
+      function start_profiling() {
+        if (console.profile) {
+          console.profile('C3 demo run');
+        }
+      }
       function stop_profiling() {
-        console.profileEnd('C3 demo run');
+        if (console.profileEnd) {
+          console.profileEnd('C3 demo run');
+        }
       }
       var prof_timer_h = null;
       var prof_timestamp = Date.now();
@@ -30,6 +35,9 @@
         
         prof_timer_h = setTimeout(stop_profiling, t);
       }
+      start_profiling();
+    </script>
+    <script id="profile_code_chunk_2">
       debounce_profile_stop(45000);
     </script>
   </head>
