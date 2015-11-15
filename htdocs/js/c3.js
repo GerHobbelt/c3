@@ -3208,9 +3208,14 @@
     };
 
     c3_chart_internal_fn.getShapeIndices = function C3_INTERNAL_getShapeIndices(typeFilter) {
-        var $$ = this, config = $$.config,
-            indices = {}, i = 0, j, k;
-        $$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$)).forEach(function (d) {
+        var $$ = this, 
+            config = $$.config,
+            indices = {}, 
+            i = 0, 
+            j, k;
+        $$.filterTargetsToShow($$.data.targets.filter(function (d) {
+                return typeFilter.call($$, d);
+            })).forEach(function (d) {
             for (j = 0; j < config.data_groups.length; j++) {
                 if (config.data_groups[j].indexOf(d.id) < 0) {
                     continue;
@@ -3230,7 +3235,8 @@
         return indices;
     };
     c3_chart_internal_fn.getShapeX = function C3_INTERNAL_getShapeX(offset, targetsNum, indices, isSub) {
-        var $$ = this, scale = isSub ? $$.subX : $$.x;
+        var $$ = this, 
+            scale = isSub ? $$.subX : $$.x;
         return function (d) {
             var index = d.id in indices ? indices[d.id] : 0;
             return d.x || d.x === 0 ? scale(d.x) - offset * (targetsNum / 2 - index) : 0;
@@ -3245,7 +3251,9 @@
     };
     c3_chart_internal_fn.getShapeOffset = function C3_INTERNAL_getShapeOffset(typeFilter, indices, isSub) {
         var $$ = this,
-            targets = $$.orderTargets($$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))),
+            targets = $$.orderTargets($$.filterTargetsToShow($$.data.targets.filter(function (d) {
+                return typeFilter.call($$, d, isSub);
+            }))),
             targetIds = targets.map(function (t) {
                 return t.id;
             });
@@ -3254,7 +3262,7 @@
                 y0 = scale(0), 
                 offset = y0;
             targets.forEach(function (t) {
-                var values = $$.isStepType(d) ? $$.convertValuesToStep(t.values) : t.values;
+                var values = $$.isStepType(d, isSub) ? $$.convertValuesToStep(t.values) : t.values;
                 if (t.id === d.id || indices[t.id] !== indices[d.id]) {
                     return;
                 }
@@ -3619,9 +3627,11 @@
 
         return function (d) {
             var values = config.line_connectNull ? $$.filterRemoveNull(d.values) : d.values,
-                x0 = 0, y0 = 0, path;
-            if ($$.isAreaType(d)) {
-                if ($$.isStepType(d)) { 
+                x0 = 0, 
+                y0 = 0, 
+                path;
+            if ($$.isAreaType(d, isSub)) {
+                if ($$.isStepType(d, isSub)) { 
                     values = $$.convertValuesToStep(values); 
                 }
                 path = area.interpolate($$.getInterpolate(d))(values);
@@ -3803,7 +3813,6 @@
             .style("cursor", function (d) { 
                 return config.data_selection_isselectable(d) ? "pointer" : null; 
             });
-
     };
     c3_chart_internal_fn.updateBar = function C3_INTERNAL_updateBar(durationForExit) {
         var $$ = this,
@@ -3846,7 +3855,8 @@
     };
     c3_chart_internal_fn.getBarW = function C3_INTERNAL_getBarW(axis, barTargetsNum) {
         var $$ = this, 
-            config = $$.config, w = 0;
+            config = $$.config, 
+            w = 0;
         if (typeof config.bar_width === 'number') {
             w = config.bar_width;
         } else if (barTargetsNum) {
@@ -6524,7 +6534,9 @@
             .attr('height', maxY - minY);
         // TODO: binary search when multiple xs
         main.selectAll('.' + CLASS.shapes).selectAll('.' + CLASS.shape)
-            .filter(function (d) { return config.data_selection_isselectable(d); })
+            .filter(function (d) { 
+                return config.data_selection_isselectable(d); 
+            })
             .each(function (d, i) {
                 var shape = d3.select(this),
                     isSelected = shape.classed(CLASS.SELECTED),
@@ -6651,7 +6663,9 @@
             if (!config.data_selection_multiple) {
                 $$.main.selectAll('.' + CLASS.shapes + (config.data_selection_grouped ? $$.getTargetSelectorSuffix(d.id) : "")).selectAll('.' + CLASS.shape).each(function (d, i) {
                     var shape = d3.select(this);
-                    if (shape.classed(CLASS.SELECTED)) { toggle(false, shape.classed(CLASS.SELECTED, false), d, i); }
+                    if (shape.classed(CLASS.SELECTED)) { 
+                        toggle(false, shape.classed(CLASS.SELECTED, false), d, i); 
+                    }
                 });
             }
             shape.classed(CLASS.SELECTED, !isSelected);
@@ -6756,7 +6770,7 @@
         var $$ = this;
         $$.contextBar = $$.context.selectAll('.' + CLASS.bars).selectAll('.' + CLASS.bar)
             .data(function (d, i) {
-                return $$.barData(d);
+                return $$.barData(d, true);
             });
         $$.contextBar.enter().append('path')
             .attr("class", $$.classBar.bind($$))
@@ -6778,7 +6792,7 @@
         var $$ = this;
         $$.contextLine = $$.context.selectAll('.' + CLASS.lines).selectAll('.' + CLASS.line)
             .data(function (d, i) {
-                return $$.lineData(d);
+                return $$.lineData(d, true);
             });
         $$.contextLine.enter().append('path')
             .attr('class', $$.classLine.bind($$))
@@ -6800,7 +6814,7 @@
             d3 = $$.d3;
         $$.contextArea = $$.context.selectAll('.' + CLASS.areas).selectAll('.' + CLASS.area)
             .data(function (d, i) {
-                return $$.lineData(d);
+                return $$.lineData(d, true);
             });
         $$.contextArea.enter().append('path')
             .attr("class", $$.classArea.bind($$))
@@ -6839,7 +6853,6 @@
             }
             // update subchart elements if needed
             if (withSubchart) {
-
                 // extent rect
                 if (!$$.brush.empty()) {
                     $$.brush.extent($$.x.orgDomain()).update();
@@ -7900,8 +7913,15 @@
         var $$ = this.internal, d3 = $$.d3;
         return d3.merge(
             $$.main.selectAll('.' + CLASS.shapes + $$.getTargetSelectorSuffix(targetId)).selectAll('.' + CLASS.shape)
-                .filter(function () { return d3.select(this).classed(CLASS.SELECTED); })
-                .map(function (d) { return d.map(function (d) { var data = d.__data__; return data.data ? data.data : data; }); })
+                .filter(function () { 
+                    return d3.select(this).classed(CLASS.SELECTED); 
+                })
+                .map(function (d) { 
+                    return d.map(function (d) { 
+                        var data = d.__data__; 
+                        return data.data ? data.data : data; 
+                    }); 
+                })
         );
     };
     c3_chart_fn.select = function C3_API_select(ids, indices, resetOther) {
