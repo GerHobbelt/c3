@@ -15,7 +15,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'node_modules/d3/d3.min.js',
+      'htdocs/js/d3.latest.js',
       'c3.js',
       'c3.css',
       'spec/*-helper.js',
