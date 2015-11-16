@@ -329,7 +329,10 @@
         main.append("text")
             .attr("class", CLASS.text + ' ' + CLASS.empty)
             .attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
-            .attr("dominant-baseline", "middle"); // vertical centering of text at y position in all browsers, except IE.    
+            .attr("dominant-baseline", "middle"); // vertical centering of text at y position in all browsers, except IE.
+
+        // Regions
+        $$.initRegion();
 
         // Grids
         $$.initGrid();
@@ -369,9 +372,6 @@
 
         // Set targets
         $$.updateTargets($$.data.targets);
-
-        // Regions (explicitly put into the forefront for user-interaction)
-        $$.initRegion();
 
         // Draw with targets
         if (binding) {
@@ -841,7 +841,7 @@
         return this.config.axis_x_type === 'timeseries';
     };
     c3_chart_internal_fn.isCategorized = function C3_INTERNAL_isCategorized() {
-        return this.config.axis_x_type.indexOf('category') >= 0;
+        return this.config.axis_x_type.indexOf('categor') >= 0;             // accept both 'category' and 'categorized'
     };
     c3_chart_internal_fn.isCustomX = function C3_INTERNAL_isCustomX() {
         var $$ = this, 
@@ -4021,19 +4021,13 @@
         };
     };
     c3_chart_internal_fn.isWithinBar = function C3_INTERNAL_isWithinBar(that) {
-        var mouse = this.d3.mouse(that), 
-            box = that.getBoundingClientRect(),
-            seg0 = that.pathSegList.getItem(0), 
-            seg1 = that.pathSegList.getItem(1),
-            x = Math.min(seg0.x, seg1.x), 
-            y = Math.min(seg0.y, seg1.y),
-            w = box.width, 
-            h = box.height, 
+        var mouse = this.d3.mouse(that),
+            box = getPathBox(that), 
             offset = 2,
-            sx = x - offset, 
-            ex = x + w + offset, 
-            sy = y + h + offset, 
-            ey = y - offset;
+            sx = box.x - offset, 
+            ex = box.x + box.width + offset, 
+            sy = box.y + box.height + offset, 
+            ey = box.y - offset;
         return sx < mouse[0] && mouse[0] < ex && ey < mouse[1] && mouse[1] < sy;
     };
 
@@ -7425,9 +7419,23 @@
         },
         getPathBox = c3_chart_internal_fn.getPathBox = function C3_INTERNAL_getPathBox(path) {
             var box = path.getBoundingClientRect(),
-                items = [path.pathSegList.getItem(0), path.pathSegList.getItem(1)],
-                minX = items[0].x, minY = Math.min(items[0].y, items[1].y);
-            return {x: minX, y: minY, width: box.width, height: box.height};
+                minX, minY;
+            // MSIE supports pathSEgList while it crashes on latest Chrome: https://msdn.microsoft.com/en-us/library/ff971976(v=vs.85).aspx
+            if (path.pathSegList && path.pathSegList.getItem) {
+                var seg0 = path.pathSegList.getItem(0);
+                var seg1 = path.pathSegList.getItem(1);
+                minX = Math.min(seg0.x, seg1.x); 
+                minY = Math.min(seg0.y, seg1.y);
+            } else {
+                minX = box.left;
+                minY = box.top;
+            }
+            return {
+                x: minX, 
+                y: minY, 
+                width: box.width, 
+                height: box.height
+            };
         };
 
     c3_chart_fn.focus = function C3_API_focus(targetIds) {
