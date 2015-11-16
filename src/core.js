@@ -836,7 +836,7 @@ c3_chart_internal_fn.isTimeSeries = function C3_INTERNAL_isTimeSeries() {
     return this.config.axis_x_type === 'timeseries';
 };
 c3_chart_internal_fn.isCategorized = function C3_INTERNAL_isCategorized() {
-    return this.config.axis_x_type.indexOf('category') >= 0;
+    return this.config.axis_x_type.indexOf('categor') >= 0;             // accept both 'category' and 'categorized'
 };
 c3_chart_internal_fn.isCustomX = function C3_INTERNAL_isCustomX() {
     var $$ = this, 
