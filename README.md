@@ -1,4 +1,4 @@
-c3 [![Build Status](https://travis-ci.org/masayuki0812/c3.svg?branch=master)](https://travis-ci.org/masayuki0812/c3) [![Dependency Status](https://david-dm.org/masayuki0812/c3.svg)](https://david-dm.org/masayuki0812/c3) [![devDependency Status](https://david-dm.org/masayuki0812/c3/dev-status.svg)](https://david-dm.org/masayuki0812/c3#info=devDependencies) [![license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/masayuki0812/c3/blob/master/LICENSE)
+c3 [![Build Status](https://travis-ci.org/masayuki0812/c3.svg?branch=master)](https://travis-ci.org/masayuki0812/c3) [![Dependency Status](https://david-dm.org/masayuki0812/c3.svg)](https://david-dm.org/masayuki0812/c3) [![devDependency Status](https://david-dm.org/masayuki0812/c3/dev-status.svg)](https://david-dm.org/masayuki0812/c3#info=devDependencies) [![license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/masayuki0812/c3/blob/master/LICENSE) [![codecov.io](https://codecov.io/github/masayuki0812/c3/coverage.svg?branch=master)](https://codecov.io/github/masayuki0812/c3?branch=master)
 ==
 
 **This is a fork of c3**
@@ -31,6 +31,7 @@ For general C3.js-related discussion, please visit our [Google Group at https://
 The [issue queue](https://github.com/masayuki0812/c3/issues) is to be used for reporting defects and problems with C3.js, in addition to feature requests and ideas. It is **not** a catch-all support forum. **For general support enquiries, please use the [Google Group](https://groups.google.com/forum/#!forum/c3js) at https://groups.google.com/forum/#!forum/c3js.** All questions involving the interplay between C3.js and any other library (such as AngularJS) should be posted there first!
 
 Before reporting an issue, please do the following:
+
 1. [Search for existing issues](https://github.com/masayuki0812/c3/issues) to ensure you're not posting a duplicate.
 
 1.  [Search the Google Group](https://groups.google.com/forum/#!forum/c3js) to ensure it hasn't been addressed there already.
@@ -41,16 +42,14 @@ Before reporting an issue, please do the following:
 
 ## Pull requests
 Pull requests are welcome, though please post an issue first to see whether such a change is desirable.
-If you choose to submit a pull request, please do not bump the version number unless asked to, and please include test cases for any new features!
+If you choose to submit a pull request, please do not bump the version number unless asked to, and please include test cases for any new features. Squash all your commits as well, please.
 
 ## Playground
 Please fork this fiddle:
 + [http://jsfiddle.net/masayuki0812/7kYJu/](http://jsfiddle.net/masayuki0812/7kYJu/)
 
 ## Dependency
-+ [D3.js](https://github.com/mbostock/d3) `<=3.5.0`
++ [D3.js](https://github.com/mbostock/d3) `~3.5.0`
 
 ## License
 MIT
-
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=masayuki0812&url=https://github.com/masayuki0812/c3&title=c3&language=javascript&tags=github&category=software)

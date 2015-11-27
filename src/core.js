@@ -26,7 +26,10 @@ function inherit(base, derived) {
 function Chart(config) {
     var $$ = this.internal = new ChartInternal(this);
     $$.loadConfig(config);
+
+    $$.beforeInit(config);
     $$.init();
+    $$.afterInit(config);
 
     // bind "this" to nested API
     (function bindThis(fn, target, argThis) {
@@ -66,6 +69,12 @@ c3_chart_fn = c3.chart.fn;
 c3_chart_internal_fn = c3.chart.internal.fn;
 c3_chart_internal_axis_fn = c3.chart.internal.axis.fn;
 
+c3_chart_internal_fn.beforeInit = function () {
+    // can do something
+};
+c3_chart_internal_fn.afterInit = function () {
+    // can do something
+};
 c3_chart_internal_fn.init = function () {
     var $$ = this, config = $$.config;
 
@@ -242,6 +251,10 @@ c3_chart_internal_fn.initWithData = function (data) {
         .style("overflow", "hidden")
         .on('mouseenter', function () { return config.onmouseover.call($$); })
         .on('mouseleave', function () { return config.onmouseout.call($$); });
+
+    if ($$.config.svg_classname) {
+        $$.svg.attr('class', $$.config.svg_classname);
+    }
 
     // Define defs
     defs = $$.svg.append("defs");
@@ -1021,7 +1034,7 @@ c3_chart_internal_fn.parseDate = function (date) {
         parsedDate = date;
     } else if (typeof date === 'string') {
         parsedDate = $$.dataTimeFormat($$.config.data_xFormat).parse(date);
-    } else if (typeof date === 'number' || !isNaN(date)) {
+    } else if (typeof date === 'number' && !isNaN(date)) {
         parsedDate = new Date(+date);
     }
     if (!parsedDate || isNaN(+parsedDate)) {
