@@ -41,7 +41,8 @@ var isValue = c3_chart_internal_fn.isValue = function C3_INTERNAL_isValue(v) {
     getPathBox = c3_chart_internal_fn.getPathBox = function C3_INTERNAL_getPathBox(path) {
         var box = path.getBoundingClientRect(),
             minX, minY;
-        // MSIE supports pathSEgList while it crashes on latest Chrome: https://msdn.microsoft.com/en-us/library/ff971976(v=vs.85).aspx
+        // MSIE supports pathSegList while it crashes on latest Chrome: https://msdn.microsoft.com/en-us/library/ff971976(v=vs.85).aspx
+        // See also: https://github.com/masayuki0812/c3/issues/1465
         if (path.pathSegList && path.pathSegList.getItem) {
             var seg0 = path.pathSegList.getItem(0);
             var seg1 = path.pathSegList.getItem(1);
