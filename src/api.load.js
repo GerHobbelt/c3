@@ -5,6 +5,10 @@ c3_chart_fn.load = function C3_API_load(args) {
     if (args.xs) {
         $$.addXs(args.xs);
     }
+    // update names if exists
+    if ('names' in args) {
+        c3_chart_fn.data.names.bind(this)(args.names);
+    }
     // update classes if exists
     if (args.classes) {
         Object.keys(args.classes).forEach(function (id) {

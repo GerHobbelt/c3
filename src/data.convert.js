@@ -1,7 +1,13 @@
-c3_chart_internal_fn.convertUrlToData = function C3_INTERNAL_convertUrlToData(url, mimeType, keys, done) {
+c3_chart_internal_fn.convertUrlToData = function C3_INTERNAL_convertUrlToData(url, mimeType, headers, keys, done) {
     var $$ = this, 
         type = mimeType ? mimeType : 'csv';
-    $$.d3.xhr(url, function (error, data) {
+    var req = $$.d3.xhr(url);
+    if (headers) {
+        Object.keys(headers).forEach(function (header) {
+            req.header(header, headers[header]);
+        });
+    }
+    req.get(function (error, data) {
         var d;
         var dataResponse = data.response || data.responseText;
         if (!data) {

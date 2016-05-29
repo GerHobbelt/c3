@@ -41,7 +41,7 @@ c3_chart_internal_fn.loadFromArgs = function C3_INTERNAL_loadFromArgs(args) {
         $$.load($$.convertDataToTargets(args.data), args);
     }
     else if (args.url) {
-        $$.convertUrlToData(args.url, args.mimeType, args.keys, function (data) {
+        $$.convertUrlToData(args.url, args.mimeType, args.headers, args.keys, function (data) {
             $$.load($$.convertDataToTargets(data), args);
         });
     }

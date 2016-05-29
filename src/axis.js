@@ -82,7 +82,7 @@ Axis.prototype.updateXAxisTickValues = function C3_API_AXIS_updateXAxisTickValue
     }
     return tickValues;
 };
-Axis.prototype.getYAxis = function C3_API_AXIS_getYAxis(scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, withoutRotateTickText, isY2Axis) {
+Axis.prototype.getYAxis = function C3_API_AXIS_getYAxis(scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, withoutRotateTickText) {
     // TODO: refactor the whole axis_x/y/y2 stuff to become one config block per axis: axis_x.xyz, axis_y.xyz, axis_y2.xyz -->
     // that way we can pass in the config block and not copy individual settings nor hardcode-check inside like we do now. :-(
     var $$ = this.owner,
@@ -92,12 +92,12 @@ Axis.prototype.getYAxis = function C3_API_AXIS_getYAxis(scale, orient, tickForma
             withOuterTick: withOuterTick,
             tickMultiline: !isY2Axis ? config.axis_y_tick_multiline : config.axis_y2_tick_multiline,
             tickWidth: !isY2Axis ? config.axis_y_tick_width : config.axis_y2_tick_width,
-            tickTextRotate: /* withoutRotateTickText ? 0 : !isY2Axis ? */ config.axis_y_tick_rotate ,// : config.axis_y2_tick_rotate,
             withoutTransition: withoutTransition,
+            tickTextRotate: withoutRotateTickText ? 0 : config.axis_y_tick_rotate,
         },
-        axis = c3_axis(d3, axisParams).scale(scale).orient(orient).tickFormat(tickFormat);
+        axis = c3_axis($$.d3, axisParams).scale(scale).orient(orient).tickFormat(tickFormat);
     if ($$.isTimeSeriesY()) {
-        axis.ticks(d3.time[!isY2Axis ? config.axis_y_tick_time_value : config.axis_y2_tick_time_value], !isY2Axis ? config.axis_y_tick_time_interval : config.axis_y2_tick_time_interval);
+        axis.ticks($$.d3.time[!isY2Axis ? config.axis_y_tick_time_value : config.axis_y2_tick_time_value], !isY2Axis ? config.axis_y_tick_time_interval : config.axis_y2_tick_time_interval);
     } else {
         axis.tickValues(tickValues);
     }
