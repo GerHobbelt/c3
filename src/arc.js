@@ -59,9 +59,9 @@ c3_chart_internal_fn.updateAngle = function C3_INTERNAL_updateAngle(d) {
     if ($$.isGaugeType(d.data)) {
         gMin = config.gauge_min;
         gMax = config.gauge_max;
-        gTic = (Math.PI) / (gMax - gMin);
+        gTic = (Math.PI * (config.gauge_fullCircle ? 2 : 1)) / (gMax - gMin);
         gValue = d.value < gMin ? 0 : d.value < gMax ? d.value - gMin : (gMax - gMin);
-        d.startAngle = -1 * (Math.PI / 2);
+        d.startAngle = config.gauge_startingAngle;
         d.endAngle = d.startAngle + gTic * gValue;
     }
     return found ? d : null;
@@ -112,7 +112,8 @@ c3_chart_internal_fn.getArc = function C3_INTERNAL_getArc(d, withoutUpdate, forc
 
 
 c3_chart_internal_fn.transformForArcLabel = function C3_INTERNAL_transformForArcLabel(d) {
-    var $$ = this,
+    var $$ = this, 
+        config = $$.config,
         updated = $$.updateAngle(d), 
         c, x, y, h, ratio, 
         translate = "",
@@ -122,8 +123,13 @@ c3_chart_internal_fn.transformForArcLabel = function C3_INTERNAL_transformForArc
         x = isNaN(c[0]) ? 0 : c[0];
         y = isNaN(c[1]) ? 0 : c[1];
         h = Math.sqrt(x * x + y * y);
-        // TODO: ratio should be an option?
-        ratio = $$.radius && h ? (36 / $$.radius > 0.375 ? 1.175 - 36 / $$.radius : 0.8) * $$.radius / h : 0;
+        if ($$.hasType('donut') && config.donut_label_ratio) {
+            ratio = isFunction(config.donut_label_ratio) ? config.donut_label_ratio(d, $$.radius, h) : config.donut_label_ratio;
+        } else if ($$.hasType('pie') && config.pie_label_ratio) {
+            ratio = isFunction(config.pie_label_ratio) ? config.pie_label_ratio(d, $$.radius, h) : config.pie_label_ratio;
+        } else {
+            ratio = $$.radius && h ? (36 / $$.radius > 0.375 ? 1.175 - 36 / $$.radius : 0.8) * $$.radius / h : 0;
+        }
         translate = "translate(" + (x * ratio) +  ',' + (y * ratio) +  ")";
     }
     else if (updated && hasGauge && $$.visibleTargetCount > 1) {
@@ -137,7 +143,8 @@ c3_chart_internal_fn.transformForArcLabel = function C3_INTERNAL_transformForArc
 
 c3_chart_internal_fn.getArcRatio = function C3_INTERNAL_getArcRatio(d) {
     var $$ = this,
-        whole = $$.hasType('gauge') ? Math.PI : (Math.PI * 2);
+        config = $$.config,
+        whole = Math.PI * ($$.hasType('gauge') && !config.gauge_fullCircle ? 1 : 2);
     return d ? (d.endAngle - d.startAngle) / whole : null;
 };
 
@@ -355,7 +362,7 @@ c3_chart_internal_fn.redrawArc = function C3_INTERNAL_redrawArc(duration, durati
         .style("opacity", 0)
         .each(function (d) {
             if ($$.isGaugeType(d.data)) {
-                d.startAngle = d.endAngle = -1 * (Math.PI / 2);
+                d.startAngle = d.endAngle = config.gauge_startingAngle;
             }
             this._current = d;
         });
@@ -535,8 +542,8 @@ c3_chart_internal_fn.redrawArc = function C3_INTERNAL_redrawArc(duration, durati
 
                 var d = {
                     data: [{value: config.gauge_max}],
-                    startAngle: -1 * (Math.PI / 2),
-                    endAngle: Math.PI / 2,
+                    startAngle: config.gauge_startingAngle,
+                    endAngle: -1 * config.gauge_startingAngle,
                     index: index++
                 };
                 return $$.getArc(d, true, true);
@@ -545,11 +552,11 @@ c3_chart_internal_fn.redrawArc = function C3_INTERNAL_redrawArc(duration, durati
             .attr("dy", ".75em")
             .text(config.gauge_label_show ? config.gauge_units : '');
         $$.arcs.select('.' + CLASS.chartArcsGaugeMin)
-            .attr("dx", -1 * ($$.innerRadius + (($$.radius - $$.innerRadius) / 2)) + "px")
+            .attr("dx", -1 * ($$.innerRadius + (($$.radius - $$.innerRadius) / (config.gauge_fullCircle ? 1 : 2))) + "px")
             .attr("dy", "1.2em")
             .text(config.gauge_label_show ? minGaugeValue : '');
         $$.arcs.select('.' + CLASS.chartArcsGaugeMax)
-            .attr("dx", $$.innerRadius + (($$.radius - $$.innerRadius) / 2) + "px")
+            .attr("dx", $$.innerRadius + (($$.radius - $$.innerRadius) / (config.gauge_fullCircle ? 1 : 2)) + "px")
             .attr("dy", "1.2em")
             .text(config.gauge_label_show ? maxGaugeValue : '');
     }

@@ -41,18 +41,22 @@ c3_chart_internal_fn.togglePoint = function C3_INTERNAL_togglePoint(selected, ta
 c3_chart_internal_fn.selectPath = function C3_INTERNAL_selectPath(target, d) {
     var $$ = this;
     $$.config.data_onselected.call($$, d, target.node());
-    target.transition().duration(100)
+    if ($$.config.interaction_brighten) {
+        target.transition().duration(100)
         .style("fill", function () { 
             return $$.d3.rgb($$.color(d)).brighter(0.75); 
         });
+    }
 };
 c3_chart_internal_fn.unselectPath = function C3_INTERNAL_unselectPath(target, d) {
     var $$ = this;
     $$.config.data_onunselected.call($$, d, target.node());
-    target.transition().duration(100)
+    if ($$.config.interaction_brighten) {
+        target.transition().duration(100)
         .style("fill", function () { 
             return $$.color(d); 
         });
+    }
 };
 c3_chart_internal_fn.togglePath = function C3_INTERNAL_togglePath(selected, target, d, i) {
     selected ? this.selectPath(target, d, i) : this.unselectPath(target, d, i);

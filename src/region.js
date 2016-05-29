@@ -13,12 +13,13 @@ c3_chart_internal_fn.updateRegion = function C3_INTERNAL_updateRegion(duration) 
 
     $$.mainRegion = $$.main.select('.' + CLASS.regions).selectAll('.' + CLASS.region)
         .data(config.regions);
-    var g = $$.mainRegion.enter().append('g')
-        .attr('class', $$.classRegion.bind($$));
+    var g = $$.mainRegion.enter().append('g');
     g.append('rect')
         .style("fill-opacity", 0);
     g.append('text')
         .text($$.labelRegion.bind($$));
+    $$.mainRegion
+        .attr('class', $$.classRegion.bind($$));
     $$.mainRegion.exit().transition().duration(duration)
         .style("opacity", 0)
         .remove();
@@ -26,7 +27,13 @@ c3_chart_internal_fn.updateRegion = function C3_INTERNAL_updateRegion(duration) 
 c3_chart_internal_fn.redrawRegion = function C3_INTERNAL_redrawRegion(withTransition) {
     console.count('redrawRegion');
     var $$ = this,
-        regions = $$.mainRegion.selectAll('rect'),
+        regions = $$.mainRegion.selectAll('rect').each(function () {
+            // data is binded to g and it's not transferred to rect (child node) automatically,
+            // then data of each rect has to be updated manually.
+            // TODO: there should be more efficient way to solve this?
+            var parentData = $$.d3.select(this.parentNode).datum();
+            $$.d3.select(this).datum(parentData);
+        }),
         x = $$.regionX.bind($$),
         y = $$.regionY.bind($$),
         w = $$.regionWidth.bind($$),

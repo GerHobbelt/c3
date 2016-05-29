@@ -309,7 +309,7 @@ c3_chart_internal_fn.generateDrawArea = function C3_INTERNAL_generateDrawArea(ar
             return config.data_groups.length > 0 ? getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)(d.value);
         };
 
-    area = config.axis_rotated ? area.x0(value0).x1(value1).y(xValue) : area.x(xValue).y0(value0).y1(value1);
+    area = config.axis_rotated ? area.x0(value0).x1(value1).y(xValue) : area.x(xValue).y0(config.area_above ? 0 : value0).y1(value1);
     if (!config.line_connectNull) {
         area = area.defined(function (d) { 
             return d.value !== null; 
@@ -463,7 +463,7 @@ c3_chart_internal_fn.pointExpandedR = function C3_INTERNAL_pointExpandedR(d) {
 c3_chart_internal_fn.pointSelectR = function C3_INTERNAL_pointSelectR(d) {
     var $$ = this, 
         config = $$.config;
-    return config.point_select_r ? config.point_select_r : $$.pointR(d) * 4;
+    return isFunction(config.point_select_r) ? config.point_select_r(d) : ((config.point_select_r) ? config.point_select_r : $$.pointR(d) * 4);
 };
 c3_chart_internal_fn.isWithinCircle = function C3_INTERNAL_isWithinCircle(that, r) {
     var d3 = this.d3,
