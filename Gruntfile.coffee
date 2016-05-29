@@ -166,6 +166,6 @@ module.exports = (grunt) ->
     grunt.registerTask 'test', ['karma']
     grunt.registerTask 'build', ['concat', 'sass']
     grunt.registerTask 'minify', ['cssmin', 'uglify']
-    grunt.registerTask 'default', ['lint', 'update_web', 'test', 'minify']
+    grunt.registerTask 'default', ['concat', 'lint', 'update_web', 'test', 'minify']
     grunt.registerTask 'update_web', ['build', 'copy:web']
     grunt.registerTask 'quickbuild', ['update_web', 'minify']
