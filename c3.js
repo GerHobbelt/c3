@@ -3253,11 +3253,11 @@
         }
         // Calculate x axis height when tick rotated
         if (axisId === 'x' && !config.axis_rotated && config.axis_x_tick_rotate) {
-            h = 30 + $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - config.axis_x_tick_rotate) / 180);
+            h += $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - config.axis_x_tick_rotate) / 180);
         }
         // Calculate y axis height when tick rotated
         if (axisId === 'y' && config.axis_rotated && config.axis_y_tick_rotate) {
-            h = 30 + $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - config.axis_y_tick_rotate) / 180);
+            h += $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - config.axis_y_tick_rotate) / 180);
         }
         return h + ($$.axis.getLabelPositionById(axisId).isInner ? 0 : 10) + (axisId === 'y2' ? -10 : 0);
     };
@@ -5469,7 +5469,7 @@
         }
         return tickValues;
     };
-    Axis.prototype.getYAxis = function getYAxis(scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, withoutRotateTickText) {
+    Axis.prototype.getYAxis = function C3_API_AXIS_getYAxis(scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, withoutRotateTickText, isY2Axis) {
         // TODO: refactor the whole axis_x/y/y2 stuff to become one config block per axis: axis_x.xyz, axis_y.xyz, axis_y2.xyz -->
         // that way we can pass in the config block and not copy individual settings nor hardcode-check inside like we do now. :-(
         var $$ = this.owner,
@@ -5480,7 +5480,7 @@
                 tickMultiline: !isY2Axis ? config.axis_y_tick_multiline : config.axis_y2_tick_multiline,
                 tickWidth: !isY2Axis ? config.axis_y_tick_width : config.axis_y2_tick_width,
                 withoutTransition: withoutTransition,
-                tickTextRotate: withoutRotateTickText ? 0 : config.axis_y_tick_rotate
+                tickTextRotate: withoutRotateTickText ? 0 : config.axis_y_tick_rotate,
             },
             axis = c3_axis($$.d3, axisParams).scale(scale).orient(orient).tickFormat(tickFormat);
         if ($$.isTimeSeriesY()) {
@@ -7639,7 +7639,7 @@
             $$.addXs(args.xs);
         }
         // update names if exists
-        if (args.names) {
+        if ('names' in args) {
             c3_chart_fn.data.names.bind(this)(args.names);
         }
         // update classes if exists

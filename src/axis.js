@@ -82,7 +82,7 @@ Axis.prototype.updateXAxisTickValues = function C3_API_AXIS_updateXAxisTickValue
     }
     return tickValues;
 };
-Axis.prototype.getYAxis = function C3_API_AXIS_getYAxis(scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, withoutRotateTickText) {
+Axis.prototype.getYAxis = function C3_API_AXIS_getYAxis(scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, withoutRotateTickText, isY2Axis) {
     // TODO: refactor the whole axis_x/y/y2 stuff to become one config block per axis: axis_x.xyz, axis_y.xyz, axis_y2.xyz -->
     // that way we can pass in the config block and not copy individual settings nor hardcode-check inside like we do now. :-(
     var $$ = this.owner,
