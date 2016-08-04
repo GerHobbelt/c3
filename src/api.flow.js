@@ -1,7 +1,12 @@
-c3_chart_fn.flow = function (args) {
+c3_chart_fn.flow = function C3_API_flow(args) {
     var $$ = this.internal,
-        targets, data, notfoundIds = [], orgDataCount = $$.getMaxDataCount(),
-        dataCount, domain, baseTarget, baseValue, length = 0, tail = 0, diff, to;
+        targets, data, 
+        notfoundIds = [], 
+        orgDataCount = $$.getMaxDataCount(),
+        dataCount, domain, baseTarget, baseValue, 
+        length = 0, 
+        tail = 0, 
+        diff, to;
 
     if (args.json) {
         data = $$.convertJsonToData(args.json, args.keys);
@@ -19,7 +24,8 @@ c3_chart_fn.flow = function (args) {
 
     // Update/Add data
     $$.data.targets.forEach(function (t) {
-        var found = false, i, j;
+        var found = false, 
+            i, j;
         for (i = 0; i < targets.length; i++) {
             if (t.id === targets[i].id) {
                 found = true;
@@ -32,7 +38,13 @@ c3_chart_fn.flow = function (args) {
                 for (j = 0; j < length; j++) {
                     targets[i].values[j].index = tail + j;
                     if (!$$.isTimeSeries()) {
-                        targets[i].values[j].x = tail + j;
+                        if ($$.isCustomX()) {
+                            // If we have custom x, just use the value fed in
+                            targets[i].values[j].x = targets[i].values[j].x;
+                        } else {
+                            // otherwise make one based on the last index
+                            targets[i].values[j].x = tail + j;
+                        }
                     }
                 }
                 t.values = t.values.concat(targets[i].values);
@@ -41,7 +53,9 @@ c3_chart_fn.flow = function (args) {
                 break;
             }
         }
-        if (!found) { notfoundIds.push(t.id); }
+        if (!found) { 
+            notfoundIds.push(t.id); 
+        }
     });
 
     // Append null for not found targets
@@ -95,7 +109,9 @@ c3_chart_fn.flow = function (args) {
         length = 0;
         to = $$.isTimeSeries() ? $$.parseDate(args.to) : args.to;
         baseTarget.values.forEach(function (v) {
-            if (v.x < to) { length++; }
+            if (v.x < to) { 
+                length++; 
+            }
         });
     } else if (isDefined(args.length)) {
         length = args.length;
@@ -137,12 +153,15 @@ c3_chart_fn.flow = function (args) {
         withLegend: true,
         withTransition: orgDataCount > 1,
         withTrimXDomain: false,
-        withUpdateXAxis: true,
+        withUpdateXDomain: $$.isTimeSeries,
+        withUpdateXAxis: true
     });
 };
 
-c3_chart_internal_fn.generateFlow = function (args) {
-    var $$ = this, config = $$.config, d3 = $$.d3;
+c3_chart_internal_fn.generateFlow = function C3_INTERNAL_generateFlow(args) {
+    var $$ = this, 
+        config = $$.config, 
+        d3 = $$.d3;
 
     return function () {
         var targets = args.targets,
@@ -157,7 +176,9 @@ c3_chart_internal_fn.generateFlow = function (args) {
             yForText = args.yForText,
             duration = args.duration;
 
-        var translateX, scaleX = 1, transform,
+        var translateX, 
+            scaleX = 1, 
+            transform,
             flowIndex = flow.index,
             flowLength = flow.length,
             flowStart = $$.getValueOnIndex($$.data.targets[0].values, flowIndex),
@@ -187,7 +208,9 @@ c3_chart_internal_fn.generateFlow = function (args) {
         // update x domain to generate axis elements for flow
         domain = $$.updateXDomain(targets, true, true);
         // update elements related to x scale
-        if ($$.updateXGrid) { $$.updateXGrid(true); }
+        if ($$.updateXGrid) { 
+            $$.updateXGrid(true); 
+        }
 
         // generate transform to flow
         if (!flow.orgDataCount) { // if empty
@@ -228,7 +251,10 @@ c3_chart_internal_fn.generateFlow = function (args) {
             wait.add(xgridLines.transition().attr('transform', transform));
         })
         .call(wait, function () {
-            var i, shapes = [], texts = [], eventRects = [];
+            var i, 
+                shapes = [], 
+                texts = [], 
+                eventRects = [];
 
             // remove flowed elements
             if (flowLength) {
