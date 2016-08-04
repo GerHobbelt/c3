@@ -38,11 +38,13 @@ c3_chart_internal_fn.getTooltipContent = function C3_INTERNAL_getTooltipContent(
         orderAsc = $$.isOrderAsc();
 
     if (config.data_groups.length === 0) {
-        d.sort(function (a, b) {
-            var v1 = a ? a.value : null, 
-	        v2 = b ? b.value : null;
-            return orderAsc ? v1 - v2 : v2 - v1;
-        });
+        if (config.data_order) {
+            d.sort(function (a, b) {
+                var v1 = a ? a.value : null, 
+	            v2 = b ? b.value : null;
+                return orderAsc ? v1 - v2 : v2 - v1;
+            });
+        }
     } else {
         var ids = $$.orderTargets($$.data.targets.slice(0)).map(function (i) {
             return i.id;
