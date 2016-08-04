@@ -78,7 +78,7 @@ var CLASS = c3_chart_internal_fn.CLASS = {
     INCLUDED: '_included_'
 };
 c3_chart_internal_fn.generateClass = function C3_INTERNAL_generateClass(prefix, targetId) {
-    return " " + prefix + " " + prefix + this.getTargetSelectorSuffix(targetId);
+    return ' ' + prefix + ' ' + prefix + this.getTargetSelectorSuffix(targetId);
 };
 c3_chart_internal_fn.classText = function C3_INTERNAL_classText(d) {
     return this.generateClass(CLASS.text, d.index);

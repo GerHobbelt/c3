@@ -1,6 +1,6 @@
 c3_chart_internal_fn.initTitle = function C3_INTERNAL_initTitle() {
     var $$ = this;
-    $$.title = $$.svg.append("text")
+    $$.title = $$.svg.append('text')
           .text($$.config.title_text)
 //          .attr("x", $$.xForTitle.bind($$))
 //          .attr("y", $$.yForTitle.bind($$))

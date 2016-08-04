@@ -1,7 +1,7 @@
 c3_chart_internal_fn.initText = function C3_INTERNAL_initText() {
     var $$ = this;
-    $$.main.select('.' + CLASS.chart).append("g")
-        .attr("class", CLASS.chartTexts);
+    $$.main.select('.' + CLASS.chart).append('g')
+        .attr('class', CLASS.chartTexts);
     $$.mainText = $$.d3.selectAll([]);
 };
 c3_chart_internal_fn.updateTargetsForText = function C3_INTERNAL_updateTargetsForText(targets) {
@@ -18,7 +18,7 @@ c3_chart_internal_fn.updateTargetsForText = function C3_INTERNAL_updateTargetsFo
     mainTextEnter = mainTextUpdate.enter().append('g')
         .attr('class', classChartText)
         .style('opacity', 0)
-        .style("pointer-events", "none");
+        .style('pointer-events', 'none');
     mainTextEnter.append('g')
         .attr('class', classTexts);
 };
@@ -44,7 +44,7 @@ c3_chart_internal_fn.updateText = function C3_INTERNAL_updateText(durationForExi
             return $$.barOrLineData(d);
         });
     $$.mainText.enter().append('text')
-        .attr("class", classText)
+        .attr('class', classText)
         .attr('text-anchor', function (d) {
             var anchor = (config.data_labels && config.data_labels.anchor) || 'auto';
             if (anchor === 'auto') {
@@ -57,11 +57,11 @@ c3_chart_internal_fn.updateText = function C3_INTERNAL_updateText(durationForExi
             d.anchor = anchor;
             return anchor;
         })
-        .style("stroke", 'none')
-        .style("fill", function (d) { 
+        .style('stroke', 'none')
+        .style('fill', function (d) { 
             return $$.getLabelColor(d); 
         })
-        .style("fill-opacity", 0);
+        .style('fill-opacity', 0);
     $$.mainText
         .text(drawText);
         // old:
@@ -111,15 +111,15 @@ c3_chart_internal_fn.redrawText = function C3_INTERNAL_redrawText(xForText, yFor
                 }
                 return 0;
             })
-            .style("fill", function (d) { 
+            .style('fill', function (d) { 
                 return $$.getLabelColor(d); 
             })
-            .style("fill-opacity", opacityForText)
+            .style('fill-opacity', opacityForText)
     ];
 };
 c3_chart_internal_fn.getTextRect = function C3_INTERNAL_getTextRect(element, cls) {
     var dummy = this.d3.select('body').append('div').classed('c3', true),
-        svg = dummy.append("svg").style('visibility', 'hidden').style('position', 'fixed').style('top', 0).style('left', 0),
+        svg = dummy.append('svg').style('visibility', 'hidden').style('position', 'fixed').style('top', 0).style('left', 0),
         text = element.textContent,
         font = this.d3.select(element).style('font'),
         rect,
@@ -127,7 +127,7 @@ c3_chart_internal_fn.getTextRect = function C3_INTERNAL_getTextRect(element, cls
     svg.selectAll('.dummy')
         .data([text])
       .enter().append('text')
-        .classed(cls ? cls : "", true)
+        .classed(cls ? cls : '', true)
         .style('font', font)
         .text(text)
       .each(function () {
