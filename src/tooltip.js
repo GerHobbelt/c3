@@ -1,5 +1,7 @@
-c3_chart_internal_fn.initTooltip = function () {
-    var $$ = this, config = $$.config, i;
+c3_chart_internal_fn.initTooltip = function C3_INTERNAL_initTooltip() {
+    var $$ = this, 
+        config = $$.config, 
+        i;
     $$.tooltip = $$.selectChart
         .style("position", "relative")
       .append("div")
@@ -24,25 +26,32 @@ c3_chart_internal_fn.initTooltip = function () {
             .style("display", "block");
     }
 };
-c3_chart_internal_fn.getTooltipContent = function (d, defaultTitleFormat, defaultValueFormat, color) {
-    var $$ = this, config = $$.config,
+c3_chart_internal_fn.getTooltipContent = function C3_INTERNAL_getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color) {
+    var $$ = this, 
+        config = $$.config,
         titleFormat = config.tooltip_format_title || defaultTitleFormat,
-        nameFormat = config.tooltip_format_name || function (name) { return name; },
+        nameFormat = config.tooltip_format_name || function (name) { 
+            return name; 
+        },
         valueFormat = config.tooltip_format_value || defaultValueFormat,
         text, i, title, value, name, bgcolor,
         orderAsc = $$.isOrderAsc();
 
     if (config.data_groups.length === 0) {
-        d.sort(function(a, b){
-            var v1 = a ? a.value : null, v2 = b ? b.value : null;
-            return orderAsc ? v1 - v2 : v2 - v1;
-        });
+        if (config.data_order) {
+            d.sort(function (a, b) {
+                var v1 = a ? a.value : null, 
+	            v2 = b ? b.value : null;
+                return orderAsc ? v1 - v2 : v2 - v1;
+            });
+        }
     } else {
-        var ids = $$.orderTargets($$.data.targets).map(function (i) {
+        var ids = $$.orderTargets($$.data.targets.slice(0)).map(function (i) {
             return i.id;
         });
-        d.sort(function(a, b) {
-            var v1 = a ? a.value : null, v2 = b ? b.value : null;
+        d.sort(function (a, b) {
+            var v1 = a ? a.value : null, 
+	        v2 = b ? b.value : null;
             if (v1 > 0 && v2 > 0) {
                 v1 = a ? ids.indexOf(a.id) : null;
                 v2 = b ? ids.indexOf(b.id) : null;
@@ -52,9 +61,9 @@ c3_chart_internal_fn.getTooltipContent = function (d, defaultTitleFormat, defaul
     }
 
     for (i = 0; i < d.length; i++) {
-        if (! (d[i] && (d[i].value || d[i].value === 0))) { continue; }
+        if (!(d[i] && (d[i].value || d[i].value === 0))) { continue; }
 
-        if (! text) {
+        if (!text) {
             title = sanitise(titleFormat ? titleFormat(d[i].x) : d[i].x);
             text = "<table class='" + $$.CLASS.tooltip + "'>" + (title || title === 0 ? "<tr><th colspan='2'>" + title + "</th></tr>" : "");
         }
@@ -74,12 +83,14 @@ c3_chart_internal_fn.getTooltipContent = function (d, defaultTitleFormat, defaul
     }
     return text + "</table>";
 };
-c3_chart_internal_fn.tooltipPosition = function (dataToShow, tWidth, tHeight, element) {
-    var $$ = this, config = $$.config, d3 = $$.d3;
+c3_chart_internal_fn.tooltipPosition = function C3_INTERNAL_tooltipPosition(dataToShow, tWidth, tHeight, element) {
+    var $$ = this, 
+        config = $$.config, 
+        d3 = $$.d3;
     var svgLeft, tooltipLeft, tooltipRight, tooltipTop, chartRight;
     var forArc = $$.hasArcType(),
         mouse = d3.mouse(element);
-  // Determin tooltip position
+    // Determine tooltip position
     if (forArc) {
         tooltipLeft = (($$.width - ($$.isLegendRight ? $$.getLegendWidth() : 0)) / 2) + mouse[0];
         tooltipTop = ($$.height / 2) + mouse[1] + 20;
@@ -99,7 +110,7 @@ c3_chart_internal_fn.tooltipPosition = function (dataToShow, tWidth, tHeight, el
 
         if (tooltipRight > chartRight) {
             // 20 is needed for Firefox to keep tooltip width
-            tooltipLeft -= tooltipRight - chartRight + 20;
+            tooltipLeft = $$.x(dataToShow[0].x) - tWidth + $$.getCurrentPaddingLeft(true) - 20;
         }
         if (tooltipTop + tHeight > $$.currentHeight) {
             tooltipTop -= tHeight + 30;
@@ -110,16 +121,31 @@ c3_chart_internal_fn.tooltipPosition = function (dataToShow, tWidth, tHeight, el
     }
     return {top: tooltipTop, left: tooltipLeft};
 };
-c3_chart_internal_fn.showTooltip = function (selectedData, element) {
-    var $$ = this, config = $$.config;
+c3_chart_internal_fn.showTooltip = function C3_INTERNAL_showTooltip(selectedData, element) {
+    var $$ = this, 
+        config = $$.config;
     var tWidth, tHeight, position;
     var forArc = $$.hasArcType(),
-        dataToShow = selectedData.filter(function (d) { return d && isValue(d.value); }),
+        dataToShow = selectedData.filter(function (d) { 
+            return d && isValue(d.value); 
+        }),
         positionFunction = config.tooltip_position || c3_chart_internal_fn.tooltipPosition;
     if (dataToShow.length === 0 || !config.tooltip_show) {
         return;
     }
-    $$.tooltip.html(config.tooltip_contents.call($$, selectedData, $$.axis.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color)).style("display", "block");
+    var tooltip = $$.tooltip.html(config.tooltip_contents.call($$, selectedData, $$.axis.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color));
+    if ($$.config.tooltip_animation_show) {
+        tooltip = tooltip
+                    .style("opacity", 0)
+                    .style("display", "block")
+                    .transition()
+                    .delay($$.config.tooltip_animation_delay)
+                    .duration($$.config.tooltip_animation_duration)
+                    .ease($$.config.tooltip_animation_ease)
+                    .style("opacity", 1);
+    } else {
+        tooltip.style("display", "block");
+    }
 
     // Get tooltip dimensions
     tWidth = $$.tooltip.property('offsetWidth');
@@ -131,6 +157,6 @@ c3_chart_internal_fn.showTooltip = function (selectedData, element) {
         .style("top", position.top + "px")
         .style("left", position.left + 'px');
 };
-c3_chart_internal_fn.hideTooltip = function () {
+c3_chart_internal_fn.hideTooltip = function C3_INTERNAL_hideTooltip() {
     this.tooltip.style("display", "none");
 };

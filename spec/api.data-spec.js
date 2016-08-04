@@ -1,4 +1,4 @@
-describe('c3 api data', function () {
+xdescribe('c3 api data', function () {
     'use strict';
 
     var chart;

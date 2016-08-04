@@ -554,7 +554,7 @@ describe('c3 chart axis', function () {
 
     describe('axis.x.tick.rotate', function () {
 
-        describe('not rotated', function () {
+        describe('rotated', function () {
 
             it('should update args successfully', function () {
                 args = {
@@ -601,7 +601,7 @@ describe('c3 chart axis', function () {
 
     describe('axis.y.tick.rotate', function () {
 
-        describe('not rotated', function () {
+        describe('rotated', function () {
 
             it('should update args successfully', function () {
                 args = {
@@ -624,6 +624,7 @@ describe('c3 chart axis', function () {
             });
 
             it('should rotate tick texts', function () {
+                expect(chart.internal.config.axis_y_tick_rotate).toBe(45);
                 chart.internal.main.selectAll('.c3-axis-y g.tick').each(function () {
                     var tick = d3.select(this),
                         text = tick.select('text'),

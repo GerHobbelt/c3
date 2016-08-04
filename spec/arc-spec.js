@@ -1,4 +1,4 @@
-describe('c3 chart arc', function () {
+xdescribe('c3 chart arc', function () {
     'use strict';
 
     var chart, args;

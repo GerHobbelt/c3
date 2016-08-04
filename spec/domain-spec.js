@@ -1,4 +1,4 @@
-describe('c3 chart domain', function () {
+xdescribe('c3 chart domain', function () {
     'use strict';
 
     var chart;
