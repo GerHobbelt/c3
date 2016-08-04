@@ -24,8 +24,8 @@ c3_chart_fn.regions.remove = function C3_API_regions_remove(options) {
         duration, classes, regions;
 
     options = options || {};
-    duration = $$.getOption(options, "duration", config.transition_duration);
-    classes = $$.getOption(options, "classes", [CLASS.region]);
+    duration = $$.getOption(options, 'duration', config.transition_duration);
+    classes = $$.getOption(options, 'classes', [CLASS.region]);
 
     regions = $$.main.select('.' + CLASS.regions).selectAll(classes.map(function (c) { 
         return '.' + c; 

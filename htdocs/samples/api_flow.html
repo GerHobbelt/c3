@@ -2,6 +2,10 @@
   <head>
     <link rel="stylesheet" type="text/css" href="../css/c3.css">
     <style>
+      .c3-region-0 {
+        fill: #27e8e5;
+        fill-opacity: 0.8
+      }
       .c3-region-1 {
         fill: #dd3333;
         fill-opacity: 0.8
@@ -81,8 +85,8 @@
           }
         },
         regions: [
-          {start:2, end:4, class:'region1'},
-          {start:100, end:200, axis:'y'},
+          {start:2, end:4, class:'region1', label: 'data segment'},
+          {start:100, end:200, axis:'y', label: 'red band'},
         ],
       });
       };

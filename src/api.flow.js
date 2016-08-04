@@ -304,6 +304,8 @@ c3_chart_internal_fn.generateFlow = function C3_INTERNAL_generateFlow(args) {
             mainRegion.select('rect').filter($$.isRegionOnX)
                 .attr("x", $$.regionX.bind($$))
                 .attr("width", $$.regionWidth.bind($$));
+            mainRegion.select('text').filter($$.isRegionOnX)
+                .attr("x", $$.regionX.bind($$));
 
             if (config.interaction_enabled) {
                 $$.redrawEventRect();
