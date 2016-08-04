@@ -2341,14 +2341,15 @@
         return Math.sqrt(Math.pow(x - pos[xIndex], 2) + Math.pow(y - pos[yIndex], 2));
     };
     c3_chart_internal_fn.convertValuesToStep = function C3_INTERNAL_convertValuesToStep(values) {
-        var converted, i;
+        var converted, 
+            i;
 
         if (!this.isCategorized()) {
             return values;
         }
-        
+            
         converted = values.slice(0);
-        
+
         for (i = values.length + 1; 0 < i; i--) {
             converted[i] = converted[i - 1];
         }
@@ -4741,11 +4742,11 @@
             orderAsc = $$.isOrderAsc();
 
         if (config.data_groups.length === 0) {
-            if(config.data_order) {
-            d.sort(function (a, b) {
-                var v1 = a ? a.value : null, 
-    	        v2 = b ? b.value : null;
-                return orderAsc ? v1 - v2 : v2 - v1;
+            if (config.data_order) {
+                d.sort(function (a, b) {
+                    var v1 = a ? a.value : null, 
+    	            v2 = b ? b.value : null;
+                    return orderAsc ? v1 - v2 : v2 - v1;
                 });
             }
         } else {
@@ -6703,11 +6704,11 @@
                     // line/area selection not supported yet
                     return;
                 }
-                if (isWithin ^ isIncluded) {
-                    shape.classed(CLASS.INCLUDED, !isIncluded);
+                if (isWithin ^ isSelected || isWithin ^ isIncluded) {
+                    shape.classed(CLASS.INCLUDED, isWithin);
                     // TODO: included/unincluded callback here
-                    shape.classed(CLASS.SELECTED, !isSelected);
-                    toggle.call($$, !isSelected, shape, d, i);
+                    shape.classed(CLASS.SELECTED, isWithin);
+                    toggle.call($$, isWithin, shape, d, i);
                 }
             });
     };
@@ -7230,7 +7231,7 @@
             else {
                 return 1;
             }
-        }
+        };
     };
 
     c3_chart_internal_fn.getYFormat = function C3_INTERNAL_getYFormat(forArc) {

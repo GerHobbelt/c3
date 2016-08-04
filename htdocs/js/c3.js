@@ -128,6 +128,7 @@
 
         $$.color = $$.generateColor();
         $$.levelColor = $$.generateLevelColor();
+        $$.opacity = $$.generateOpacity();
 
         $$.dataTimeFormat = config.data_xLocaltime ? d3.time.format : d3.time.format.utc;
         $$.axisTimeFormat = config.axis_x_localtime ? d3.time.format : d3.time.format.utc;
@@ -885,7 +886,7 @@
         return "translate(" + x + "," + y + ")";
     };
     c3_chart_internal_fn.initialOpacity = function C3_INTERNAL_initialOpacity(d) {
-        return d.value !== null && this.withoutFadeIn[d.id] ? 1 : 0;
+        return d.value !== null && this.withoutFadeIn[d.id] ? this.opacity(d) : 0;
     };
     c3_chart_internal_fn.initialOpacityForCircle = function C3_INTERNAL_initialOpacityForCircle(d) {
         return d.value !== null && this.withoutFadeIn[d.id] ? this.opacityForCircle(d) : 0;
@@ -1240,6 +1241,8 @@
             data_regions: {},
             data_color: undefined,
             data_colors: {},
+            data_opacity: undefined,
+            data_calculateOpacity: {},
             data_hide: false,
             data_filter: undefined,
             data_selection_enabled: false,
@@ -2338,12 +2341,14 @@
         return Math.sqrt(Math.pow(x - pos[xIndex], 2) + Math.pow(y - pos[yIndex], 2));
     };
     c3_chart_internal_fn.convertValuesToStep = function C3_INTERNAL_convertValuesToStep(values) {
-        var converted = [].concat(values), 
+        var converted, 
             i;
 
         if (!this.isCategorized()) {
             return values;
         }
+            
+        converted = values.slice(0);
 
         for (i = values.length + 1; 0 < i; i--) {
             converted[i] = converted[i - 1];
@@ -3956,7 +3961,7 @@
             (withTransition ? this.mainBar.transition(Math.random().toString()) : this.mainBar)
                 .attr('d', drawBar)
                 .style("fill", this.color)
-                .style("opacity", 1)
+                .style("opacity", this.opacity)
         ];
     };
     c3_chart_internal_fn.getBarW = function C3_INTERNAL_getBarW(axis, barTargetsNum) {
@@ -4737,11 +4742,13 @@
             orderAsc = $$.isOrderAsc();
 
         if (config.data_groups.length === 0) {
-            d.sort(function (a, b) {
-                var v1 = a ? a.value : null, 
-    	        v2 = b ? b.value : null;
-                return orderAsc ? v1 - v2 : v2 - v1;
-            });
+            if (config.data_order) {
+                d.sort(function (a, b) {
+                    var v1 = a ? a.value : null, 
+    	            v2 = b ? b.value : null;
+                    return orderAsc ? v1 - v2 : v2 - v1;
+                });
+            }
         } else {
             var ids = $$.orderTargets($$.data.targets.slice(0)).map(function (i) {
                 return i.id;
@@ -6697,11 +6704,11 @@
                     // line/area selection not supported yet
                     return;
                 }
-                if (isWithin ^ isIncluded) {
-                    shape.classed(CLASS.INCLUDED, !isIncluded);
+                if (isWithin ^ isSelected || isWithin ^ isIncluded) {
+                    shape.classed(CLASS.INCLUDED, isWithin);
                     // TODO: included/unincluded callback here
-                    shape.classed(CLASS.SELECTED, !isSelected);
-                    toggle.call($$, !isSelected, shape, d, i);
+                    shape.classed(CLASS.SELECTED, isWithin);
+                    toggle.call($$, isWithin, shape, d, i);
                 }
             });
     };
@@ -7203,6 +7210,28 @@
             }
             return color;
         } : null;
+    };
+    c3_chart_internal_fn.generateOpacity = function () {
+        var $$ = this, config = $$.config,
+            opacity = config.data_opacity,
+            callback = config.data_calculateOpacity;
+
+        return function (d) {
+            var id = d.id || (d.data && d.data.id) || d;
+
+            // if callback function is provided
+            if (callback[id] instanceof Function) {
+                return callback[id](d);
+            }
+            // if opacity is specified
+            else if (opacity !== undefined) {
+                return opacity;
+            }
+            // default
+            else {
+                return 1;
+            }
+        };
     };
 
     c3_chart_internal_fn.getYFormat = function C3_INTERNAL_getYFormat(forArc) {
@@ -7728,6 +7757,12 @@
         if (args.colors) {
             Object.keys(args.colors).forEach(function (id) {
                 config.data_colors[id] = args.colors[id];
+            });
+        }
+        // update calculateOpacity if exists
+        if ('calculateOpacity' in args) {
+            Object.keys(args.calculateOpacity).forEach(function (id) {
+                config.data_calculateOpacity[id] = args.calculateOpacity[id];
             });
         }
         // update names if exists
@@ -8653,17 +8688,18 @@
                     function split(splitted, text) {
                         spaceIndex = undefined;
                         for (var i = 1; i < text.length; i++) {
-                            if (text.charAt(i) === ' ') {
+                            var currentChar = text.charAt(i);
+                            if (currentChar === ' ' || currentChar === '\n') {
                                 spaceIndex = i;
                                 preserveSpace = 0;
-                            } else if (text.charAt(i) === '/' || text.charAt(i) === '-') {
+                            } else if (currentChar === '/' || currentChar === '-') {
                                 spaceIndex = i;
                                 preserveSpace = 1;
                             }
                             subtext = text.substr(0, i + 1);
                             textWidth = sizeFor1Char.w * subtext.length;
-                            // if text width gets over tick width, split by space index or current index
-                            if (maxWidth < textWidth) {
+                            // if text width gets over tick width OR we have reached a newline character, split by space index or current index
+                            if (currentChar === '\n' || maxWidth < textWidth) {
                                 return split(
                                     splitted.concat(text.substr(0, spaceIndex ? spaceIndex + preserveSpace : i)),
                                     text.slice(spaceIndex ? spaceIndex + 1 : i)

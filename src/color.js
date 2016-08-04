@@ -64,5 +64,5 @@ c3_chart_internal_fn.generateOpacity = function () {
         else {
             return 1;
         }
-    }
+    };
 };
