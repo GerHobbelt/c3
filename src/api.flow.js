@@ -163,7 +163,7 @@ c3_chart_internal_fn.generateFlow = function C3_INTERNAL_generateFlow(args) {
         config = $$.config, 
         d3 = $$.d3;
 
-    return function () {
+    return function C3_INTERNAL_generateFlow_cbf() {
         var targets = args.targets,
             flow = args.flow,
             drawBar = args.drawBar,

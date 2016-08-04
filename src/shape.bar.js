@@ -58,7 +58,6 @@ c3_chart_internal_fn.updateBar = function C3_INTERNAL_updateBar(durationForExit)
         .remove();
 };
 c3_chart_internal_fn.redrawBar = function C3_INTERNAL_redrawBar(drawBar, withTransition) {
-    console.count('redrawBar');
     return [
         (withTransition ? this.mainBar.transition(Math.random().toString()) : this.mainBar)
             .attr('d', drawBar)

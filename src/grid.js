@@ -164,7 +164,6 @@ c3_chart_internal_fn.updateGrid = function C3_INTERNAL_updateGrid(duration) {
         .remove();
 };
 c3_chart_internal_fn.redrawGrid = function C3_INTERNAL_redrawGrid(withTransition) {
-    console.count('redrawGrid');
     var $$ = this, 
         config = $$.config, 
         xv = $$.xv.bind($$),

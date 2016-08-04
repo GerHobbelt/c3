@@ -339,7 +339,6 @@ c3_chart_internal_fn.initArc = function C3_INTERNAL_initArc() {
 };
 
 c3_chart_internal_fn.redrawArc = function C3_INTERNAL_redrawArc(duration, durationForExit, withTransform) {
-    console.count('redrawArc');
     var $$ = this, 
         d3 = $$.d3, 
         config = $$.config, 

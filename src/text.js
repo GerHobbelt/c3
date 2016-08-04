@@ -91,7 +91,6 @@ c3_chart_internal_fn.generateDrawBarText = function C3_INTERNAL_generateDrawBarT
 
 //c3_chart_internal_fn.addTransitionForText = function C3_INTERNAL_addTransitionForText(transitions, xForText, yForText, forFlow)
 c3_chart_internal_fn.redrawText = function C3_INTERNAL_redrawText(xForText, yForText, forFlow, withTransition) {
-    console.count('redrawText');
     var $$ = this,
         config = $$.config,
         opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
@@ -136,8 +135,6 @@ c3_chart_internal_fn.getTextRect = function C3_INTERNAL_getTextRect(element, cls
         rect = this.getBoundingClientRect(); 
       });
     dummy.remove();
-    console.count('getTextRect: count = ' + count);
-    //assert(count === 1);
     return rect;
 };
 c3_chart_internal_fn.generateXYForText = function C3_INTERNAL_generateXYForText(areaIndices, barIndices, lineIndices, forX) {

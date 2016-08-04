@@ -535,7 +535,6 @@
     };
 
     c3_chart_internal_fn.redraw = function C3_INTERNAL_redraw(options, transitions) {
-        console.count('redraw');
         var $$ = this, 
             main = $$.main, 
             d3 = $$.d3, 
@@ -800,7 +799,6 @@
     };
 
     c3_chart_internal_fn.updateAndRedraw = function C3_INTERNAL_updateAndRedraw(options) {
-        console.count('updateAndRedraw');
         var $$ = this, 
             config = $$.config, 
             transitions;
@@ -829,7 +827,6 @@
         $$.redraw(options, transitions);
     };
     c3_chart_internal_fn.redrawWithoutRescale = function C3_INTERNAL_redrawWithoutRescale() {
-        console.count('redrawWithoutRescale');
         this.redraw({
             withY: false,
             withSubchart: false,
@@ -1099,7 +1096,6 @@
     };
 
     c3_chart_internal_fn.generateResize = function C3_INTERNAL_generateResize() {
-        console.count('generateResize');
         var resizeFunctions = [];
         function callResizeFunctions() {
             resizeFunctions.forEach(function C3_INTERNAL_execResizeFunction(f) {
@@ -2769,7 +2765,6 @@
             .style('fill-opacity', 0);
     };
     c3_chart_internal_fn.redrawEventRect = function C3_INTERNAL_redrawEventRect() {
-        console.count('redrawEventRect');
         var $$ = this, 
             config = $$.config,
             eventRectUpdate, maxDataCountTarget,
@@ -3486,7 +3481,6 @@
             .remove();
     };
     c3_chart_internal_fn.redrawLine = function C3_INTERNAL_redrawLine(drawLine, withTransition) {
-        console.count('redrawLine');
         return [
             (withTransition ? this.mainLine.transition(Math.random().toString()) : this.mainLine)
                 .attr("d", drawLine)
@@ -3702,7 +3696,6 @@
             .remove();
     };
     c3_chart_internal_fn.redrawArea = function C3_INTERNAL_redrawArea(drawArea, withTransition) {
-        console.count('redrawArea');
         return [
             (withTransition ? this.mainArea.transition(Math.random().toString()) : this.mainArea)
                 .attr("d", drawArea)
@@ -3801,7 +3794,6 @@
         $$.mainCircle.exit().remove();
     };
     c3_chart_internal_fn.redrawCircle = function C3_INTERNAL_redrawCircle(cx, cy, withTransition) {
-        console.count('redrawCircle');
         var selectedCircles = this.main.selectAll('.' + CLASS.selectedCircle);
         return [
             (withTransition ? this.mainCircle.transition(Math.random().toString()) : this.mainCircle)
@@ -3958,7 +3950,6 @@
             .remove();
     };
     c3_chart_internal_fn.redrawBar = function C3_INTERNAL_redrawBar(drawBar, withTransition) {
-        console.count('redrawBar');
         return [
             (withTransition ? this.mainBar.transition(Math.random().toString()) : this.mainBar)
                 .attr('d', drawBar)
@@ -4179,7 +4170,6 @@
 
     //c3_chart_internal_fn.addTransitionForText = function C3_INTERNAL_addTransitionForText(transitions, xForText, yForText, forFlow)
     c3_chart_internal_fn.redrawText = function C3_INTERNAL_redrawText(xForText, yForText, forFlow, withTransition) {
-        console.count('redrawText');
         var $$ = this,
             config = $$.config,
             opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
@@ -4224,8 +4214,6 @@
             rect = this.getBoundingClientRect(); 
           });
         dummy.remove();
-        console.count('getTextRect: count = ' + count);
-        //assert(count === 1);
         return rect;
     };
     c3_chart_internal_fn.generateXYForText = function C3_INTERNAL_generateXYForText(areaIndices, barIndices, lineIndices, forX) {
@@ -4566,7 +4554,6 @@
             .remove();
     };
     c3_chart_internal_fn.redrawGrid = function C3_INTERNAL_redrawGrid(withTransition) {
-        console.count('redrawGrid');
         var $$ = this, 
             config = $$.config, 
             xv = $$.xv.bind($$),
@@ -5310,7 +5297,6 @@
     };
 
     c3_chart_internal_fn.redrawTitle = function C3_INTERNAL_redrawTitle() {
-        console.count('redrawTitle');
         var $$ = this;
         $$.title
               .attr("x", $$.xForTitle.bind($$))
@@ -5380,7 +5366,6 @@
       }
     };
     c3_chart_internal_fn.redrawHeader = function C3_INTERNAL_redrawHeader() {
-        console.count('redrawHeader');
         var $$ = this;
         if ($$.header) {
             var header_height = $$.getCurrentPaddingTop();
@@ -5421,7 +5406,6 @@
       }
     };
     c3_chart_internal_fn.redrawFooter = function C3_INTERNAL_redrawFooter() {
-        console.count('redrawFooter');
         var $$ = this;
         if ($$.footer) {
             var footer_height = $$.getCurrentPaddingBottom();
@@ -6289,7 +6273,6 @@
     };
 
     c3_chart_internal_fn.redrawArc = function C3_INTERNAL_redrawArc(duration, durationForExit, withTransform) {
-        console.count('redrawArc');
         var $$ = this, 
             d3 = $$.d3, 
             config = $$.config, 
@@ -6556,8 +6539,12 @@
         var g = $$.mainRegion.enter().append('g');
         g.append('rect')
             .style("fill-opacity", 0);
-        // g.append('text')
-        //     .text($$.labelRegion.bind($$));
+    if (0) {
+        g.append('text')
+            .text(function (d) {
+                return 'xxxxxxxxxxxxxxxxxxxxxxxxx:' + $$.labelRegion.bind($$)(d);
+            });
+    }
         $$.mainRegion
             .attr('class', $$.classRegion.bind($$));
         $$.mainRegion.exit().transition().duration(duration)
@@ -6565,9 +6552,8 @@
             .remove();
     };
     c3_chart_internal_fn.redrawRegion = function C3_INTERNAL_redrawRegion(withTransition) {
-        console.count('redrawRegion');
         var $$ = this,
-            regions = $$.mainRegion.selectAll('rect').each(function () {
+            regions = $$.mainRegion.selectAll('rect, text').each(function () {
                 // data is binded to g and it's not transferred to rect (child node) automatically,
                 // then data of each rect has to be updated manually.
                 // TODO: there should be more efficient way to solve this?
@@ -6579,7 +6565,9 @@
             w = $$.regionWidth.bind($$),
             h = $$.regionHeight.bind($$);
             
-        var paddedY = $$.regionY($$) + 10;  // To allow for text height
+        var paddedY = function (d) {
+            return $$.regionY(d) + 10;  // To allow for text height
+        };
         var regionLabels = $$.mainRegion.selectAll('text');
             
         return [
@@ -6953,7 +6941,6 @@
             .remove();
     };
     c3_chart_internal_fn.redrawBarForSubchart = function C3_INTERNAL_redrawBarForSubchart(drawBarOnSub, withTransition, duration) {
-        console.count('redrawBarForSubchart');
         (withTransition ? this.contextBar.transition(Math.random().toString()).duration(duration) : this.contextBar)
             .attr('d', drawBarOnSub)
             .style('opacity', 1);
@@ -6974,7 +6961,6 @@
             .remove();
     };
     c3_chart_internal_fn.redrawLineForSubchart = function C3_INTERNAL_redrawLineForSubchart(drawLineOnSub, withTransition, duration) {
-        console.count('redrawLineForSubchart');
         (withTransition ? this.contextLine.transition(Math.random().toString()).duration(duration) : this.contextLine)
             .attr("d", drawLineOnSub)
             .style('opacity', 1);
@@ -7000,14 +6986,12 @@
             .remove();
     };
     c3_chart_internal_fn.redrawAreaForSubchart = function C3_INTERNAL_redrawAreaForSubchart(drawAreaOnSub, withTransition, duration) {
-        console.count('redrawAreaForSubchart');
         (withTransition ? this.contextArea.transition(Math.random().toString()).duration(duration) : this.contextArea)
             .attr("d", drawAreaOnSub)
             .style("fill", this.color)
             .style("opacity", this.orgAreaOpacity);
     };
     c3_chart_internal_fn.redrawSubchart = function C3_INTERNAL_redrawSubchart(withSubchart, transitions, duration, durationForExit, areaIndices, barIndices, lineIndices) {
-        console.count('redrawSubchart');
         var $$ = this, 
             d3 = $$.d3, 
             config = $$.config,
@@ -7043,7 +7027,6 @@
         }
     };
     c3_chart_internal_fn.redrawForBrush = function C3_INTERNAL_redrawForBrush() {
-        console.count('redrawForBrush');
         var $$ = this, 
             x = $$.x;
         $$.redraw({
@@ -7131,7 +7114,6 @@
         $$.main.selectAll('.' + CLASS.eventRect).call(z).on("dblclick.zoom", null);
     };
     c3_chart_internal_fn.redrawForZoom = function C3_INTERNAL_redrawForZoom() {
-        console.count('redrawForZoom');
         var $$ = this, 
             d3 = $$.d3, 
             config = $$.config, 
@@ -7978,7 +7960,7 @@
             config = $$.config, 
             d3 = $$.d3;
 
-        return function () {
+        return function C3_INTERNAL_generateFlow_cbf() {
             var targets = args.targets,
                 flow = args.flow,
                 drawBar = args.drawBar,
@@ -8464,7 +8446,6 @@
     };
 
     c3_chart_fn.flush = function C3_API_flush() {
-        console.count('flush');
         var $$ = this.internal;
         $$.updateAndRedraw({withLegend: true, withTransition: false, withTransitionForTransform: false});
     };

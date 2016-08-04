@@ -16,8 +16,12 @@ c3_chart_internal_fn.updateRegion = function C3_INTERNAL_updateRegion(duration) 
     var g = $$.mainRegion.enter().append('g');
     g.append('rect')
         .style("fill-opacity", 0);
-    // g.append('text')
-    //     .text($$.labelRegion.bind($$));
+if (0) {
+    g.append('text')
+        .text(function (d) {
+            return 'xxxxxxxxxxxxxxxxxxxxxxxxx:' + $$.labelRegion.bind($$)(d);
+        });
+}
     $$.mainRegion
         .attr('class', $$.classRegion.bind($$));
     $$.mainRegion.exit().transition().duration(duration)
@@ -25,9 +29,8 @@ c3_chart_internal_fn.updateRegion = function C3_INTERNAL_updateRegion(duration) 
         .remove();
 };
 c3_chart_internal_fn.redrawRegion = function C3_INTERNAL_redrawRegion(withTransition) {
-    console.count('redrawRegion');
     var $$ = this,
-        regions = $$.mainRegion.selectAll('rect').each(function () {
+        regions = $$.mainRegion.selectAll('rect, text').each(function () {
             // data is binded to g and it's not transferred to rect (child node) automatically,
             // then data of each rect has to be updated manually.
             // TODO: there should be more efficient way to solve this?
@@ -39,7 +42,9 @@ c3_chart_internal_fn.redrawRegion = function C3_INTERNAL_redrawRegion(withTransi
         w = $$.regionWidth.bind($$),
         h = $$.regionHeight.bind($$);
         
-    var paddedY = $$.regionY($$) + 10;  // To allow for text height
+    var paddedY = function (d) {
+        return $$.regionY(d) + 10;  // To allow for text height
+    };
     var regionLabels = $$.mainRegion.selectAll('text');
         
     return [

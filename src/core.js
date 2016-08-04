@@ -530,7 +530,6 @@ c3_chart_internal_fn.showTargets = function C3_INTERNAL_showTargets() {
 };
 
 c3_chart_internal_fn.redraw = function C3_INTERNAL_redraw(options, transitions) {
-    console.count('redraw');
     var $$ = this, 
         main = $$.main, 
         d3 = $$.d3, 
@@ -795,7 +794,6 @@ c3_chart_internal_fn.redraw = function C3_INTERNAL_redraw(options, transitions) 
 };
 
 c3_chart_internal_fn.updateAndRedraw = function C3_INTERNAL_updateAndRedraw(options) {
-    console.count('updateAndRedraw');
     var $$ = this, 
         config = $$.config, 
         transitions;
@@ -824,7 +822,6 @@ c3_chart_internal_fn.updateAndRedraw = function C3_INTERNAL_updateAndRedraw(opti
     $$.redraw(options, transitions);
 };
 c3_chart_internal_fn.redrawWithoutRescale = function C3_INTERNAL_redrawWithoutRescale() {
-    console.count('redrawWithoutRescale');
     this.redraw({
         withY: false,
         withSubchart: false,
@@ -1094,7 +1091,6 @@ c3_chart_internal_fn.bindResize = function C3_INTERNAL_bindResize() {
 };
 
 c3_chart_internal_fn.generateResize = function C3_INTERNAL_generateResize() {
-    console.count('generateResize');
     var resizeFunctions = [];
     function callResizeFunctions() {
         resizeFunctions.forEach(function C3_INTERNAL_execResizeFunction(f) {
