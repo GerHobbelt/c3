@@ -2757,7 +2757,7 @@
         });
     };
 
-    c3_chart_internal_fn.categoryName = function (i) {
+    c3_chart_internal_fn.categoryName = function C3_INTERNAL_categoryName(i) {
         var config = this.config;
         return i < config.axis_x_categories.length ? config.axis_x_categories[i] : i;
     };
@@ -8341,7 +8341,7 @@
         return this.internal.updateDataAttributes('axes', axes, !isUndefined(redraw) ? redraw : true);
     };
 
-    c3_chart_fn.category = function (i, category) {
+    c3_chart_fn.category = function C3_API_category(i, category) {
         var $$ = this.internal, config = $$.config;
         if (arguments.length > 1) {
             config.axis_x_categories[i] = category;
@@ -8349,7 +8349,7 @@
         }
         return config.axis_x_categories[i];
     };
-    c3_chart_fn.categories = function (categories) {
+    c3_chart_fn.categories = function C3_API_categories(categories) {
         var $$ = this.internal, config = $$.config;
         if (!arguments.length) { return config.axis_x_categories; }
         config.axis_x_categories = categories;
