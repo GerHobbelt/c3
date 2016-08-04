@@ -5878,61 +5878,70 @@
         transitions.axisSubX.call($$.subXAxis);
     };
 
-    c3_chart_internal_fn.getClipPath = function (id) {
+    c3_chart_internal_fn.getClipPath = function C3_INTERNAL_getClipPath(id) {
         var isIE9 = window.navigator.appVersion.toLowerCase().indexOf("msie 9.") >= 0;
         return "url(" + (isIE9 ? "" : document.URL.split('#')[0]) + "#" + id + ")";
     };
-    c3_chart_internal_fn.appendClip = function (parent, id) {
+    c3_chart_internal_fn.appendClip = function C3_INTERNAL_appendClip(parent, id) {
         return parent.append("clipPath").attr("id", id).append("rect");
     };
-    c3_chart_internal_fn.getAxisClipX = function (forHorizontal) {
+    c3_chart_internal_fn.getAxisClipX = function C3_INTERNAL_getAxisClipX(forHorizontal) {
+        var $$ = this;
         // axis line width + padding for left
         var left = Math.max(30, this.margin.left);
-        return forHorizontal ? -(1 + left) : -(left - 1);
+        if (forHorizontal) {
+            return $$.config.axis_x_clip ? 0 : -(1 + left);
+        } else {
+            return -(left - 1);
+        }
     };
-    c3_chart_internal_fn.getAxisClipY = function (forHorizontal) {
+    c3_chart_internal_fn.getAxisClipY = function C3_INTERNAL_getAxisClipY(forHorizontal) {
         return forHorizontal ? -20 : -this.margin.top;
     };
-    c3_chart_internal_fn.getXAxisClipX = function () {
+    c3_chart_internal_fn.getXAxisClipX = function C3_INTERNAL_getXAxisClipX() {
         var $$ = this;
         return $$.getAxisClipX(!$$.config.axis_rotated);
     };
-    c3_chart_internal_fn.getXAxisClipY = function () {
+    c3_chart_internal_fn.getXAxisClipY = function C3_INTERNAL_getXAxisClipY() {
         var $$ = this;
         return $$.getAxisClipY(!$$.config.axis_rotated);
     };
-    c3_chart_internal_fn.getYAxisClipX = function () {
+    c3_chart_internal_fn.getYAxisClipX = function C3_INTERNAL_getYAxisClipX() {
         var $$ = this;
         return $$.config.axis_y_inner ? -1 : $$.getAxisClipX($$.config.axis_rotated);
     };
-    c3_chart_internal_fn.getYAxisClipY = function () {
+    c3_chart_internal_fn.getYAxisClipY = function C3_INTERNAL_getYAxisClipY() {
         var $$ = this;
         return $$.getAxisClipY($$.config.axis_rotated);
     };
-    c3_chart_internal_fn.getAxisClipWidth = function (forHorizontal) {
+    c3_chart_internal_fn.getAxisClipWidth = function C3_INTERNAL_getAxisClipWidth(forHorizontal) {
         var $$ = this,
             left = Math.max(30, $$.margin.left),
             right = Math.max(30, $$.margin.right);
         // width + axis line width + padding for left/right
-        return forHorizontal ? $$.width + 2 + left + right : $$.margin.left + 20;
+        if (forHorizontal) {
+            return $$.config.axis_x_clip ? $$.width : $$.width + 2 + left + right;
+        } else {
+            return $$.margin.left + 20;
+        }
     };
-    c3_chart_internal_fn.getAxisClipHeight = function (forHorizontal) {
+    c3_chart_internal_fn.getAxisClipHeight = function C3_INTERNAL_getAxisClipHeight(forHorizontal) {
         // less than 20 is not enough to show the axis label 'outer' without legend
         return (forHorizontal ? this.margin.bottom : (this.margin.top + this.height)) + 20;
     };
-    c3_chart_internal_fn.getXAxisClipWidth = function () {
+    c3_chart_internal_fn.getXAxisClipWidth = function C3_INTERNAL_getXAxisClipWidth() {
         var $$ = this;
         return $$.getAxisClipWidth(!$$.config.axis_rotated);
     };
-    c3_chart_internal_fn.getXAxisClipHeight = function () {
+    c3_chart_internal_fn.getXAxisClipHeight = function C3_INTERNAL_getXAxisClipHeight() {
         var $$ = this;
         return $$.getAxisClipHeight(!$$.config.axis_rotated);
     };
-    c3_chart_internal_fn.getYAxisClipWidth = function () {
+    c3_chart_internal_fn.getYAxisClipWidth = function C3_INTERNAL_getYAxisClipWidth() {
         var $$ = this;
         return $$.getAxisClipWidth($$.config.axis_rotated) + ($$.config.axis_y_inner ? 20 : 0);
     };
-    c3_chart_internal_fn.getYAxisClipHeight = function () {
+    c3_chart_internal_fn.getYAxisClipHeight = function C3_INTERNAL_getYAxisClipHeight() {
         var $$ = this;
         return $$.getAxisClipHeight($$.config.axis_rotated);
     };
@@ -7297,6 +7306,7 @@
         chartArc: 'c3-chart-arc',
         chartArcs: 'c3-chart-arcs',
         chartArcsTitle: 'c3-chart-arcs-title',
+        chartArcsSubTitle: 'c3-chart-arcs-subtitle',
         chartArcsBackground: 'c3-chart-arcs-background',
         chartArcsGaugeUnit: 'c3-chart-arcs-gauge-unit',
         chartArcsGaugeMax: 'c3-chart-arcs-gauge-max',
@@ -7326,6 +7336,7 @@
         circle: 'c3-circle',
         circles: 'c3-circles',
         arc: 'c3-arc',
+        arcLabelLine: 'c3-arc-label-line',
         arcs: 'c3-arcs',
         area: 'c3-area',
         areas: 'c3-areas',
@@ -7362,58 +7373,61 @@
         SELECTED: '_selected_',
         INCLUDED: '_included_'
     };
-    c3_chart_internal_fn.generateClass = function (prefix, targetId) {
+    c3_chart_internal_fn.generateClass = function C3_INTERNAL_generateClass(prefix, targetId) {
         return " " + prefix + " " + prefix + this.getTargetSelectorSuffix(targetId);
     };
-    c3_chart_internal_fn.classText = function (d) {
+    c3_chart_internal_fn.classText = function C3_INTERNAL_classText(d) {
         return this.generateClass(CLASS.text, d.index);
     };
-    c3_chart_internal_fn.classTexts = function (d) {
+    c3_chart_internal_fn.classTexts = function C3_INTERNAL_classTexts(d) {
         return this.generateClass(CLASS.texts, d.id);
     };
-    c3_chart_internal_fn.classShape = function (d) {
+    c3_chart_internal_fn.classShape = function C3_INTERNAL_classShape(d) {
         return this.generateClass(CLASS.shape, d.index);
     };
-    c3_chart_internal_fn.classShapes = function (d) {
+    c3_chart_internal_fn.classShapes = function C3_INTERNAL_classShapes(d) {
         return this.generateClass(CLASS.shapes, d.id);
     };
-    c3_chart_internal_fn.classLine = function (d) {
+    c3_chart_internal_fn.classLine = function C3_INTERNAL_classLine(d) {
         return this.classShape(d) + this.generateClass(CLASS.line, d.id);
     };
-    c3_chart_internal_fn.classLines = function (d) {
+    c3_chart_internal_fn.classLines = function C3_INTERNAL_classLines(d) {
         return this.classShapes(d) + this.generateClass(CLASS.lines, d.id);
     };
-    c3_chart_internal_fn.classCircle = function (d) {
+    c3_chart_internal_fn.classCircle = function C3_INTERNAL_classCircle(d) {
         return this.classShape(d) + this.generateClass(CLASS.circle, d.index);
     };
-    c3_chart_internal_fn.classCircles = function (d) {
+    c3_chart_internal_fn.classCircles = function C3_INTERNAL_classCircles(d) {
         return this.classShapes(d) + this.generateClass(CLASS.circles, d.id);
     };
-    c3_chart_internal_fn.classBar = function (d) {
+    c3_chart_internal_fn.classBar = function C3_INTERNAL_classBar(d) {
         return this.classShape(d) + this.generateClass(CLASS.bar, d.index);
     };
-    c3_chart_internal_fn.classBars = function (d) {
+    c3_chart_internal_fn.classBars = function C3_INTERNAL_classBars(d) {
         return this.classShapes(d) + this.generateClass(CLASS.bars, d.id);
     };
-    c3_chart_internal_fn.classArc = function (d) {
+    c3_chart_internal_fn.classArc = function C3_INTERNAL_classArc(d) {
         return this.classShape(d.data) + this.generateClass(CLASS.arc, d.data.id);
     };
-    c3_chart_internal_fn.classArcs = function (d) {
+    c3_chart_internal_fn.classArcs = function C3_INTERNAL_classArcs(d) {
         return this.classShapes(d.data) + this.generateClass(CLASS.arcs, d.data.id);
     };
-    c3_chart_internal_fn.classArea = function (d) {
+    c3_chart_internal_fn.classArea = function C3_INTERNAL_classArea(d) {
         return this.classShape(d) + this.generateClass(CLASS.area, d.id);
     };
-    c3_chart_internal_fn.classAreas = function (d) {
+    c3_chart_internal_fn.classAreas = function C3_INTERNAL_classAreas(d) {
         return this.classShapes(d) + this.generateClass(CLASS.areas, d.id);
     };
-    c3_chart_internal_fn.classRegion = function (d, i) {
-        return this.generateClass(CLASS.region, i) + ' ' + ('class' in d ? d['class'] : '');
+    c3_chart_internal_fn.classRegion = function C3_INTERNAL_classRegion(d, i) {
+        return this.generateClass(CLASS.region, i) + ' ' + (d.class != null ? d.class : '');
     };
-    c3_chart_internal_fn.classEvent = function (d) {
+    c3_chart_internal_fn.labelRegion = function C3_INTERNAL_labelRegion(d) {
+        return d.label !== undefined ? d.label : '';
+    };
+    c3_chart_internal_fn.classEvent = function C3_INTERNAL_classEvent(d) {
         return this.generateClass(CLASS.eventRect, d.index);
     };
-    c3_chart_internal_fn.classTarget = function (id) {
+    c3_chart_internal_fn.classTarget = function C3_INTERNAL_classTarget(id) {
         var $$ = this;
         var additionalClassSuffix = $$.config.data_classes[id], additionalClass = '';
         if (additionalClassSuffix) {
@@ -7421,42 +7435,42 @@
         }
         return $$.generateClass(CLASS.target, id) + additionalClass;
     };
-    c3_chart_internal_fn.classFocus = function (d) {
+    c3_chart_internal_fn.classFocus = function C3_INTERNAL_classFocus(d) {
         return this.classFocused(d) + this.classDefocused(d);
     };
-    c3_chart_internal_fn.classFocused = function (d) {
+    c3_chart_internal_fn.classFocused = function C3_INTERNAL_classFocused(d) {
         return ' ' + (this.focusedTargetIds.indexOf(d.id) >= 0 ? CLASS.focused : '');
     };
-    c3_chart_internal_fn.classDefocused = function (d) {
+    c3_chart_internal_fn.classDefocused = function C3_INTERNAL_classDefocused(d) {
         return ' ' + (this.defocusedTargetIds.indexOf(d.id) >= 0 ? CLASS.defocused : '');
     };
-    c3_chart_internal_fn.classChartText = function (d) {
+    c3_chart_internal_fn.classChartText = function C3_INTERNAL_classChartText(d) {
         return CLASS.chartText + this.classTarget(d.id);
     };
-    c3_chart_internal_fn.classChartLine = function (d) {
+    c3_chart_internal_fn.classChartLine = function C3_INTERNAL_classChartLine(d) {
         return CLASS.chartLine + this.classTarget(d.id);
     };
-    c3_chart_internal_fn.classChartBar = function (d) {
+    c3_chart_internal_fn.classChartBar = function C3_INTERNAL_classChartBar(d) {
         return CLASS.chartBar + this.classTarget(d.id);
     };
-    c3_chart_internal_fn.classChartArc = function (d) {
+    c3_chart_internal_fn.classChartArc = function C3_INTERNAL_classChartArc(d) {
         return CLASS.chartArc + this.classTarget(d.data.id);
     };
-    c3_chart_internal_fn.getTargetSelectorSuffix = function (targetId) {
+    c3_chart_internal_fn.getTargetSelectorSuffix = function C3_INTERNAL_getTargetSelectorSuffix(targetId) {
         return targetId || targetId === 0 ? ('-' + targetId).replace(/[\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\]/g, '-') : '';
     };
-    c3_chart_internal_fn.selectorTarget = function (id, prefix) {
+    c3_chart_internal_fn.selectorTarget = function C3_INTERNAL_selectorTarget(id, prefix) {
         return (prefix || '') + '.' + CLASS.target + this.getTargetSelectorSuffix(id);
     };
-    c3_chart_internal_fn.selectorTargets = function (ids, prefix) {
+    c3_chart_internal_fn.selectorTargets = function C3_INTERNAL_selectorTargets(ids, prefix) {
         var $$ = this;
         ids = ids || [];
         return ids.length ? ids.map(function (id) { return $$.selectorTarget(id, prefix); }) : null;
     };
-    c3_chart_internal_fn.selectorLegend = function (id) {
+    c3_chart_internal_fn.selectorLegend = function C3_INTERNAL_selectorLegend(id) {
         return '.' + CLASS.legendItem + this.getTargetSelectorSuffix(id);
     };
-    c3_chart_internal_fn.selectorLegends = function (ids) {
+    c3_chart_internal_fn.selectorLegends = function C3_INTERNAL_selectorLegends(ids) {
         var $$ = this;
         return ids && ids.length ? ids.map(function (id) { return $$.selectorLegend(id); }) : null;
     };
