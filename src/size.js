@@ -129,11 +129,11 @@ c3_chart_internal_fn.getHorizontalAxisHeight = function C3_INTERNAL_getHorizonta
     }
     // Calculate x axis height when tick rotated
     if (axisId === 'x' && !config.axis_rotated && config.axis_x_tick_rotate) {
-        h += $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - config.axis_x_tick_rotate) / 180);
+        h += $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - Math.abs(config.axis_x_tick_rotate)) / 180);
     }
     // Calculate y axis height when tick rotated
     if (axisId === 'y' && config.axis_rotated && config.axis_y_tick_rotate) {
-        h += $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - config.axis_y_tick_rotate) / 180);
+        h += $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - Math.abs(config.axis_y_tick_rotate)) / 180);
     }
     return h + ($$.axis.getLabelPositionById(axisId).isInner ? 0 : 10) + (axisId === 'y2' ? -10 : 0);
 };
