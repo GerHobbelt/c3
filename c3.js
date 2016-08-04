@@ -2341,13 +2341,14 @@
         return Math.sqrt(Math.pow(x - pos[xIndex], 2) + Math.pow(y - pos[yIndex], 2));
     };
     c3_chart_internal_fn.convertValuesToStep = function C3_INTERNAL_convertValuesToStep(values) {
-        var converted = [].concat(values), 
-            i;
+        var converted, i;
 
         if (!this.isCategorized()) {
             return values;
         }
-
+        
+        converted = values.slice(0);
+        
         for (i = values.length + 1; 0 < i; i--) {
             converted[i] = converted[i - 1];
         }
