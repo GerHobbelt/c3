@@ -7131,6 +7131,9 @@
         if (!config.zoom_enabled) {
             return;
         }
+        if (!d3.event.sourceEvent) {
+            return;
+        }
         if ($$.filterTargetsToShow($$.data.targets).length === 0) {
             return;
         }

@@ -7128,10 +7128,10 @@
             config = $$.config, 
             zoom = $$.zoom, 
             x = $$.x;
-        if (!d3.event.sourceEvent) {
+        if (!config.zoom_enabled) {
             return;
         }
-        if (!config.zoom_enabled) {
+        if (!d3.event.sourceEvent) {
             return;
         }
         if ($$.filterTargetsToShow($$.data.targets).length === 0) {

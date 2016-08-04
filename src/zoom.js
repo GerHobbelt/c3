@@ -59,6 +59,9 @@ c3_chart_internal_fn.redrawForZoom = function C3_INTERNAL_redrawForZoom() {
     if (!config.zoom_enabled) {
         return;
     }
+    if (!d3.event.sourceEvent) {
+        return;
+    }
     if ($$.filterTargetsToShow($$.data.targets).length === 0) {
         return;
     }
