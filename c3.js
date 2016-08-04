@@ -2580,7 +2580,7 @@
                         x,
                         value = d[id] !== null && !isNaN(d[id]) ? +d[id] : null;
                     // use x as categories if custom x and categorized
-                    if ($$.isCustomX() && $$.isCategorized() && index === 0 && !isUndefined(rawX)) {
+                    if ($$.isCustomX() && $$.isCategorized() && !isUndefined(rawX)) {
                         if (index === 0 && i === 0) {
                             config.axis_x_categories = [];
                         }
@@ -4494,6 +4494,7 @@
             $$.updateXGrid();
         }
         $$.xgridLines = main.select('.' + CLASS.xgridLines).selectAll('.' + CLASS.xgridLine)
+            .remove()
             .data(config.grid_x_lines);
         // enter
         xgridLine = $$.xgridLines.enter().append('g')
@@ -4508,7 +4509,7 @@
             .attr('dx', $$.gridTextDx)
             .attr('dy', -5)
             .style("opacity", 0);
-        // udpate
+        // update
         // done in d3.transition() at the end of this function
         // exit
         $$.xgridLines.exit().transition().duration(duration)
