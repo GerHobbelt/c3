@@ -1,4 +1,4 @@
-c3_chart_internal_fn.getDefaultConfig = function () {
+c3_chart_internal_fn.getDefaultConfig = function C3_INTERNAL_getDefaultConfig() {
     var config = {
         bindto: '#chart',
         svg_classname: undefined,
@@ -8,7 +8,12 @@ c3_chart_internal_fn.getDefaultConfig = function () {
         padding_right: undefined,
         padding_top: undefined,
         padding_bottom: undefined,
+        margin_left: undefined,
+        margin_right: undefined,
+        margin_top: undefined,
+        margin_bottom: undefined,
         resize_auto: true,
+        resize_timeout: 100,
         zoom_enabled: false,
         zoom_extent: undefined,
         zoom_privileged: false,
@@ -44,6 +49,8 @@ c3_chart_internal_fn.getDefaultConfig = function () {
         data_regions: {},
         data_color: undefined,
         data_colors: {},
+        data_opacity: undefined,
+        data_calculateOpacity: {},
         data_hide: false,
         data_filter: undefined,
         data_selection_enabled: false,
@@ -56,6 +63,8 @@ c3_chart_internal_fn.getDefaultConfig = function () {
         data_onmouseout: function () {},
         data_onselected: function () {},
         data_onunselected: function () {},
+        data_ondragstart: function () {},
+        data_ondragend: function () {},
         data_url: undefined,
         data_headers: undefined,
         data_json: undefined,
@@ -67,6 +76,10 @@ c3_chart_internal_fn.getDefaultConfig = function () {
         data_empty_label_text: "",
         // subchart
         subchart_show: false,
+        subchart_type: undefined,
+        subchart_types: {},
+        subchart_line_step_type: 'step',
+        subchart_line_spline_type: 'cardinal',
         subchart_size_height: 60,
         subchart_axis_x_show: true,
         subchart_onbrush: function () {},
@@ -91,9 +104,12 @@ c3_chart_internal_fn.getDefaultConfig = function () {
         // axis
         axis_rotated: false,
         axis_x_show: true,
+        axis_x_clip: false,
         axis_x_type: 'indexed',
+        axis_x_scale_type: undefined,
         axis_x_localtime: true,
         axis_x_categories: [],
+        axis_x_tick_automatic: false,
         axis_x_tick_centered: false,
         axis_x_tick_format: undefined,
         axis_x_tick_culling: {},
@@ -113,6 +129,7 @@ c3_chart_internal_fn.getDefaultConfig = function () {
         axis_x_label: {},
         axis_y_show: true,
         axis_y_type: undefined,
+        axis_y_scale_type: undefined,
         axis_y_max: undefined,
         axis_y_min: undefined,
         axis_y_inverted: false,
@@ -121,13 +138,16 @@ c3_chart_internal_fn.getDefaultConfig = function () {
         axis_y_label: {},
         axis_y_tick_format: undefined,
         axis_y_tick_outer: true,
-        axis_y_tick_values: null,        
+        axis_y_tick_multiline: false,
+        axis_y_tick_width: null,
+        axis_y_tick_values: null,
         axis_y_tick_rotate: 0,
         axis_y_tick_count: undefined,
         axis_y_tick_time_value: undefined,
         axis_y_tick_time_interval: undefined,
         axis_y_padding: {},
         axis_y_default: undefined,
+        axis_y_showLine: true,
         axis_y2_show: false,
         axis_y2_max: undefined,
         axis_y2_min: undefined,
@@ -137,7 +157,10 @@ c3_chart_internal_fn.getDefaultConfig = function () {
         axis_y2_label: {},
         axis_y2_tick_format: undefined,
         axis_y2_tick_outer: true,
+        axis_y2_tick_multiline: false,
+        axis_y2_tick_width: null,
         axis_y2_tick_values: null,
+        axis_y2_tick_rotate: 0,
         axis_y2_tick_count: undefined,
         axis_y2_padding: {},
         axis_y2_default: undefined,
@@ -156,12 +179,15 @@ c3_chart_internal_fn.getDefaultConfig = function () {
         point_show: true,
         point_r: 2.5,
         point_sensitivity: 10,
+        point_animation: false,
         point_focus_expand_enabled: true,
         point_focus_expand_r: undefined,
         point_select_r: undefined,
+        point_scatter_opacity: 0.5,
         // line
         line_connectNull: false,
         line_step_type: 'step',
+        line_spline_type: 'cardinal',
         // bar
         bar_width: undefined,
         bar_width_ratio: 0.6,
@@ -169,6 +195,7 @@ c3_chart_internal_fn.getDefaultConfig = function () {
         bar_zerobased: true,
         // area
         area_zerobased: true,
+        line_zerobased: false,
         area_above: false,
         // pie
         pie_label_show: true,
@@ -180,12 +207,15 @@ c3_chart_internal_fn.getDefaultConfig = function () {
         // gauge
         gauge_fullCircle: false,
         gauge_label_show: true,
+        gauge_label_formatall: false,
+        gauge_label_transition: true,
         gauge_label_format: undefined,
         gauge_min: 0,
         gauge_max: 100,
         gauge_startingAngle: -1 * Math.PI/2,
         gauge_units: undefined,
         gauge_width: undefined,
+        gauge_arcs_minWidth: 5,
         gauge_expand: {},
         gauge_expand_duration: 50,
         // donut
@@ -195,6 +225,7 @@ c3_chart_internal_fn.getDefaultConfig = function () {
         donut_label_ratio: undefined,
         donut_width: undefined,
         donut_title: "",
+        donut_subtitle: "",
         donut_expand: {},
         donut_expand_duration: 50,
         // spline
@@ -203,6 +234,10 @@ c3_chart_internal_fn.getDefaultConfig = function () {
         regions: [],
         // tooltip - show when mouseover on each data
         tooltip_show: true,
+        tooltip_animation_show: false,
+        tooltip_animation_delay: 0,
+        tooltip_animation_duration: 350,
+        tooltip_animation_ease: "linear",
         tooltip_grouped: true,
         tooltip_format_title: undefined,
         tooltip_format_name: undefined,
@@ -225,6 +260,24 @@ c3_chart_internal_fn.getDefaultConfig = function () {
             left: 0
         },
         title_position: 'top-center',
+        title_x: 0,
+        title_y: 0,
+        // header
+        header_show: false,
+        header_height: 15,
+        header_color: '#FFF',
+        header_border_show: false,
+        header_border_color: '#000',
+        header_border_width: 1,
+        // footer
+        footer_show: false,
+        footer_height: 15,
+        footer_color: '#FFF',
+        footer_border_show: false,
+        footer_border_color: '#000',
+        footer_border_width: 1,
+        // save/load in JSON format
+        json_original: undefined,
     };
 
     Object.keys(this.additionalConfig).forEach(function (key) {
@@ -235,7 +288,7 @@ c3_chart_internal_fn.getDefaultConfig = function () {
 };
 c3_chart_internal_fn.additionalConfig = {};
 
-c3_chart_internal_fn.loadConfig = function (config) {
+c3_chart_internal_fn.loadConfig = function C3_INTERNAL_loadConfig(config) {
     var this_config = this.config, target, keys, read;
     function find() {
         var key = keys.shift();

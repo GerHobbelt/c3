@@ -1,11 +1,13 @@
-c3_chart_internal_fn.initEventRect = function () {
+c3_chart_internal_fn.initEventRect = function C3_INTERNAL_initEventRect() {
     var $$ = this;
     $$.main.select('.' + CLASS.chart).append("g")
         .attr("class", CLASS.eventRects)
         .style('fill-opacity', 0);
 };
-c3_chart_internal_fn.redrawEventRect = function () {
-    var $$ = this, config = $$.config,
+c3_chart_internal_fn.redrawEventRect = function C3_INTERNAL_redrawEventRect() {
+    console.count('redrawEventRect');
+    var $$ = this, 
+        config = $$.config,
         eventRectUpdate, maxDataCountTarget,
         isMultipleX = $$.isMultipleX();
 
@@ -43,12 +45,13 @@ c3_chart_internal_fn.redrawEventRect = function () {
         eventRectUpdate.exit().remove();
     }
 };
-c3_chart_internal_fn.updateEventRect = function (eventRectUpdate) {
-    var $$ = this, config = $$.config,
+c3_chart_internal_fn.updateEventRect = function C3_INTERNAL_updateEventRect(eventRectUpdate) {
+    var $$ = this, 
+        config = $$.config,
         x, y, w, h, rectW, rectX;
 
-    // set update selection if null
-    eventRectUpdate = eventRectUpdate || $$.eventRect.data(function (d) { return d; });
+    // Moved eventRectUpdate to only be used when in non-multiplexed mode.
+    // Otherwise you get an error when flowing multiplex data.
 
     if ($$.isMultipleX()) {
         // TODO: rotated not supported yet
@@ -58,26 +61,35 @@ c3_chart_internal_fn.updateEventRect = function (eventRectUpdate) {
         h = $$.height;
     }
     else {
+        // set update selection if null
+        eventRectUpdate = eventRectUpdate || $$.eventRect.data(function (d) { 
+            return d; 
+        });
         if (($$.isCustomX() || $$.isTimeSeries()) && !$$.isCategorized()) {
-
             // update index for x that is used by prevX and nextX
             $$.updateXs();
 
             rectW = function (d) {
-                var prevX = $$.getPrevX(d.index), nextX = $$.getNextX(d.index);
+                var prevX = $$.getPrevX(d.index), 
+                    nextX = $$.getNextX(d.index);
 
                 // if there this is a single data point make the eventRect full width (or height)
                 if (prevX === null && nextX === null) {
                     return config.axis_rotated ? $$.height : $$.width;
                 }
 
-                if (prevX === null) { prevX = $$.x.domain()[0]; }
-                if (nextX === null) { nextX = $$.x.domain()[1]; }
+                if (prevX === null) { 
+                    prevX = $$.x.domain()[0]; 
+                }
+                if (nextX === null) { 
+                    nextX = $$.x.domain()[1]; 
+                }
 
                 return Math.max(0, ($$.x(nextX) - $$.x(prevX)) / 2);
             };
             rectX = function (d) {
-                var prevX = $$.getPrevX(d.index), nextX = $$.getNextX(d.index),
+                var prevX = $$.getPrevX(d.index), 
+                    nextX = $$.getNextX(d.index),
                     thisX = $$.data.xs[d.id][d.index];
 
                 // if there this is a single data point position the eventRect at 0
@@ -85,7 +97,9 @@ c3_chart_internal_fn.updateEventRect = function (eventRectUpdate) {
                     return 0;
                 }
 
-                if (prevX === null) { prevX = $$.x.domain()[0]; }
+                if (prevX === null) { 
+                    prevX = $$.x.domain()[0]; 
+                }
 
                 return ($$.x(thisX) + $$.x(prevX)) / 2;
             };
@@ -99,28 +113,36 @@ c3_chart_internal_fn.updateEventRect = function (eventRectUpdate) {
         y = config.axis_rotated ? rectX : 0;
         w = config.axis_rotated ? $$.width : rectW;
         h = config.axis_rotated ? rectW : $$.height;
-    }
 
-    eventRectUpdate
-        .attr('class', $$.classEvent.bind($$))
-        .attr("x", x)
-        .attr("y", y)
-        .attr("width", w)
-        .attr("height", h);
+        eventRectUpdate
+            .attr('class', $$.classEvent.bind($$))
+            .attr("x", x)
+            .attr("y", y)
+            .attr("width", w)
+            .attr("height", h);
+    }
 };
-c3_chart_internal_fn.generateEventRectsForSingleX = function (eventRectEnter) {
-    var $$ = this, d3 = $$.d3, config = $$.config;
+c3_chart_internal_fn.generateEventRectsForSingleX = function C3_INTERNAL_generateEventRectsForSingleX(eventRectEnter) {
+    var $$ = this, 
+        d3 = $$.d3, 
+        config = $$.config;
     eventRectEnter.append("rect")
         .attr("class", $$.classEvent.bind($$))
         .style("cursor", config.data_selection_enabled && config.data_selection_grouped ? "pointer" : null)
         .on('mouseover', function (d) {
             var index = d.index;
 
-            if ($$.dragging || $$.flowing) { return; } // do nothing while dragging/flowing
-            if ($$.hasArcType()) { return; }
+            if ($$.dragging || $$.flowing) { 
+                return; 
+            } // do nothing while dragging/flowing
+            if ($$.hasArcType()) { 
+                return; 
+            }
 
             // Expand shapes for selection
-            if (config.point_focus_expand_enabled) { $$.expandCircles(index, null, true); }
+            if (config.point_focus_expand_enabled) { 
+                $$.expandCircles(index, null, true); 
+            }
             $$.expandBars(index, null, true);
 
             // Call event handler
@@ -130,8 +152,12 @@ c3_chart_internal_fn.generateEventRectsForSingleX = function (eventRectEnter) {
         })
         .on('mouseout', function (d) {
             var index = d.index;
-            if (!$$.config) { return; } // chart is destroyed
-            if ($$.hasArcType()) { return; }
+            if (!$$.config) { 
+                return; 
+            } // chart is destroyed
+            if ($$.hasArcType()) { 
+                return; 
+            }
             $$.hideXGridFocus();
             $$.hideTooltip();
             // Undo expanded shapes
@@ -143,11 +169,16 @@ c3_chart_internal_fn.generateEventRectsForSingleX = function (eventRectEnter) {
             });
         })
         .on('mousemove', function (d) {
-            var selectedData, index = d.index,
+            var selectedData, 
+                index = d.index,
                 eventRect = $$.svg.select('.' + CLASS.eventRect + '-' + index);
 
-            if ($$.dragging || $$.flowing) { return; } // do nothing while dragging/flowing
-            if ($$.hasArcType()) { return; }
+            if ($$.dragging || $$.flowing) { 
+                return; 
+            } // do nothing while dragging/flowing
+            if ($$.hasArcType()) { 
+                return; 
+            }
 
             if ($$.isStepType(d) && $$.config.line_step_type === 'step-after' && d3.mouse(this)[0] < $$.x($$.getXValue(d.id, index))) {
                 index -= 1;
@@ -192,14 +223,18 @@ c3_chart_internal_fn.generateEventRectsForSingleX = function (eventRectEnter) {
                     if (!config.tooltip_grouped) {
                         $$.showTooltip([d], this);
                         $$.showXGridFocus([d]);
-                        if (config.point_focus_expand_enabled) { $$.expandCircles(index, d.id, true); }
+                        if (config.point_focus_expand_enabled) { 
+                            $$.expandCircles(index, d.id, true); 
+                        }
                         $$.expandBars(index, d.id, true);
                     }
                 });
         })
         .on('click', function (d) {
             var index = d.index;
-            if ($$.hasArcType() || !$$.toggleShape) { return; }
+            if ($$.hasArcType() || !$$.toggleShape) { 
+                return; 
+            }
             if ($$.cancelClick) {
                 $$.cancelClick = false;
                 return;
@@ -217,15 +252,23 @@ c3_chart_internal_fn.generateEventRectsForSingleX = function (eventRectEnter) {
         .call(
             config.data_selection_draggable && $$.drag ? (
                 d3.behavior.drag().origin(Object)
-                    .on('drag', function () { $$.drag(d3.mouse(this)); })
-                    .on('dragstart', function () { $$.dragstart(d3.mouse(this)); })
-                    .on('dragend', function () { $$.dragend(); })
+                    .on('drag', function () { 
+                        $$.drag(d3.mouse(this)); 
+                    })
+                    .on('dragstart', function () { 
+                        $$.dragstart(d3.mouse(this)); 
+                    })
+                    .on('dragend', function () { 
+                        $$.dragend(); 
+                    })
             ) : function () {}
         );
 };
 
-c3_chart_internal_fn.generateEventRectsForMultipleXs = function (eventRectEnter) {
-    var $$ = this, d3 = $$.d3, config = $$.config;
+c3_chart_internal_fn.generateEventRectsForMultipleXs = function C3_INTERNAL_generateEventRectsForMultipleXs(eventRectEnter) {
+    var $$ = this, 
+        d3 = $$.d3, 
+        config = $$.config;
 
     function mouseout() {
         $$.svg.select('.' + CLASS.eventRect).style('cursor', null);
@@ -242,16 +285,24 @@ c3_chart_internal_fn.generateEventRectsForMultipleXs = function (eventRectEnter)
         .attr('height', $$.height)
         .attr('class', CLASS.eventRect)
         .on('mouseout', function () {
-            if (!$$.config) { return; } // chart is destroyed
-            if ($$.hasArcType()) { return; }
+            if (!$$.config) { 
+                return; 
+            } // chart is destroyed
+            if ($$.hasArcType()) { 
+                return; 
+            }
             mouseout();
         })
         .on('mousemove', function () {
             var targetsToShow = $$.filterTargetsToShow($$.data.targets);
             var mouse, closest, sameXData, selectedData;
 
-            if ($$.dragging) { return; } // do nothing when dragging
-            if ($$.hasArcType(targetsToShow)) { return; }
+            if ($$.dragging) { 
+                return; 
+            } // do nothing when dragging
+            if ($$.hasArcType(targetsToShow)) { 
+                return; 
+            }
 
             mouse = d3.mouse(this);
             closest = $$.findClosestFromTargets(targetsToShow, mouse);
@@ -261,7 +312,7 @@ c3_chart_internal_fn.generateEventRectsForMultipleXs = function (eventRectEnter)
                 $$.mouseover = undefined;
             }
 
-            if (! closest) {
+            if (!closest) {
                 mouseout();
                 return;
             }
@@ -290,20 +341,24 @@ c3_chart_internal_fn.generateEventRectsForMultipleXs = function (eventRectEnter)
             // Show cursor as pointer if point is close to mouse position
             if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
                 $$.svg.select('.' + CLASS.eventRect).style('cursor', 'pointer');
-                if (!$$.mouseover) {
-                    config.data_onmouseover.call($$.api, closest);
-                    $$.mouseover = closest;
-                }
+                config.data_onmouseover.call($$.api, closest);
+                $$.mouseover = closest;
             }
         })
         .on('click', function () {
             var targetsToShow = $$.filterTargetsToShow($$.data.targets);
             var mouse, closest;
-            if ($$.hasArcType(targetsToShow)) { return; }
+
+            if ($$.hasArcType(targetsToShow)) { 
+                return; 
+            }
 
             mouse = d3.mouse(this);
             closest = $$.findClosestFromTargets(targetsToShow, mouse);
-            if (! closest) { return; }
+            if (!closest) { 
+                return; 
+            }
+
             // select if selection enabled
             if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
                 $$.main.selectAll('.' + CLASS.shapes + $$.getTargetSelectorSuffix(closest.id)).selectAll('.' + CLASS.shape + '-' + closest.index).each(function () {
@@ -317,13 +372,19 @@ c3_chart_internal_fn.generateEventRectsForMultipleXs = function (eventRectEnter)
         .call(
             config.data_selection_draggable && $$.drag ? (
                 d3.behavior.drag().origin(Object)
-                    .on('drag', function () { $$.drag(d3.mouse(this)); })
-                    .on('dragstart', function () { $$.dragstart(d3.mouse(this)); })
-                    .on('dragend', function () { $$.dragend(); })
+                    .on('drag', function () { 
+                        $$.drag(d3.mouse(this)); 
+                    })
+                    .on('dragstart', function () { 
+                        $$.dragstart(d3.mouse(this)); 
+                    })
+                    .on('dragend', function () { 
+                        $$.dragend(); 
+                    })
             ) : function () {}
         );
 };
-c3_chart_internal_fn.dispatchEvent = function (type, index, mouse) {
+c3_chart_internal_fn.dispatchEvent = function C3_INTERNAL_dispatchEvent(type, index, mouse) {
     var $$ = this,
         selector = '.' + CLASS.eventRect + (!$$.isMultipleX() ? '-' + index : ''),
         eventRect = $$.main.select(selector).node(),
