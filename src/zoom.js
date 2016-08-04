@@ -1,5 +1,8 @@
-c3_chart_internal_fn.initZoom = function () {
-    var $$ = this, d3 = $$.d3, config = $$.config, startEvent;
+c3_chart_internal_fn.initZoom = function C3_INTERNAL_initZoom() {
+    var $$ = this, 
+        d3 = $$.d3, 
+        config = $$.config, 
+        startEvent;
 
     $$.zoom = d3.behavior.zoom()
         .on("zoomstart", function () {
@@ -40,14 +43,23 @@ c3_chart_internal_fn.getZoomDomain = function () {
         max = d3.max([$$.orgXDomain[1], config.zoom_x_max]);
     return [min, max];
 };
-c3_chart_internal_fn.updateZoom = function () {
-    var $$ = this, z = $$.config.zoom_enabled ? $$.zoom : function () {};
+c3_chart_internal_fn.updateZoom = function C3_INTERNAL_updateZoom() {
+    var $$ = this, 
+        z = $$.config.zoom_enabled ? $$.zoom : function () {};
     $$.main.select('.' + CLASS.zoomRect).call(z).on("dblclick.zoom", null);
     $$.main.selectAll('.' + CLASS.eventRect).call(z).on("dblclick.zoom", null);
 };
-c3_chart_internal_fn.redrawForZoom = function () {
-    var $$ = this, d3 = $$.d3, config = $$.config, zoom = $$.zoom, x = $$.x;
+c3_chart_internal_fn.redrawForZoom = function C3_INTERNAL_redrawForZoom() {
+    console.count('redrawForZoom');
+    var $$ = this, 
+        d3 = $$.d3, 
+        config = $$.config, 
+        zoom = $$.zoom, 
+        x = $$.x;
     if (!config.zoom_enabled) {
+        return;
+    }
+    if (!d3.event.sourceEvent) {
         return;
     }
     if ($$.filterTargetsToShow($$.data.targets).length === 0) {

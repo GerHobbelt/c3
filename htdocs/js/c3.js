@@ -2026,6 +2026,17 @@
         return current;
     };
 
+    c3_chart_internal_fn.getOriginalJson = function C3_INTERNAL_getOriginalJson() {
+    	return this.config.json_original;
+    };
+    c3_chart_internal_fn.json2array = function C3_INTERNAL_json2array(json) {
+    	var arr = [];
+    	for (var i in json) {
+    		arr.push(json[i]);
+    	}
+    	return arr;
+    };
+
     c3_chart_internal_fn.convertUrlToData = function (url, mimeType, headers, keys, done) {
         var $$ = this, type = mimeType ? mimeType : 'csv';
         var req = $$.d3.xhr(url);
@@ -4363,6 +4374,88 @@
         return $$.yForTitle() + $$.config.title_padding.bottom;
     };
 
+    c3_chart_internal_fn.initHeader = function C3_INTERNAL_initHeader() {
+      var $$ = this;
+      if ($$.config.header_show /* && $$.getCurrentPaddingTop() */ ) {
+          var header_height = $$.getCurrentPaddingTop();
+          var header_border_offset = header_height;
+          $$.header = $$.svg.append("rect")
+                .attr("class", "c3-chart-header")
+                .attr("style", "fill: " + $$.config.header_color)
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("width", $$.getCurrentWidth())
+                .attr("height", header_height);
+
+          if ($$.config.header_border_show) {
+              $$.headerBorder = $$.svg.append("line")
+                    .attr("class", "c3-chart-header-border")
+                    .attr("style", "stroke-width: " + $$.config.header_border_width + 
+                          "; stroke: " + $$.config.header_border_color)
+                    .attr("x1", 0)
+                    .attr("x2", $$.getCurrentWidth())
+                    .attr("y1", header_border_offset)
+                    .attr("y2", header_border_offset);
+          }
+      }
+    };
+    c3_chart_internal_fn.redrawHeader = function C3_INTERNAL_redrawHeader() {
+        console.count('redrawHeader');
+        var $$ = this;
+        if ($$.header) {
+            var header_height = $$.getCurrentPaddingTop();
+            $$.header
+                .attr("width", $$.getCurrentWidth())
+                .attr("height", header_height);
+        }
+
+        if ($$.headerBorder) {
+            $$.headerBorder
+                .attr("x2", $$.getCurrentWidth());
+        }
+    };
+
+    c3_chart_internal_fn.initFooter = function C3_INTERNAL_initFooter() {
+      var $$ = this;
+      if ($$.config.footer_show /* && $$.getCurrentPaddingBottom() */ ) {
+          var footer_height = $$.getCurrentPaddingBottom();
+          var footer_border_offset = $$.getCurrentHeight() - $$.config.footer_height - $$.getCurrentPaddingTop();
+          $$.footer = $$.svg.append("rect")
+                .attr("class", "c3-chart-footer")
+                .attr("style", "fill: " + $$.config.footer_color)
+                .attr("x", 0)
+                .attr("y", footer_height)
+                .attr("width", $$.getCurrentWidth())
+                .attr("height", footer_height);
+
+          if ($$.config.footer_border_show) {
+              $$.footerBorder = $$.svg.append("line")
+                    .attr("class", "c3-chart-footer-border")
+                    .attr("style", "stroke-width: " + $$.config.footer_border_width +
+                          "; stroke: " + $$.config.footer_border_color)
+                    .attr("x1", 0)
+                    .attr("x2", $$.getCurrentWidth())
+                    .attr("y1", footer_border_offset)
+                    .attr("y2", footer_border_offset);
+          }
+      }
+    };
+    c3_chart_internal_fn.redrawFooter = function C3_INTERNAL_redrawFooter() {
+        console.count('redrawFooter');
+        var $$ = this;
+        if ($$.footer) {
+            var footer_height = $$.getCurrentPaddingBottom();
+            $$.footer
+                .attr("width", $$.getCurrentWidth())
+                .attr("height", footer_height);
+        }
+
+        if ($$.footerBorder) {
+            $$.footerBorder
+                .attr("x2", $$.getCurrentWidth());
+        }
+    };
+
     function Axis(owner) {
         API.call(this, owner);
     }
@@ -5701,8 +5794,11 @@
         return extent;
     };
 
-    c3_chart_internal_fn.initZoom = function () {
-        var $$ = this, d3 = $$.d3, config = $$.config, startEvent;
+    c3_chart_internal_fn.initZoom = function C3_INTERNAL_initZoom() {
+        var $$ = this, 
+            d3 = $$.d3, 
+            config = $$.config, 
+            startEvent;
 
         $$.zoom = d3.behavior.zoom()
             .on("zoomstart", function () {
@@ -5743,14 +5839,23 @@
             max = d3.max([$$.orgXDomain[1], config.zoom_x_max]);
         return [min, max];
     };
-    c3_chart_internal_fn.updateZoom = function () {
-        var $$ = this, z = $$.config.zoom_enabled ? $$.zoom : function () {};
+    c3_chart_internal_fn.updateZoom = function C3_INTERNAL_updateZoom() {
+        var $$ = this, 
+            z = $$.config.zoom_enabled ? $$.zoom : function () {};
         $$.main.select('.' + CLASS.zoomRect).call(z).on("dblclick.zoom", null);
         $$.main.selectAll('.' + CLASS.eventRect).call(z).on("dblclick.zoom", null);
     };
-    c3_chart_internal_fn.redrawForZoom = function () {
-        var $$ = this, d3 = $$.d3, config = $$.config, zoom = $$.zoom, x = $$.x;
+    c3_chart_internal_fn.redrawForZoom = function C3_INTERNAL_redrawForZoom() {
+        console.count('redrawForZoom');
+        var $$ = this, 
+            d3 = $$.d3, 
+            config = $$.config, 
+            zoom = $$.zoom, 
+            x = $$.x;
         if (!config.zoom_enabled) {
+            return;
+        }
+        if (!d3.event.sourceEvent) {
             return;
         }
         if ($$.filterTargetsToShow($$.data.targets).length === 0) {
@@ -7008,6 +7113,12 @@
         this.internal.config.tooltip_onhide.call(this);
     };
 
+    c3_chart_fn.originalJson = function C3_API_originalJson() {
+    	return this.internal.getOriginalJson();
+    };
+    c3_chart_fn.originalJsonArray = function C3_API_originalJsonArray() {
+    	return this.internal.json2array(this.internal.getOriginalJson());
+    };
     // Features:
     // 1. category axis
     // 2. ceil values of translate/x/y to int for half pixel antialiasing
