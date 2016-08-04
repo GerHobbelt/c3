@@ -1,17 +1,20 @@
-c3_chart_internal_fn.initBar = function () {
+c3_chart_internal_fn.initBar = function C3_INTERNAL_initBar() {
     var $$ = this;
     $$.main.select('.' + CLASS.chart).append("g")
         .attr("class", CLASS.chartBars);
 };
-c3_chart_internal_fn.updateTargetsForBar = function (targets) {
-    var $$ = this, config = $$.config,
+c3_chart_internal_fn.updateTargetsForBar = function C3_INTERNAL_updateTargetsForBar(targets) {
+    var $$ = this, 
+        config = $$.config,
         mainBarUpdate, mainBarEnter,
         classChartBar = $$.classChartBar.bind($$),
         classBars = $$.classBars.bind($$),
         classFocus = $$.classFocus.bind($$);
     mainBarUpdate = $$.main.select('.' + CLASS.chartBars).selectAll('.' + CLASS.chartBar)
         .data(targets)
-        .attr('class', function (d) { return classChartBar(d) + classFocus(d); });
+        .attr('class', function (d) { 
+            return classChartBar(d) + classFocus(d); 
+        });
     mainBarEnter = mainBarUpdate.enter().append('g')
         .attr('class', classChartBar)
         .style('opacity', 0)
@@ -19,55 +22,113 @@ c3_chart_internal_fn.updateTargetsForBar = function (targets) {
     // Bars for each data
     mainBarEnter.append('g')
         .attr("class", classBars)
-        .style("cursor", function (d) { return config.data_selection_isselectable(d) ? "pointer" : null; });
+        .style("cursor", function (d) { 
+            return config.data_selection_isselectable(d) ? "pointer" : null; 
+        });
 
 };
-c3_chart_internal_fn.updateBar = function (durationForExit) {
+c3_chart_internal_fn.updateBar = function C3_INTERNAL_updateBar(durationForExit) {
     var $$ = this,
-        barData = $$.barData.bind($$),
         classBar = $$.classBar.bind($$),
         initialOpacity = $$.initialOpacity.bind($$),
-        color = function (d) { return $$.color(d.id); };
+        color = function (d) { 
+            return $$.color(d.id); 
+        };
     $$.mainBar = $$.main.selectAll('.' + CLASS.bars).selectAll('.' + CLASS.bar)
-        .data(barData);
-    $$.mainBar.enter().append('path')
-        .attr("class", classBar)
+        .data(function (d, i) {
+            return $$.barData(d);
+        });
+
+    var path = $$.mainBar.enter().append('path')
+        .attr("class", function (path) {
+          var extraClasses = $$.config.data_classes[path.id] ? ' ' + $$.config.data_classes[path.id] : '';
+          return classBar(path) + extraClasses;
+        })
         .style("stroke", color)
         .style("fill", color);
+
+    if ($$.config.mask) {
+        path.style("mask", "url(#diagonalMask)");
+    }
+
     $$.mainBar
         .style("opacity", initialOpacity);
     $$.mainBar.exit().transition().duration(durationForExit)
         .style('opacity', 0)
         .remove();
 };
-c3_chart_internal_fn.redrawBar = function (drawBar, withTransition) {
+c3_chart_internal_fn.redrawBar = function C3_INTERNAL_redrawBar(drawBar, withTransition) {
+    console.count('redrawBar');
     return [
         (withTransition ? this.mainBar.transition(Math.random().toString()) : this.mainBar)
             .attr('d', drawBar)
             .style("fill", this.color)
-            .style("opacity", 1)
+            .style("opacity", this.opacity)
     ];
 };
-c3_chart_internal_fn.getBarW = function (axis, barTargetsNum) {
-    var $$ = this, config = $$.config,
-        w = typeof config.bar_width === 'number' ? config.bar_width : barTargetsNum ? (axis.tickInterval() * config.bar_width_ratio) / barTargetsNum : 0;
-    return config.bar_width_max && w > config.bar_width_max ? config.bar_width_max : w;
+c3_chart_internal_fn.getBarW = function C3_INTERNAL_getBarW(axis, barTargetsNum) {
+    var $$ = this, 
+        config = $$.config, 
+        w = 0;
+    if (typeof config.bar_width === 'number') {
+        w = config.bar_width;
+    } else if (barTargetsNum) {
+        var tickInterval = axis.tickInterval();
+        if (config.axis_x_type === 'timeseries') {
+            var time, timePerPx, min;
+            $$.data.targets.forEach(function (target) {
+                var data = $$.data.xs[target.id];
+                // find each pixel represent how long time
+                var diff = data[data.length - 1].getTime() - data[0].getTime();
+                if (!time || diff > time) {
+                    time = diff;
+                }
+
+                // find minimal time diff between ticks
+                data.forEach(function (v, i) {
+                    if (data[i + 1]) {
+                        var diff = data[i + 1].getTime() - v.getTime();
+                        if (!min || min > diff) {
+                            min = diff;
+                        }
+                    }
+                });
+            });
+            timePerPx = time / ($$.xMax - $$.xMin);
+            tickInterval = Math.floor(min / timePerPx / 2);
+        }
+
+        w = (tickInterval * config.bar_width_ratio) / barTargetsNum;
+    }
+
+    if (config.bar_width_max && w > config.bar_width_max) {
+        return config.bar_width_max;
+    }
+
+    if (w < 1) {
+        return 1;
+    }
+
+    return  w;
 };
-c3_chart_internal_fn.getBars = function (i, id) {
+c3_chart_internal_fn.getBars = function C3_INTERNAL_getBars(i, id) {
     var $$ = this;
     return (id ? $$.main.selectAll('.' + CLASS.bars + $$.getTargetSelectorSuffix(id)) : $$.main).selectAll('.' + CLASS.bar + (isValue(i) ? '-' + i : ''));
 };
-c3_chart_internal_fn.expandBars = function (i, id, reset) {
+c3_chart_internal_fn.expandBars = function C3_INTERNAL_expandBars(i, id, reset) {
     var $$ = this;
-    if (reset) { $$.unexpandBars(); }
+    if (reset) { 
+        $$.unexpandBars(); 
+    }
     $$.getBars(i, id).classed(CLASS.EXPANDED, true);
 };
-c3_chart_internal_fn.unexpandBars = function (i) {
+c3_chart_internal_fn.unexpandBars = function C3_INTERNAL_unexpandBars(i) {
     var $$ = this;
     $$.getBars(i).classed(CLASS.EXPANDED, false);
 };
-c3_chart_internal_fn.generateDrawBar = function (barIndices, isSub) {
-    var $$ = this, config = $$.config,
+c3_chart_internal_fn.generateDrawBar = function C3_INTERNAL_generateDrawBar(barIndices, isSub) {
+    var $$ = this, 
+        config = $$.config,
         getPoints = $$.generateGetBarPoints(barIndices, isSub);
     return function (d, i) {
         // 4 points that make a bar
@@ -86,7 +147,7 @@ c3_chart_internal_fn.generateDrawBar = function (barIndices, isSub) {
         return path;
     };
 };
-c3_chart_internal_fn.generateGetBarPoints = function (barIndices, isSub) {
+c3_chart_internal_fn.generateGetBarPoints = function C3_INTERNAL_generateGetBarPoints(barIndices, isSub) {
     var $$ = this,
         axis = isSub ? $$.subXAxis : $$.xAxis,
         barTargetsNum = barIndices.__max__ + 1,
@@ -101,7 +162,9 @@ c3_chart_internal_fn.generateGetBarPoints = function (barIndices, isSub) {
             posX = barX(d), posY = barY(d);
         // fix posY not to overflow opposite quadrant
         if ($$.config.axis_rotated) {
-            if ((0 < d.value && posY < y0) || (d.value < 0 && y0 < posY)) { posY = y0; }
+            if ((0 < d.value && posY < y0) || (d.value < 0 && y0 < posY)) { 
+                posY = y0; 
+            }
         }
         // 4 points that make a bar
         return [
@@ -112,11 +175,13 @@ c3_chart_internal_fn.generateGetBarPoints = function (barIndices, isSub) {
         ];
     };
 };
-c3_chart_internal_fn.isWithinBar = function (that) {
-    var mouse = this.d3.mouse(that), box = that.getBoundingClientRect(),
-        seg0 = that.pathSegList.getItem(0), seg1 = that.pathSegList.getItem(1),
-        x = Math.min(seg0.x, seg1.x), y = Math.min(seg0.y, seg1.y),
-        w = box.width, h = box.height, offset = 2,
-        sx = x - offset, ex = x + w + offset, sy = y + h + offset, ey = y - offset;
+c3_chart_internal_fn.isWithinBar = function C3_INTERNAL_isWithinBar(that) {
+    var mouse = this.d3.mouse(that),
+        box = getPathBox(that), 
+        offset = 2,
+        sx = box.x - offset, 
+        ex = box.x + box.width + offset, 
+        sy = box.y + box.height + offset, 
+        ey = box.y - offset;
     return sx < mouse[0] && mouse[0] < ex && ey < mouse[1] && mouse[1] < sy;
 };

@@ -1,8 +1,10 @@
-c3_chart_fn.zoom = function (domain) {
+c3_chart_fn.zoom = function C3_API_zoom(domain) {
     var $$ = this.internal;
     if (domain) {
         if ($$.isTimeSeries()) {
-            domain = domain.map(function (x) { return $$.parseDate(x); });
+            domain = domain.map(function (x) { 
+                return $$.parseDate(x); 
+            });
         }
         $$.brush.extent(domain);
         $$.redraw({withUpdateXDomain: true, withY: $$.config.zoom_rescale});
@@ -10,18 +12,18 @@ c3_chart_fn.zoom = function (domain) {
     }
     return $$.brush.extent();
 };
-c3_chart_fn.zoom.enable = function (enabled) {
+c3_chart_fn.zoom.enable = function C3_API_zoom_enable(enabled) {
     var $$ = this.internal;
     $$.config.zoom_enabled = enabled;
     $$.updateAndRedraw();
 };
-c3_chart_fn.unzoom = function () {
+c3_chart_fn.unzoom = function C3_API_unzoom() {
     var $$ = this.internal;
     $$.brush.clear().update();
     $$.redraw({withUpdateXDomain: true});
 };
 
-c3_chart_fn.zoom.max = function (max) {
+c3_chart_fn.zoom.max = function C3_API_zoom_max(max) {
     var $$ = this.internal, config = $$.config, d3 = $$.d3;
     if (max === 0 || max) {
         config.zoom_x_max = d3.max([$$.orgXDomain[1], max]);
@@ -31,7 +33,7 @@ c3_chart_fn.zoom.max = function (max) {
     }
 };
 
-c3_chart_fn.zoom.min = function (min) {
+c3_chart_fn.zoom.min = function C3_API_zoom_min(min) {
     var $$ = this.internal, config = $$.config, d3 = $$.d3;
     if (min === 0 || min) {
         config.zoom_x_min = d3.min([$$.orgXDomain[0], min]);
@@ -41,7 +43,7 @@ c3_chart_fn.zoom.min = function (min) {
     }
 };
 
-c3_chart_fn.zoom.range = function (range) {
+c3_chart_fn.zoom.range = function C3_API_zoom_range(range) {
     if (arguments.length) {
         if (isDefined(range.max)) { this.domain.max(range.max); }
         if (isDefined(range.min)) { this.domain.min(range.min); }

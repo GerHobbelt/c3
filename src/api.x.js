@@ -1,4 +1,4 @@
-c3_chart_fn.x = function (x) {
+c3_chart_fn.x = function C3_API_x(x) {
     var $$ = this.internal;
     if (arguments.length) {
         $$.updateTargetX($$.data.targets, x);
@@ -6,7 +6,7 @@ c3_chart_fn.x = function (x) {
     }
     return $$.data.xs;
 };
-c3_chart_fn.xs = function (xs) {
+c3_chart_fn.xs = function C3_API_xs(xs) {
     var $$ = this.internal;
     if (arguments.length) {
         $$.updateTargetXs($$.data.targets, xs);
