@@ -187,7 +187,7 @@ c3_chart_internal_fn.convertDataToTargets = function C3_INTERNAL_convertDataToTa
                     x,
                     value = d[id] !== null && !isNaN(d[id]) ? +d[id] : null;
                 // use x as categories if custom x and categorized
-                if ($$.isCustomX() && $$.isCategorized() && index === 0 && !isUndefined(rawX)) {
+                if ($$.isCustomX() && $$.isCategorized() && !isUndefined(rawX)) {
                     if (index === 0 && i === 0) {
                         config.axis_x_categories = [];
                     }

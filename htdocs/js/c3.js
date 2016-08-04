@@ -2580,7 +2580,7 @@
                         x,
                         value = d[id] !== null && !isNaN(d[id]) ? +d[id] : null;
                     // use x as categories if custom x and categorized
-                    if ($$.isCustomX() && $$.isCategorized() && index === 0 && !isUndefined(rawX)) {
+                    if ($$.isCustomX() && $$.isCategorized() && !isUndefined(rawX)) {
                         if (index === 0 && i === 0) {
                             config.axis_x_categories = [];
                         }
@@ -3282,11 +3282,11 @@
         }
         // Calculate x axis height when tick rotated
         if (axisId === 'x' && !config.axis_rotated && config.axis_x_tick_rotate) {
-            h += $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - config.axis_x_tick_rotate) / 180);
+            h += $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - Math.abs(config.axis_x_tick_rotate)) / 180);
         }
         // Calculate y axis height when tick rotated
         if (axisId === 'y' && config.axis_rotated && config.axis_y_tick_rotate) {
-            h += $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - config.axis_y_tick_rotate) / 180);
+            h += $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - Math.abs(config.axis_y_tick_rotate)) / 180);
         }
         return h + ($$.axis.getLabelPositionById(axisId).isInner ? 0 : 10) + (axisId === 'y2' ? -10 : 0);
     };
@@ -4494,6 +4494,7 @@
             $$.updateXGrid();
         }
         $$.xgridLines = main.select('.' + CLASS.xgridLines).selectAll('.' + CLASS.xgridLine)
+            .remove()
             .data(config.grid_x_lines);
         // enter
         xgridLine = $$.xgridLines.enter().append('g')
@@ -4508,7 +4509,7 @@
             .attr('dx', $$.gridTextDx)
             .attr('dy', -5)
             .style("opacity", 0);
-        // udpate
+        // update
         // done in d3.transition() at the end of this function
         // exit
         $$.xgridLines.exit().transition().duration(duration)
@@ -4734,7 +4735,7 @@
                 return orderAsc ? v1 - v2 : v2 - v1;
             });
         } else {
-            var ids = $$.orderTargets($$.data.targets).map(function (i) {
+            var ids = $$.orderTargets($.extend(true, [], $$.data.targets)).map(function (i) {
                 return i.id;
             });
             d.sort(function (a, b) {
@@ -6115,7 +6116,7 @@
             interval = window.setInterval(function () {
                 if (!$$.transiting) {
                     window.clearInterval(interval);
-                    if ($$.legend.selectAll('.c3-legend-item-focused').size() > 0) {
+                    if ($$.legend && $$.legend.selectAll('.c3-legend-item-focused').size() > 0) {
                         $$.expandArc(targetIds);
                     }
                 }

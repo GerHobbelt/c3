@@ -107,6 +107,7 @@ c3_chart_internal_fn.updateGrid = function C3_INTERNAL_updateGrid(duration) {
         $$.updateXGrid();
     }
     $$.xgridLines = main.select('.' + CLASS.xgridLines).selectAll('.' + CLASS.xgridLine)
+        .remove()
         .data(config.grid_x_lines);
     // enter
     xgridLine = $$.xgridLines.enter().append('g')
@@ -121,7 +122,7 @@ c3_chart_internal_fn.updateGrid = function C3_INTERNAL_updateGrid(duration) {
         .attr('dx', $$.gridTextDx)
         .attr('dy', -5)
         .style("opacity", 0);
-    // udpate
+    // update
     // done in d3.transition() at the end of this function
     // exit
     $$.xgridLines.exit().transition().duration(duration)

@@ -3282,11 +3282,11 @@
         }
         // Calculate x axis height when tick rotated
         if (axisId === 'x' && !config.axis_rotated && config.axis_x_tick_rotate) {
-            h += $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - config.axis_x_tick_rotate) / 180);
+            h += $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - Math.abs(config.axis_x_tick_rotate)) / 180);
         }
         // Calculate y axis height when tick rotated
         if (axisId === 'y' && config.axis_rotated && config.axis_y_tick_rotate) {
-            h += $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - config.axis_y_tick_rotate) / 180);
+            h += $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - Math.abs(config.axis_y_tick_rotate)) / 180);
         }
         return h + ($$.axis.getLabelPositionById(axisId).isInner ? 0 : 10) + (axisId === 'y2' ? -10 : 0);
     };
@@ -4735,7 +4735,7 @@
                 return orderAsc ? v1 - v2 : v2 - v1;
             });
         } else {
-            var ids = $$.orderTargets($$.data.targets).map(function (i) {
+            var ids = $$.orderTargets($.extend(true, [], $$.data.targets)).map(function (i) {
                 return i.id;
             });
             d.sort(function (a, b) {
@@ -6116,7 +6116,7 @@
             interval = window.setInterval(function () {
                 if (!$$.transiting) {
                     window.clearInterval(interval);
-                    if ($$.legend.selectAll('.c3-legend-item-focused').size() > 0) {
+                    if ($$.legend && $$.legend.selectAll('.c3-legend-item-focused').size() > 0) {
                         $$.expandArc(targetIds);
                     }
                 }
