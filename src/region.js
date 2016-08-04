@@ -25,7 +25,6 @@ c3_chart_internal_fn.updateRegion = function C3_INTERNAL_updateRegion(duration) 
         .remove();
 };
 c3_chart_internal_fn.redrawRegion = function C3_INTERNAL_redrawRegion(withTransition) {
-    console.count('redrawRegion');
     var $$ = this,
         regions = $$.mainRegion.selectAll('rect').each(function () {
             // data is binded to g and it's not transferred to rect (child node) automatically,
@@ -39,7 +38,9 @@ c3_chart_internal_fn.redrawRegion = function C3_INTERNAL_redrawRegion(withTransi
         w = $$.regionWidth.bind($$),
         h = $$.regionHeight.bind($$);
         
-    var paddedY = $$.regionY($$) + 10;  // To allow for text height
+    var paddedY = function (d) {
+        return $$.regionY(d) + 10;  // To allow for text height
+    };
     var regionLabels = $$.mainRegion.selectAll('text');
         
     return [
