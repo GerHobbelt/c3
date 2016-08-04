@@ -122,12 +122,14 @@ c3_chart_internal_fn.getTextRect = function C3_INTERNAL_getTextRect(element, cls
     var dummy = this.d3.select('body').append('div').classed('c3', true),
         svg = dummy.append("svg").style('visibility', 'hidden').style('position', 'fixed').style('top', 0).style('left', 0),
         text = element.textContent,
+        font = this.d3.select(element).style('font'),
         rect,
         count = 0;
     svg.selectAll('.dummy')
         .data([text])
       .enter().append('text')
         .classed(cls ? cls : "", true)
+        .style('font', font)
         .text(text)
       .each(function () {
         count++; 
