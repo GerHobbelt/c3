@@ -2,7 +2,7 @@
     "bitwise": true,
     "eqeqeq": true,
     "curly": true,
-    "strict": true,
+    "strict": false,
     "trailing": true,
     "white": true,
     "maxlen": 210,
@@ -28,7 +28,9 @@
         "xit": false,
         "expect": false,
         "d3": false,
-        "console": false
+        "console": false,
+
+        "c3_chart_internal_fn": true
     }
 
 }

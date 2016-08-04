@@ -1,11 +1,19 @@
 # npm modules
 node_modules
 bower_components
-d3.js
-d3.min.js
 components
 build
+.idea/
 .sass-cache
 
 # coverage report
 /coverage
+
+# github analytics scripts
+__forks__.bulk_dump
+__forks.info__/
+
+# sublime editor
+*.sublime-project
+*.sublime-workspace
+

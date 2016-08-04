@@ -4,11 +4,19 @@
     "c3.css",
     "c3.js"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GerHobbelt/c3"
+  },
   "homepage": "https://github.com/masayuki0812/c3",
   "authors": [
-    "Masayuki Tanaka <masayuki0812@mac.com>"
+    "Igor Laborie <ilaborie@gmail.com>",
+    "Masayuki Tanaka <masayuki0812@mac.com>",
+    "Matt Furness",
+    "Bradley Boveines",
+    "dsuket"
   ],
-  "description": "D3-based reusable chart library",
+  "description": "Fork of c3, a D3-based reusable chart library",
   "keywords": [
     "chart",
     "d3"
@@ -26,6 +34,6 @@
     "Gruntfile.*"
   ],
   "dependencies": {
-    "d3": "~3.5.0"
+    "d3": "~3.5.5"
   }
 }

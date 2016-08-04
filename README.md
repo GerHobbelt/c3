@@ -1,6 +1,8 @@
 c3 [![Build Status](https://travis-ci.org/c3js/c3.svg?branch=master)](https://travis-ci.org/c3js/c3) [![Dependency Status](https://david-dm.org/c3js/c3.svg)](https://david-dm.org/c3js/c3) [![devDependency Status](https://david-dm.org/c3js/c3/dev-status.svg)](https://david-dm.org/c3js/c3#info=devDependencies) [![license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/c3js/c3/blob/master/LICENSE) [![codecov.io](https://codecov.io/github/c3js/c3/coverage.svg?branch=master)](https://codecov.io/github/c3js/c3?branch=master)
 ==
 
+**This is a fork of c3**
+
 c3 is a D3-based reusable chart library that enables deeper integration of charts into web applications.
 
 Follow the link for more information: [http://c3js.org](http://c3js.org/)
@@ -37,6 +39,24 @@ Before reporting an issue, please do the following:
 1. Create a JSFiddle or Plunkr highlighting the issue. Please don't include any unnecessary dependencies so we can isolate that the issue is in fact with C3. *Please be advised that custom CSS can modify C3.js output!*
 
 1. When posting the issue, please use a descriptive title and include the version of C3 (or, if cloning from Git, the commit hash — C3 is under active development and the master branch contains the latest dev commits!), along with any platform/browser/OS information that may be relevant.
+
+## Dev Enviroment
+- Seems to only work with Node v0.10.x (currently v0.10.38)
+- Install Bower globally if needed
+
+```
+npm install
+bower install
+```
+
+## Testing
+
+```
+npm install -g grunt-cli
+gem install sass
+
+grunt jasmine
+```
 
 ## Pull requests
 Pull requests are welcome, though please post an issue first to see whether such a change is desirable.

@@ -48,7 +48,6 @@ function main() {
         };
         $("#status").text(JSON.stringify(info, null, " "));
     }
-
 };
 
 if (typeof (Array.generate) === "undefined") {
