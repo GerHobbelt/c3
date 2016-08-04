@@ -886,7 +886,7 @@
         return "translate(" + x + "," + y + ")";
     };
     c3_chart_internal_fn.initialOpacity = function C3_INTERNAL_initialOpacity(d) {
-        return d.value !== null && this.withoutFadeIn[d.id] ? this.opacity(d) : 0;
+        return d.value !== null && this.withoutFadeIn[d.id] ? 1 : 0;
     };
     c3_chart_internal_fn.initialOpacityForCircle = function C3_INTERNAL_initialOpacityForCircle(d) {
         return d.value !== null && this.withoutFadeIn[d.id] ? this.opacityForCircle(d) : 0;
@@ -4753,6 +4753,88 @@
     c3_chart_internal_fn.getTitlePadding = function() {
         var $$ = this;
         return $$.yForTitle() + $$.config.title_padding.bottom;
+    };
+
+    c3_chart_internal_fn.initHeader = function C3_INTERNAL_initHeader() {
+      var $$ = this;
+      if ($$.config.header_show /* && $$.getCurrentPaddingTop() */ ) {
+          var header_height = $$.getCurrentPaddingTop();
+          var header_border_offset = header_height;
+          $$.header = $$.svg.append("rect")
+                .attr("class", "c3-chart-header")
+                .attr("style", "fill: " + $$.config.header_color)
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("width", $$.getCurrentWidth())
+                .attr("height", header_height);
+
+          if ($$.config.header_border_show) {
+              $$.headerBorder = $$.svg.append("line")
+                    .attr("class", "c3-chart-header-border")
+                    .attr("style", "stroke-width: " + $$.config.header_border_width + 
+                          "; stroke: " + $$.config.header_border_color)
+                    .attr("x1", 0)
+                    .attr("x2", $$.getCurrentWidth())
+                    .attr("y1", header_border_offset)
+                    .attr("y2", header_border_offset);
+          }
+      }
+    };
+    c3_chart_internal_fn.redrawHeader = function C3_INTERNAL_redrawHeader() {
+        console.count('redrawHeader');
+        var $$ = this;
+        if ($$.header) {
+            var header_height = $$.getCurrentPaddingTop();
+            $$.header
+                .attr("width", $$.getCurrentWidth())
+                .attr("height", header_height);
+        }
+
+        if ($$.headerBorder) {
+            $$.headerBorder
+                .attr("x2", $$.getCurrentWidth());
+        }
+    };
+
+    c3_chart_internal_fn.initFooter = function C3_INTERNAL_initFooter() {
+      var $$ = this;
+      if ($$.config.footer_show /* && $$.getCurrentPaddingBottom() */ ) {
+          var footer_height = $$.getCurrentPaddingBottom();
+          var footer_border_offset = $$.getCurrentHeight() - $$.config.footer_height - $$.getCurrentPaddingTop();
+          $$.footer = $$.svg.append("rect")
+                .attr("class", "c3-chart-footer")
+                .attr("style", "fill: " + $$.config.footer_color)
+                .attr("x", 0)
+                .attr("y", footer_height)
+                .attr("width", $$.getCurrentWidth())
+                .attr("height", footer_height);
+
+          if ($$.config.footer_border_show) {
+              $$.footerBorder = $$.svg.append("line")
+                    .attr("class", "c3-chart-footer-border")
+                    .attr("style", "stroke-width: " + $$.config.footer_border_width +
+                          "; stroke: " + $$.config.footer_border_color)
+                    .attr("x1", 0)
+                    .attr("x2", $$.getCurrentWidth())
+                    .attr("y1", footer_border_offset)
+                    .attr("y2", footer_border_offset);
+          }
+      }
+    };
+    c3_chart_internal_fn.redrawFooter = function C3_INTERNAL_redrawFooter() {
+        console.count('redrawFooter');
+        var $$ = this;
+        if ($$.footer) {
+            var footer_height = $$.getCurrentPaddingBottom();
+            $$.footer
+                .attr("width", $$.getCurrentWidth())
+                .attr("height", footer_height);
+        }
+
+        if ($$.footerBorder) {
+            $$.footerBorder
+                .attr("x2", $$.getCurrentWidth());
+        }
     };
 
     function Axis(owner) {

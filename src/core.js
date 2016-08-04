@@ -881,7 +881,7 @@ c3_chart_internal_fn.getTranslate = function C3_INTERNAL_getTranslate(target) {
     return "translate(" + x + "," + y + ")";
 };
 c3_chart_internal_fn.initialOpacity = function C3_INTERNAL_initialOpacity(d) {
-    return d.value !== null && this.withoutFadeIn[d.id] ? this.opacity(d) : 0;
+    return d.value !== null && this.withoutFadeIn[d.id] ? 1 : 0;
 };
 c3_chart_internal_fn.initialOpacityForCircle = function C3_INTERNAL_initialOpacityForCircle(d) {
     return d.value !== null && this.withoutFadeIn[d.id] ? this.opacityForCircle(d) : 0;
