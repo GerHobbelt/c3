@@ -458,7 +458,11 @@ c3_chart_internal_fn.pointR = function C3_INTERNAL_pointR(d) {
 c3_chart_internal_fn.pointExpandedR = function C3_INTERNAL_pointExpandedR(d) {
     var $$ = this, 
         config = $$.config;
-    return config.point_focus_expand_enabled ? (config.point_focus_expand_r ? config.point_focus_expand_r : $$.pointR(d) * 1.75) : $$.pointR(d);
+    if (config.point_focus_expand_enabled) {
+        return isFunction(config.point_focus_expand_r) ? config.point_focus_expand_r(d) : (config.point_focus_expand_r ? config.point_focus_expand_r : $$.pointR(d) * 1.75);
+    } else {
+        return $$.pointR(d);
+    }
 };
 c3_chart_internal_fn.pointSelectR = function C3_INTERNAL_pointSelectR(d) {
     var $$ = this, 
