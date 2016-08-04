@@ -2402,10 +2402,10 @@
         }
         req.get(function (error, data) {
             var d;
-            var dataResponse = data.response || data.responseText;
             if (!data) {
                 throw new Error(error.responseURL + ' ' + error.status + ' (' + error.statusText + ')');
             }
+            var dataResponse = data.response || data.responseText;
             if (type === 'json') {
                 d = $$.convertJsonToData(JSON.parse(dataResponse), keys);
             } else if (type === 'tsv') {
@@ -2470,9 +2470,17 @@
         return data;
     };
     c3_chart_internal_fn.findValueInJson = function (object, path) {
+        if (path in object) {
+            // if object has a key that contains . or [], return the key's value
+            // instead of searching for an inner object
+            return object[path];
+        }
+
         path = path.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties (replace [] with .)
         path = path.replace(/^\./, '');           // strip a leading dot
         var pathArray = path.split('.');
+
+        // search for any inner objects or arrays denoted by the path
         for (var i = 0; i < pathArray.length; ++i) {
             var k = pathArray[i];
             if (k in object) {
@@ -4735,7 +4743,7 @@
                 return orderAsc ? v1 - v2 : v2 - v1;
             });
         } else {
-            var ids = $$.orderTargets($.extend(true, [], $$.data.targets)).map(function (i) {
+            var ids = $$.orderTargets($$.data.targets.slice(0)).map(function (i) {
                 return i.id;
             });
             d.sort(function (a, b) {

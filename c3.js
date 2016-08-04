@@ -2402,10 +2402,10 @@
         }
         req.get(function (error, data) {
             var d;
-            var dataResponse = data.response || data.responseText;
             if (!data) {
                 throw new Error(error.responseURL + ' ' + error.status + ' (' + error.statusText + ')');
             }
+            var dataResponse = data.response || data.responseText;
             if (type === 'json') {
                 d = $$.convertJsonToData(JSON.parse(dataResponse), keys);
             } else if (type === 'tsv') {
@@ -4743,7 +4743,7 @@
                 return orderAsc ? v1 - v2 : v2 - v1;
             });
         } else {
-            var ids = $$.orderTargets($.extend(true, [], $$.data.targets)).map(function (i) {
+            var ids = $$.orderTargets($$.data.targets.slice(0)).map(function (i) {
                 return i.id;
             });
             d.sort(function (a, b) {
