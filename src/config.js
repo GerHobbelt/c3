@@ -49,6 +49,8 @@ c3_chart_internal_fn.getDefaultConfig = function C3_INTERNAL_getDefaultConfig() 
         data_regions: {},
         data_color: undefined,
         data_colors: {},
+        data_opacity: undefined,
+        data_calculateOpacity: {},
         data_hide: false,
         data_filter: undefined,
         data_selection_enabled: false,

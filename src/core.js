@@ -123,6 +123,7 @@ c3_chart_internal_fn.initParams = function C3_INTERNAL_initParams() {
 
     $$.color = $$.generateColor();
     $$.levelColor = $$.generateLevelColor();
+    $$.opacity = $$.generateOpacity();
 
     $$.dataTimeFormat = config.data_xLocaltime ? d3.time.format : d3.time.format.utc;
     $$.axisTimeFormat = config.axis_x_localtime ? d3.time.format : d3.time.format.utc;
@@ -880,7 +881,7 @@ c3_chart_internal_fn.getTranslate = function C3_INTERNAL_getTranslate(target) {
     return "translate(" + x + "," + y + ")";
 };
 c3_chart_internal_fn.initialOpacity = function C3_INTERNAL_initialOpacity(d) {
-    return d.value !== null && this.withoutFadeIn[d.id] ? 1 : 0;
+    return d.value !== null && this.withoutFadeIn[d.id] ? this.opacity(d) : 0;
 };
 c3_chart_internal_fn.initialOpacityForCircle = function C3_INTERNAL_initialOpacityForCircle(d) {
     return d.value !== null && this.withoutFadeIn[d.id] ? this.opacityForCircle(d) : 0;

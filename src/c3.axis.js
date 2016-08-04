@@ -142,17 +142,18 @@ function c3_axis(d3, params) {
                 function split(splitted, text) {
                     spaceIndex = undefined;
                     for (var i = 1; i < text.length; i++) {
-                        if (text.charAt(i) === ' ') {
+                        var currentChar = text.charAt(i);
+                        if (currentChar === ' ' || currentChar === '\n') {
                             spaceIndex = i;
                             preserveSpace = 0;
-                        } else if (text.charAt(i) === '/' || text.charAt(i) === '-') {
+                        } else if (currentChar === '/' || currentChar === '-') {
                             spaceIndex = i;
                             preserveSpace = 1;
                         }
                         subtext = text.substr(0, i + 1);
                         textWidth = sizeFor1Char.w * subtext.length;
-                        // if text width gets over tick width, split by space index or current index
-                        if (maxWidth < textWidth) {
+                        // if text width gets over tick width OR we have reached a newline character, split by space index or current index
+                        if (currentChar === '\n' || maxWidth < textWidth) {
                             return split(
                                 splitted.concat(text.substr(0, spaceIndex ? spaceIndex + preserveSpace : i)),
                                 text.slice(spaceIndex ? spaceIndex + 1 : i)

@@ -63,7 +63,7 @@ c3_chart_internal_fn.redrawBar = function C3_INTERNAL_redrawBar(drawBar, withTra
         (withTransition ? this.mainBar.transition(Math.random().toString()) : this.mainBar)
             .attr('d', drawBar)
             .style("fill", this.color)
-            .style("opacity", 1)
+            .style("opacity", this.opacity)
     ];
 };
 c3_chart_internal_fn.getBarW = function C3_INTERNAL_getBarW(axis, barTargetsNum) {
