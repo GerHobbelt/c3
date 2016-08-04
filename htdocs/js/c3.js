@@ -7277,19 +7277,24 @@
         return format;
     };
 
-    c3_chart_internal_fn.hasCaches = function (ids) {
-        for (var i = 0; i < ids.length; i++) {
-            if (! (ids[i] in this.cache)) { return false; }
+    c3_chart_internal_fn.hasCaches = function C3_INTERNAL_hasCaches(ids) {
+        for (var i = 0, len = ids.length; i < len; i++) {
+            if (!(ids[i] in this.cache)) { 
+                return false; 
+            }
         }
         return true;
     };
-    c3_chart_internal_fn.addCache = function (id, target) {
+    c3_chart_internal_fn.addCache = function C3_INTERNAL_addCache(id, target) {
         this.cache[id] = this.cloneTarget(target);
     };
-    c3_chart_internal_fn.getCaches = function (ids) {
-        var targets = [], i;
-        for (i = 0; i < ids.length; i++) {
-            if (ids[i] in this.cache) { targets.push(this.cloneTarget(this.cache[ids[i]])); }
+    c3_chart_internal_fn.getCaches = function C3_INTERNAL_getCaches(ids) {
+        var targets = [], 
+            i, len;
+        for (i = 0, len = ids.length; i < len; i++) {
+            if (ids[i] in this.cache) { 
+                targets.push(this.cloneTarget(this.cache[ids[i]])); 
+            }
         }
         return targets;
     };
@@ -8448,19 +8453,21 @@
         $$.updateAndRedraw({withLegend: true});
     };
 
-    c3_chart_fn.resize = function (size) {
-        var $$ = this.internal, config = $$.config;
+    c3_chart_fn.resize = function C3_API_resize(size) {
+        var $$ = this.internal, 
+            config = $$.config;
         config.size_width = size ? size.width : null;
         config.size_height = size ? size.height : null;
         this.flush();
     };
 
-    c3_chart_fn.flush = function () {
+    c3_chart_fn.flush = function C3_API_flush() {
+        console.count('flush');
         var $$ = this.internal;
         $$.updateAndRedraw({withLegend: true, withTransition: false, withTransitionForTransform: false});
     };
 
-    c3_chart_fn.destroy = function () {
+    c3_chart_fn.destroy = function C3_API_destroy() {
         var $$ = this.internal;
 
         window.clearInterval($$.intervalForObserveInserted);

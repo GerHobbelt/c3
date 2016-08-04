@@ -1,16 +1,18 @@
-c3_chart_fn.resize = function (size) {
-    var $$ = this.internal, config = $$.config;
+c3_chart_fn.resize = function C3_API_resize(size) {
+    var $$ = this.internal, 
+        config = $$.config;
     config.size_width = size ? size.width : null;
     config.size_height = size ? size.height : null;
     this.flush();
 };
 
-c3_chart_fn.flush = function () {
+c3_chart_fn.flush = function C3_API_flush() {
+    console.count('flush');
     var $$ = this.internal;
     $$.updateAndRedraw({withLegend: true, withTransition: false, withTransitionForTransform: false});
 };
 
-c3_chart_fn.destroy = function () {
+c3_chart_fn.destroy = function C3_API_destroy() {
     var $$ = this.internal;
 
     window.clearInterval($$.intervalForObserveInserted);
