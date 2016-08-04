@@ -1,5 +1,5 @@
-c3_chart_fn.axis = function () {};
-c3_chart_fn.axis.labels = function (labels) {
+c3_chart_fn.axis = function C3_API_Axis() {};
+c3_chart_fn.axis.labels = function C3_API_Axis_Labels(labels) {
     var $$ = this.internal;
     if (arguments.length) {
         Object.keys(labels).forEach(function (axisId) {
@@ -9,13 +9,13 @@ c3_chart_fn.axis.labels = function (labels) {
     }
     // TODO: return some values?
 };
-c3_chart_fn.axis.max = function (max) {
+c3_chart_fn.axis.max = function C3_API_Axis_Max(max) {
     var $$ = this.internal, config = $$.config;
     if (arguments.length) {
         if (typeof max === 'object') {
-            if (isValue(max.x)) { config.axis_x_max = max.x; }
-            if (isValue(max.y)) { config.axis_y_max = max.y; }
-            if (isValue(max.y2)) { config.axis_y2_max = max.y2; }
+            if (max.hasOwnProperty('x')) { config.axis_x_max = max.x; }
+            if (max.hasOwnProperty('y')) { config.axis_y_max = max.y; }
+            if (max.hasOwnProperty('y2')) { config.axis_y2_max = max.y2; }
         } else {
             config.axis_y_max = config.axis_y2_max = max;
         }
@@ -28,13 +28,13 @@ c3_chart_fn.axis.max = function (max) {
         };
     }
 };
-c3_chart_fn.axis.min = function (min) {
+c3_chart_fn.axis.min = function C3_API_Axis_Min(min) {
     var $$ = this.internal, config = $$.config;
     if (arguments.length) {
         if (typeof min === 'object') {
-            if (isValue(min.x)) { config.axis_x_min = min.x; }
-            if (isValue(min.y)) { config.axis_y_min = min.y; }
-            if (isValue(min.y2)) { config.axis_y2_min = min.y2; }
+            if (min.hasOwnProperty('x')) { config.axis_x_min = min.x; }
+            if (min.hasOwnProperty('y')) { config.axis_y_min = min.y; }
+            if (min.hasOwnProperty('y2')) { config.axis_y2_min = min.y2; }
         } else {
             config.axis_y_min = config.axis_y2_min = min;
         }
@@ -47,7 +47,7 @@ c3_chart_fn.axis.min = function (min) {
         };
     }
 };
-c3_chart_fn.axis.range = function (range) {
+c3_chart_fn.axis.range = function C3_API_Axis_Range(range) {
     if (arguments.length) {
         if (isDefined(range.max)) { this.axis.max(range.max); }
         if (isDefined(range.min)) { this.axis.min(range.min); }

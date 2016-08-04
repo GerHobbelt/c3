@@ -1,4 +1,4 @@
-c3_chart_internal_fn.generateColor = function () {
+c3_chart_internal_fn.generateColor = function C3_INTERNAL_generateColor() {
     var $$ = this, config = $$.config, d3 = $$.d3,
         colors = config.data_colors,
         pattern = notEmpty(config.color_pattern) ? config.color_pattern : d3.scale.category10().range(),
@@ -25,7 +25,7 @@ c3_chart_internal_fn.generateColor = function () {
         return callback instanceof Function ? callback(color, d) : color;
     };
 };
-c3_chart_internal_fn.generateLevelColor = function () {
+c3_chart_internal_fn.generateLevelColor = function C3_INTERNAL_generateLevelColor() {
     var $$ = this, config = $$.config,
         colors = config.color_pattern,
         threshold = config.color_threshold,
@@ -43,4 +43,26 @@ c3_chart_internal_fn.generateLevelColor = function () {
         }
         return color;
     } : null;
+};
+c3_chart_internal_fn.generateOpacity = function () {
+    var $$ = this, config = $$.config,
+        opacity = config.data_opacity,
+        callback = config.data_calculateOpacity;
+
+    return function (d) {
+        var id = d.id || (d.data && d.data.id) || d;
+
+        // if callback function is provided
+        if (callback[id] instanceof Function) {
+            return callback[id](d);
+        }
+        // if opacity is specified
+        else if (opacity !== undefined) {
+            return opacity;
+        }
+        // default
+        else {
+            return 1;
+        }
+    };
 };
