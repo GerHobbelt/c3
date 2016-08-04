@@ -44,7 +44,7 @@ c3_chart_internal_fn.getTooltipContent = function C3_INTERNAL_getTooltipContent(
             return orderAsc ? v1 - v2 : v2 - v1;
         });
     } else {
-        var ids = $$.orderTargets($.extend(true, [], $$.data.targets)).map(function (i) {
+        var ids = $$.orderTargets($$.data.targets.slice(0)).map(function (i) {
             return i.id;
         });
         d.sort(function (a, b) {
