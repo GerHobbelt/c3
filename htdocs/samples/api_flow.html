@@ -1,18 +1,51 @@
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="/css/c3.css">
+    <link rel="stylesheet" type="text/css" href="../css/c3.css">
     <style>
       .c3-region-1 {
         fill: #dd3333;
         fill-opacity: 0.8
       }
     </style>
+    <script id="profile_code_chunk">
+      function start_profiling() {
+        if (console.profile) {
+          console.profile('C3 demo run');
+        }
+      }
+      function stop_profiling() {
+        if (console.profileEnd) {
+          console.profileEnd('C3 demo run');
+        }
+      }
+      var prof_timer_h = null;
+      var prof_timestamp = Date.now();
+      function profile_watchdog_kick(t) {
+        clearTimeout(prof_timer_h);
+        t = Math.max(t | 0, 5179);
+        
+        // make sure the farthest-into-the-future delay is kept intact:
+        var new_t = Date.now() + t;
+        var delta_t = new_t - prof_timestamp;
+        if (delta_t < 0) {
+          t = prof_timestamp - new_t;
+        } else {
+          prof_timestamp = new_t;
+        }
+        
+        prof_timer_h = setTimeout(stop_profiling, t);
+      }
+      start_profiling();
+    </script>
+    <script id="profile_code_chunk_2">
+      profile_watchdog_kick(45000);
+    </script>
   </head>
   <body>
     <div id="chart"></div>
 
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script src="/js/c3.js"></script>
+    <script src="../js/d3.latest.js" charset="utf-8"></script>
+    <script src="../js/c3.js" charset="utf-8"></script>
     <script>
 
       var padding = {}, types = {}, chart, generate = function () { return c3.generate({
@@ -55,11 +88,11 @@
       };
 
     function run() {
-
       chart = generate();
 
       setTimeout(function () {
         // Load only one data
+        profile_watchdog_kick();
         chart.flow({
           rows: [
             ['data1', 'data2', 'data3'],
@@ -71,6 +104,7 @@
 
           done: function () {
             // Load 2 data without data2 and remove 1 data
+            profile_watchdog_kick();
             chart.flow({
               columns: [
                 ['data1', 200, 300],
@@ -80,6 +114,7 @@
               duration: 1500,
 
               done: function () {
+                profile_watchdog_kick();
                 chart.flow({
                   columns: [
                     ['data1', 200, 300],
@@ -89,7 +124,7 @@
                   length: 2,
                   duration: 1500,
                   done: function () {
-
+                    profile_watchdog_kick();
                     chart.flow({
                       columns: [
                         ['data1', 500],
@@ -100,7 +135,6 @@
                       duration: 1500,
                     });
                   }
-
                 });
               }// done
 
@@ -111,6 +145,7 @@
       }, 1000);
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.flow({
           columns: [
             ['data1', 250],
@@ -122,6 +157,7 @@
       }, 9000);
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.flow({
           columns: [
             ['data1', 100],
@@ -133,6 +169,7 @@
       }, 10000);
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.flow({
           columns: [
             ['data1', 600],
@@ -144,6 +181,7 @@
       }, 11000);
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.flow({
           columns: [
             ['data1', 100],
@@ -154,10 +192,12 @@
       }, 12000);
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart = generate();
       }, 13000);
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.flow({
           columns: [
             ['data1', 500, 100],
@@ -179,6 +219,7 @@
       }, 14000);
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.flow({
           columns: [
             ['data1', 200],
@@ -190,6 +231,7 @@
       }, 18000);
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.flow({
           columns: [
             ['data1', 200],
@@ -198,19 +240,20 @@
           ]
         });
       }, 19000);
-
     }
 
     run();
 
     // Test for no padding
     setTimeout(function () {
+      profile_watchdog_kick();
       padding = {left: 0, right: 0};
       run();
     }, 22000);
 
     // Test for other chart types
     setTimeout(function () {
+      profile_watchdog_kick();
       types = {
         data2: 'area',
         data3: 'bar',

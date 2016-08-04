@@ -51,23 +51,23 @@ function main() {
 
 };
 
-if (typeof (Array.generate) == "undefined") {
+if (typeof (Array.generate) === "undefined") {
     Array.generate = function (length, generator) {
         var list = new Array(length);
         for (var i = 0; i < length; i++) {
             list[i] = generator(i);
         }
         return list;
-    }
+    };
 }
-if (typeof (Math.randomInt) == "undefined") {
+if (typeof (Math.randomInt) === "undefined") {
     Math.randomInt = function (min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+    };
 }
-if (typeof (Array.generateNumbers) == "undefined") {
+if (typeof (Array.generateNumbers) === "undefined") {
     Array.generateNumbers = function (from, until) {
-        if (arguments.length == 1) {
+        if (arguments.length === 1) {
             until = from;
             from = 0;
         }
@@ -77,5 +77,5 @@ if (typeof (Array.generateNumbers) == "undefined") {
             list[i] = i + from;
         }
         return list;
-    }
+    };
 }

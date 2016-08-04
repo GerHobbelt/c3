@@ -1,13 +1,45 @@
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="/css/c3.css">
+    <link rel="stylesheet" type="text/css" href="../css/c3.css">
+    <script id="profile_code_chunk">
+      function start_profiling() {
+        if (console.profile) {
+          console.profile('C3 demo run');
+        }
+      }
+      function stop_profiling() {
+        if (console.profileEnd) {
+          console.profileEnd('C3 demo run');
+        }
+      }
+      var prof_timer_h = null;
+      var prof_timestamp = Date.now();
+      function profile_watchdog_kick(t) {
+        clearTimeout(prof_timer_h);
+        t = Math.max(t | 0, 5179);
+        
+        // make sure the farthest-into-the-future delay is kept intact:
+        var new_t = Date.now() + t;
+        var delta_t = new_t - prof_timestamp;
+        if (delta_t < 0) {
+          t = prof_timestamp - new_t;
+        } else {
+          prof_timestamp = new_t;
+        }
+        
+        prof_timer_h = setTimeout(stop_profiling, t);
+      }
+      start_profiling();
+    </script>
+    <script id="profile_code_chunk_2">
+      profile_watchdog_kick();
+    </script>
   </head>
   <body>
     <div id="chart"></div>
 
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script src="/js/c3.js"></script>
-<!--    <script src="/js/c3.min.0.1.35.js"></script>-->
+    <script src="../js/d3.latest.js" charset="utf-8"></script>
+    <script src="../js/c3.js" charset="utf-8"></script>
     <script>
 
       var dates = ['date',
@@ -46,8 +78,8 @@
         }
       });
 
-/*
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.load({
           columns: [
             ['sample', 200, 130, 90, 240, 130, 100],
@@ -57,16 +89,16 @@
       }, 1000);
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.load({
           columns: [
-            ['date', '20140101', '20140201', '20140301', '20140401', '20140501', '20140601'],
+            ['date', '2014-01-01', '2014-02-01', '2014-03-01', '2014-04-01', '2014-05-01', '2014-06-01'],
             ['sample', 500, 630, 690, 440, 630, 900],
             ['sample2', 400, 600, 460, 200, 350, 450]
           ]
         });
       }, 2000);
 
-*/
     </script>
   </body>
 </html>

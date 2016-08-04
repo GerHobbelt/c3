@@ -1,12 +1,45 @@
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="/css/c3.css">
+    <link rel="stylesheet" type="text/css" href="../css/c3.css">
+    <script id="profile_code_chunk">
+      function start_profiling() {
+        if (console.profile) {
+          console.profile('C3 demo run');
+        }
+      }
+      function stop_profiling() {
+        if (console.profileEnd) {
+          console.profileEnd('C3 demo run');
+        }
+      }
+      var prof_timer_h = null;
+      var prof_timestamp = Date.now();
+      function profile_watchdog_kick(t) {
+        clearTimeout(prof_timer_h);
+        t = Math.max(t | 0, 5179);
+        
+        // make sure the farthest-into-the-future delay is kept intact:
+        var new_t = Date.now() + t;
+        var delta_t = new_t - prof_timestamp;
+        if (delta_t < 0) {
+          t = prof_timestamp - new_t;
+        } else {
+          prof_timestamp = new_t;
+        }
+        
+        prof_timer_h = setTimeout(stop_profiling, t);
+      }
+      start_profiling();
+    </script>
+    <script id="profile_code_chunk_2">
+      profile_watchdog_kick();
+    </script>
   </head>
   <body>
     <div id="chart"></div>
 
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script src="/js/c3.js"></script>
+    <script src="../js/d3.latest.js" charset="utf-8"></script>
+    <script src="../js/c3.js" charset="utf-8"></script>
     <script>
       var chart = c3.generate({
         data: {
@@ -34,6 +67,7 @@
       });
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.load({
           columns: [
             ['sample', -100, 200, 50, 100, 400, 299]
@@ -42,26 +76,32 @@
       }, 1000);
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.regions([]);
       }, 2000);
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.regions([{start:0.5,end:2.5}]);
       }, 3000);
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.regions.add([{start:4.5}]);
       }, 4000);
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.regions.add([{start:3,end:3.5,class:"region1"}, {start:4,end:4.5,class:"region2"}]);
       }, 5000);
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.regions.remove({classes:['region1', 'region2'], duration: 0});
       }, 6000);
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.regions.add([
           {start:3,end:3.5,class:"region3 hoge"},
           {start:4,end:4.5,class:"region4 hoge"},
@@ -70,17 +110,19 @@
       }, 7000);
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.regions.remove({classes:['hoge'], duration: 500});
       }, 8000);
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.regions.remove({classes:['hogehoge']});
       }, 9000);
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.regions.remove({});
       }, 10000);
-
 
     </script>
   </body>

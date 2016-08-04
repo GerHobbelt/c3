@@ -1,0 +1,123 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="../css/c3.css">
+    <script id="profile_code_chunk">
+      function start_profiling() {
+        if (console.profile) {
+          console.profile('C3 demo run');
+        }
+      }
+      function stop_profiling() {
+        if (console.profileEnd) {
+          console.profileEnd('C3 demo run');
+        }
+      }
+      var prof_timer_h = null;
+      var prof_timestamp = Date.now();
+      function profile_watchdog_kick(t) {
+        clearTimeout(prof_timer_h);
+        t = Math.max(t | 0, 5179);
+        
+        // make sure the farthest-into-the-future delay is kept intact:
+        var new_t = Date.now() + t;
+        var delta_t = new_t - prof_timestamp;
+        if (delta_t < 0) {
+          t = prof_timestamp - new_t;
+        } else {
+          prof_timestamp = new_t;
+        }
+        
+        prof_timer_h = setTimeout(stop_profiling, t);
+      }
+      start_profiling();
+    </script>
+    <script id="profile_code_chunk_2">
+      profile_watchdog_kick();
+    </script>
+  </head>
+  <body>
+    <div id="chart1"></div>
+    <div id="chart2"></div>
+    <div id="chart3"></div>
+
+    <script src="../js/d3.latest.js" charset="utf-8"></script>
+    <script src="../js/c3.js" charset="utf-8"></script>
+    <script>
+
+      var chart1 = c3.generate({
+        bindto: '#chart1',
+        data: {
+          columns: [
+            ['data1', 30, 200, 100, 400, 150, 250],
+            ['data2', 150, 20, 310, 140, 215, 25]
+          ],
+          labels: true,
+          types: {
+            'data1': 'spline',
+            'data2': 'bar'
+          }
+        },
+        subchart: {
+          show: true,
+          types: {
+            'data1': 'step',
+            'data2': 'line'
+          },
+          line_spline_type: 'monotone'
+        },
+        line_spline_type: 'cubic',
+        spline_interpolation_type: 'cubic'
+      });
+
+if (0) {
+
+      var chart2 = c3.generate({
+        bindto: '#chart2',
+        data: {
+          columns: [
+            ['data1', 30, 200, 100, 400, 150, 250],
+            ['data2', 50, 20, 10, 40, 15, 25]
+          ],
+          labels: true,
+          types: {
+            'data1': 'spline',
+            'data2': 'bar'
+          },
+        },
+        subchart: {
+          show: true,
+          types: {
+            'data1': 'line',
+            'data2': 'line'
+          },
+          line_spline_type: 'step'
+        },
+        axis: {
+          rotated: true
+        },
+        line_spline_type: 'step',
+        spline_interpolation_type: 'step' 
+      });
+
+      var chart3 = c3.generate({
+        bindto: '#chart3',
+        data: {
+          columns: [
+            ['data1', 30, 200, 100, 400, 150, 250],
+            ['data2', 50, 20, 10, 40, 15, 25]
+          ],
+          labels: true
+        },
+        axis: {
+          x: {
+            default: [3, 5]
+          }
+        },
+        subchart: {
+          show: true
+        },
+      });
+}
+    </script>
+  </body>
+</html>

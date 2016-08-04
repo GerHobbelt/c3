@@ -1,12 +1,45 @@
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="/css/c3.css">
+    <link rel="stylesheet" type="text/css" href="../css/c3.css">
+    <script id="profile_code_chunk">
+      function start_profiling() {
+        if (console.profile) {
+          console.profile('C3 demo run');
+        }
+      }
+      function stop_profiling() {
+        if (console.profileEnd) {
+          console.profileEnd('C3 demo run');
+        }
+      }
+      var prof_timer_h = null;
+      var prof_timestamp = Date.now();
+      function profile_watchdog_kick(t) {
+        clearTimeout(prof_timer_h);
+        t = Math.max(t | 0, 5179);
+        
+        // make sure the farthest-into-the-future delay is kept intact:
+        var new_t = Date.now() + t;
+        var delta_t = new_t - prof_timestamp;
+        if (delta_t < 0) {
+          t = prof_timestamp - new_t;
+        } else {
+          prof_timestamp = new_t;
+        }
+        
+        prof_timer_h = setTimeout(stop_profiling, t);
+      }
+      start_profiling();
+    </script>
+    <script id="profile_code_chunk_2">
+      profile_watchdog_kick();
+    </script>
   </head>
   <body>
     <div id="chart"></div>
 
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script src="/js/c3.js"></script>
+    <script src="../js/d3.latest.js" charset="utf-8"></script>
+    <script src="../js/c3.js" charset="utf-8"></script>
     <script>
       var chart = c3.generate({
         bindto: '#chart',
@@ -24,7 +57,7 @@
         },
         axis: {
           x: {
-            type: 'categorized',
+            type: 'category',
             label: 'X Label'
           },
           y: {
@@ -37,6 +70,7 @@
       });
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.load({
           columns: [
             ['x', 'www.yahoo.com', 'www.rakuten.com', 'www.mixi.com', 'www.sony.com'],
@@ -47,6 +81,7 @@
       }, 1000);
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.load({
           columns: [
             ['x', 'www.hogehoge.com', 'www.aaaa.com', 'www.aaaa.com'],
@@ -57,6 +92,7 @@
       }, 2000);
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.load({
           columns: [
             ['x', 'www.yahoo.com', 'www.rakuten.com', 'www.mixi.com', 'www.sony.com'],
@@ -67,6 +103,7 @@
       }, 3000);
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.load({
           columns: [
             ['download', 30, 30, 20, 170],
@@ -76,8 +113,9 @@
       }, 4000);
 
       setTimeout(function () {
+        profile_watchdog_kick();
         chart.load({
-          url: '/data/c3_test3.csv'
+          url: '../data/c3_test3.csv'
         });
       }, 5000);
 

@@ -1,0 +1,85 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="../css/c3.css">
+    <script id="profile_code_chunk">
+      function start_profiling() {
+        if (console.profile) {
+          console.profile('C3 demo run');
+        }
+      }
+      function stop_profiling() {
+        if (console.profileEnd) {
+          console.profileEnd('C3 demo run');
+        }
+      }
+      var prof_timer_h = null;
+      var prof_timestamp = Date.now();
+      function profile_watchdog_kick(t) {
+        clearTimeout(prof_timer_h);
+        t = Math.max(t | 0, 5179);
+        
+        // make sure the farthest-into-the-future delay is kept intact:
+        var new_t = Date.now() + t;
+        var delta_t = new_t - prof_timestamp;
+        if (delta_t < 0) {
+          t = prof_timestamp - new_t;
+        } else {
+          prof_timestamp = new_t;
+        }
+        
+        prof_timer_h = setTimeout(stop_profiling, t);
+      }
+      start_profiling();
+    </script>
+    <script id="profile_code_chunk_2">
+      profile_watchdog_kick();
+    </script>
+
+    <style>
+      .button {
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="chart"></div>
+
+    <div class="control">
+      Zero Based:
+      <div class="button">
+        <input type="radio" name="zerobased" value="true" id="zerobased_on"/>
+        <label for="zerobased_on">ON</label>
+      </div>
+      <div class="button">
+        <input type="radio" name="zerobased" value="false" id="zerobased_off" checked="checked"/>
+        <label for="zerobased_off">OFF(default)</label>
+      </div>
+    </div>
+
+    <script src="../js/d3.latest.js" charset="utf-8"></script>
+    <script src="../js/c3.js" charset="utf-8"></script>
+    <script>
+      var chart;
+      function showChart(zerobased) {
+        chart = c3.generate({
+          data: {
+            columns: [
+              ['data1', 1030, 1200, 1100, 1400, 1150, 1250],
+              ['data2', 2130, 2100, 2140, 2200, 2150, 1850]
+            ],
+            type: 'line'
+          },
+          line: {
+            zerobased: zerobased
+          }
+        });
+      }
+
+      d3.selectAll(".button input").on("change", function(){
+        showChart(this.value === 'true');
+      });
+      showChart();
+
+    </script>
+  </body>
+</html>

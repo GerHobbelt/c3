@@ -1,0 +1,177 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="../css/c3.css">
+    <script id="profile_code_chunk">
+      function start_profiling() {
+        if (console.profile) {
+          console.profile('C3 demo run');
+        }
+      }
+      function stop_profiling() {
+        if (console.profileEnd) {
+          console.profileEnd('C3 demo run');
+        }
+      }
+      var prof_timer_h = null;
+      var prof_timestamp = Date.now();
+      function profile_watchdog_kick(t) {
+        clearTimeout(prof_timer_h);
+        t = Math.max(t | 0, 5179);
+        
+        // make sure the farthest-into-the-future delay is kept intact:
+        var new_t = Date.now() + t;
+        var delta_t = new_t - prof_timestamp;
+        if (delta_t < 0) {
+          t = prof_timestamp - new_t;
+        } else {
+          prof_timestamp = new_t;
+        }
+        
+        prof_timer_h = setTimeout(stop_profiling, t);
+      }
+      start_profiling();
+    </script>
+    <script id="profile_code_chunk_2">
+      profile_watchdog_kick();
+    </script>
+  </head>
+  <body>
+    <h2>Rotation false</h2>
+    <h3>outer-top</h3>
+    <div id="chart1"></div>
+    <h3>outer-bottom</h3>
+    <div id="chart2"></div>
+    <h3>inner-top</h3>
+    <div id="chart3"></div>
+    <h3>inner-bottom</h3>
+    <div id="chart4"></div>
+
+    <h2>Rotation true</h2>
+    <h3>outer-top</h3>
+    <div id="chart5"></div>
+    <h3>outer-bottom</h3>
+    <div id="chart6"></div>
+    <h3>inner-top</h3>
+    <div id="chart7"></div>
+    <h3>inner-bottom</h3>
+    <div id="chart8"></div>
+
+    <h2>Rotation true, and label rotated</h2>
+    <h3>outer-top</h3>
+    <div id="chart9"></div>
+    <h3>outer-bottom</h3>
+    <div id="chart10"></div>
+    <h3>inner-top</h3>
+    <div id="chart11"></div>
+    <h3>inner-bottom</h3>
+    <div id="chart12"></div>
+
+    <script src="../js/d3.latest.js" charset="utf-8"></script>
+    <script src="../js/c3.js" charset="utf-8"></script>
+    <script>
+
+      var axis_x_type = 'category',
+          axis_rotated = false;
+
+      var data = {
+        columns: [
+          ['data1', 30, 200, 200, 400, 150, 250],
+          ['data2', 50, 40, 10, 30, 60, 80],
+          ['data3', 230, 100, 20, 0, 250, 250]
+        ],
+        type: 'bar',
+        labels: {
+          show: true
+        },
+        groups: [
+          ['data1', 'data2', 'data3']
+        ]
+      };
+      var axis = {
+        x: {
+          label: {
+            text: 'SampleLabel',
+            position: '',
+            rotate: false
+          }
+        },
+        rotated: false
+      };
+
+      function showChart(opt) {
+        axis.x.label.text = 'SampleLabel-' + opt.bindto;
+        axis.x.label.position = opt.position;
+        axis.rotated = opt.rotated;
+        if (opt.x_rotate !== undefined) {
+          axis.x.label.rotate = opt.x_rotate;
+        }
+        c3.generate({
+          bindto: opt.bindto,
+          data: data,
+          axis: axis
+        });
+      }
+
+      var options = [
+        {
+          bindto: '#chart1',
+          position: 'outer-top',
+          rotated: false
+        }, {
+          bindto: '#chart2',
+          position: 'outer-bottom',
+          rotated: false
+        }, {
+          bindto: '#chart3',
+          position: 'inner-top',
+          rotated: false
+        }, {
+          bindto: '#chart4',
+          position: 'inner-bottom',
+          rotated: false
+        }, {
+          bindto: '#chart5',
+          position: 'outer-top',
+          rotated: true
+        }, {
+          bindto: '#chart6',
+          position: 'outer-bottom',
+          rotated: true
+        }, {
+          bindto: '#chart7',
+          position: 'inner-top',
+          rotated: true
+        }, {
+          bindto: '#chart8',
+          position: 'inner-bottom',
+          rotated: true
+        }, {
+          bindto: '#chart9',
+          position: 'outer-top',
+          x_rotate: true,
+          rotated: true
+        }, {
+          bindto: '#chart10',
+          position: 'outer-bottom',
+          x_rotate: true,
+          rotated: true
+        }, {
+          bindto: '#chart11',
+          position: 'inner-top',
+          x_rotate: true,
+          rotated: true
+        }, {
+          bindto: '#chart12',
+          position: 'inner-bottom',
+          x_rotate: true,
+          rotated: true
+        }
+      ]
+
+      options.forEach(function(opt) {
+        showChart(opt)
+      });
+
+    </script>
+  </body>
+</html>
