@@ -7128,6 +7128,9 @@
             config = $$.config, 
             zoom = $$.zoom, 
             x = $$.x;
+        if (!d3.event.sourceEvent) {
+            return;
+        }
         if (!config.zoom_enabled) {
             return;
         }
