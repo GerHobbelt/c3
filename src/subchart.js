@@ -108,7 +108,6 @@ c3_chart_internal_fn.updateBarForSubchart = function C3_INTERNAL_updateBarForSub
         .remove();
 };
 c3_chart_internal_fn.redrawBarForSubchart = function C3_INTERNAL_redrawBarForSubchart(drawBarOnSub, withTransition, duration) {
-    console.count('redrawBarForSubchart');
     (withTransition ? this.contextBar.transition(Math.random().toString()).duration(duration) : this.contextBar)
         .attr('d', drawBarOnSub)
         .style('opacity', 1);
@@ -129,7 +128,6 @@ c3_chart_internal_fn.updateLineForSubchart = function C3_INTERNAL_updateLineForS
         .remove();
 };
 c3_chart_internal_fn.redrawLineForSubchart = function C3_INTERNAL_redrawLineForSubchart(drawLineOnSub, withTransition, duration) {
-    console.count('redrawLineForSubchart');
     (withTransition ? this.contextLine.transition(Math.random().toString()).duration(duration) : this.contextLine)
         .attr("d", drawLineOnSub)
         .style('opacity', 1);
@@ -155,14 +153,12 @@ c3_chart_internal_fn.updateAreaForSubchart = function C3_INTERNAL_updateAreaForS
         .remove();
 };
 c3_chart_internal_fn.redrawAreaForSubchart = function C3_INTERNAL_redrawAreaForSubchart(drawAreaOnSub, withTransition, duration) {
-    console.count('redrawAreaForSubchart');
     (withTransition ? this.contextArea.transition(Math.random().toString()).duration(duration) : this.contextArea)
         .attr("d", drawAreaOnSub)
         .style("fill", this.color)
         .style("opacity", this.orgAreaOpacity);
 };
 c3_chart_internal_fn.redrawSubchart = function C3_INTERNAL_redrawSubchart(withSubchart, transitions, duration, durationForExit, areaIndices, barIndices, lineIndices) {
-    console.count('redrawSubchart');
     var $$ = this, 
         d3 = $$.d3, 
         config = $$.config,
@@ -198,7 +194,6 @@ c3_chart_internal_fn.redrawSubchart = function C3_INTERNAL_redrawSubchart(withSu
     }
 };
 c3_chart_internal_fn.redrawForBrush = function C3_INTERNAL_redrawForBrush() {
-    console.count('redrawForBrush');
     var $$ = this, 
         x = $$.x;
     $$.redraw({

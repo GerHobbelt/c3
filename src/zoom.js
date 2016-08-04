@@ -50,7 +50,6 @@ c3_chart_internal_fn.updateZoom = function C3_INTERNAL_updateZoom() {
     $$.main.selectAll('.' + CLASS.eventRect).call(z).on("dblclick.zoom", null);
 };
 c3_chart_internal_fn.redrawForZoom = function C3_INTERNAL_redrawForZoom() {
-    console.count('redrawForZoom');
     var $$ = this, 
         d3 = $$.d3, 
         config = $$.config, 

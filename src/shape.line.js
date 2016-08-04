@@ -69,7 +69,6 @@ c3_chart_internal_fn.updateLine = function C3_INTERNAL_updateLine(durationForExi
         .remove();
 };
 c3_chart_internal_fn.redrawLine = function C3_INTERNAL_redrawLine(drawLine, withTransition) {
-    console.count('redrawLine');
     return [
         (withTransition ? this.mainLine.transition(Math.random().toString()) : this.mainLine)
             .attr("d", drawLine)
@@ -285,7 +284,6 @@ c3_chart_internal_fn.updateArea = function C3_INTERNAL_updateArea(durationForExi
         .remove();
 };
 c3_chart_internal_fn.redrawArea = function C3_INTERNAL_redrawArea(drawArea, withTransition) {
-    console.count('redrawArea');
     return [
         (withTransition ? this.mainArea.transition(Math.random().toString()) : this.mainArea)
             .attr("d", drawArea)
@@ -384,7 +382,6 @@ c3_chart_internal_fn.updateCircle = function C3_INTERNAL_updateCircle() {
     $$.mainCircle.exit().remove();
 };
 c3_chart_internal_fn.redrawCircle = function C3_INTERNAL_redrawCircle(cx, cy, withTransition) {
-    console.count('redrawCircle');
     var selectedCircles = this.main.selectAll('.' + CLASS.selectedCircle);
     return [
         (withTransition ? this.mainCircle.transition(Math.random().toString()) : this.mainCircle)

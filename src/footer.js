@@ -24,7 +24,6 @@ c3_chart_internal_fn.initFooter = function C3_INTERNAL_initFooter() {
   }
 };
 c3_chart_internal_fn.redrawFooter = function C3_INTERNAL_redrawFooter() {
-    console.count('redrawFooter');
     var $$ = this;
     if ($$.footer) {
         var footer_height = $$.getCurrentPaddingBottom();

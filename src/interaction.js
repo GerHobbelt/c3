@@ -5,7 +5,6 @@ c3_chart_internal_fn.initEventRect = function C3_INTERNAL_initEventRect() {
         .style('fill-opacity', 0);
 };
 c3_chart_internal_fn.redrawEventRect = function C3_INTERNAL_redrawEventRect() {
-    console.count('redrawEventRect');
     var $$ = this, 
         config = $$.config,
         eventRectUpdate, maxDataCountTarget,

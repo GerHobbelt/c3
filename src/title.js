@@ -8,7 +8,6 @@ c3_chart_internal_fn.initTitle = function C3_INTERNAL_initTitle() {
 };
 
 c3_chart_internal_fn.redrawTitle = function C3_INTERNAL_redrawTitle() {
-    console.count('redrawTitle');
     var $$ = this;
     $$.title
           .attr("x", $$.xForTitle.bind($$))
