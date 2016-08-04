@@ -10,7 +10,7 @@ c3_chart_internal_fn.convertUrlToData = function C3_INTERNAL_convertUrlToData(ur
     req.get(function (error, data) {
         var d;
         if (!data) {
-            throw new Error(error.responseURL + ' ' + error.status + ' (' + error.statusText + ')');
+            throw new Error((error.responseURL || url) + ' [' + error.status + '] (' + (error.statusText || 'Cannot load data from URL') + ')');
         }
         var dataResponse = data.response || data.responseText;
         if (type === 'json') {
