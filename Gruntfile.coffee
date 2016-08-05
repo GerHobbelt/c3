@@ -1,5 +1,5 @@
 module.exports = (grunt) ->
-    require('load-grunt-tasks') grunt, pattern: ['grunt-contrib-*', 'grunt-sass', 'grunt-karma']
+    require('load-grunt-tasks') grunt, pattern: ['grunt-contrib-*', 'grunt-karma']
     fs = require('fs')
 
     grunt.initConfig
@@ -7,9 +7,9 @@ module.exports = (grunt) ->
           concat:
             tasks: 'concat'
             files: ['src/*.js']
-          sass:
-            tasks: 'sass'
-            files: ['src/scss/*.scss']
+          less:
+            tasks: 'less'
+            files: ['src/less/*.less']
 
         concat:
           dist:
@@ -127,6 +127,13 @@ module.exports = (grunt) ->
             files:
               'c3.css': 'src/scss/main.scss'
 
+        less:
+          options:
+            sourcemap: 'none'
+          c3:
+            files:
+              'c3.css': 'src/less/main.less'
+
         copy:
           web:
             files: [
@@ -134,6 +141,7 @@ module.exports = (grunt) ->
               {expand: true, src: 'c3.css', dest: 'htdocs/css/', filter: 'isFile'},
 
               {expand: true, cwd: 'extensions/js/', src: ['**'], dest: 'htdocs/js/extensions/'},
+              {expand: true, cwd: 'extensions/chart-bubble/', src: ['*.js'], dest: 'htdocs/js/extensions/'},
             ]
 
 
@@ -165,7 +173,7 @@ module.exports = (grunt) ->
 
     grunt.registerTask 'lint', ['jshint']
     grunt.registerTask 'test', ['karma']
-    grunt.registerTask 'build', ['concat', 'sass']
+    grunt.registerTask 'build', ['concat', 'less']
     grunt.registerTask 'minify', ['cssmin', 'uglify']
     grunt.registerTask 'default', ['concat', 'lint', 'update_web', 'test', 'minify']
     grunt.registerTask 'update_web', ['build', 'copy:web']

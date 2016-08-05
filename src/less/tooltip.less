@@ -1,0 +1,42 @@
+.c3-tooltip-container {
+  z-index: 10;
+}
+.c3-tooltip {
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: #222;
+  background-color: #fff;
+  empty-cells:show;
+  -webkit-box-shadow: 7px 7px 12px -9px rgb(119,119,119);
+     -moz-box-shadow: 7px 7px 12px -9px rgb(119,119,119);
+          box-shadow: 7px 7px 12px -9px rgb(119,119,119);
+  opacity: 0.9;
+}
+.c3-tooltip tr {
+  border: 1px solid #ccc;
+}
+.c3-tooltip th {
+  color: #fff;
+  background-color: #aaa;
+  padding: 2px 5px;
+  font-size: 14px;
+  text-align: left;
+}
+.c3-tooltip td {
+  color: inherit;
+  background-color: inherit;
+  padding: 3px 6px;
+  font-size: 13px;
+}
+.c3-tooltip td > span {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+}
+.c3-tooltip td.value{
+  border-left-width: 1px;
+  border-left-style: dotted;
+  border-left-color: inherit;
+  text-align: right;
+}
